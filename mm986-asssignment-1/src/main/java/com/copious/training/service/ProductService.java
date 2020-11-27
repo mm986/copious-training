@@ -1,16 +1,20 @@
 package com.copious.training.service;
 
+import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.dao.ProductRepository;
 import com.copious.training.domain.Sku;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -24,6 +28,8 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
+    Logger logger = LoggerFactory.getLogger(ProductService.class);
+
     /**
      * Service method to get sorted list of available Products [ArrayList Implementation].
      *
@@ -32,7 +38,7 @@ public class ProductService {
      */
     public List<Sku> getProductListFromArrayList() throws IOException {
 
-        List<Sku> products=new ArrayList<>();
+        List<Sku> products = new ArrayList<>();
 
         products.addAll(productRepository
                 .getMockProducts()
@@ -53,7 +59,7 @@ public class ProductService {
      * @throws IOException
      */
     public List<Sku> getProductListFromLinkedList() throws IOException {
-        List<Sku> products=new LinkedList<>();
+        List<Sku> products = new LinkedList<>();
 
         products.addAll(productRepository
                 .getMockProducts()
@@ -80,4 +86,42 @@ public class ProductService {
                 .max(Comparator.comparing(Sku::getTotalPrice))
                 .orElseThrow(() -> new IllegalStateException("Product Not Available"));
     }
+
+    /**
+     * Service method to validate single product.
+     *
+     * @return Product
+     */
+    public Optional<Sku> validateProduct(Sku product) {
+        try {
+            return Stream.of(product)
+                    .map(sku -> {
+
+                        // Regex based validation on Product.
+                        if (!Pattern
+                                .compile("^[a-zA-Z0-9]+$")
+                                .matcher(sku.getSku())
+                                .matches()
+                        ) {
+                            throw new InvalidProductException(HttpStatus.BAD_REQUEST, "Invalid SKU: Sku "
+                                    + sku.getSku()
+                                    + " should match alphanumeric regular expression ^[a-zA-Z0-9]+$ "
+                                    + "Special characters not allowed."
+                            );
+                        } else if (sku.getTotalPrice().compareTo(new BigDecimal(0)) == -1) {
+                            throw new InvalidProductException(HttpStatus.BAD_REQUEST, "Invalid SKU: Sku "
+                                    + sku.getSku()
+                                    + " should have valid +ve price."
+                            );
+                        }
+                        logger.info("Valid SKU: Sku" + sku.getSku() + " posted successfully");
+                        return sku;
+                    })
+                    .findFirst();
+        } catch (Exception e) {
+            logger.error("Exception during validation of Product/SKU. {} : {} : {}", e.getCause(), e.getMessage(), e.getStackTrace());
+            throw e;
+        }
+    }
 }
+

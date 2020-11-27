@@ -68,7 +68,8 @@ This assignment covers following concepts and terminologies -
     * Use ArrayList to perform above operations
     * Use Linked List to perform some of the above operations
     * Use Map to store and operate on above operations
-                     
+    * Refer following link for HashSet, LinkedHashSet and TreeSet
+    https://www.geeksforgeeks.org/difference-and-similarities-between-hashset-linkedhashset-and-treeset-in-java/ 
 ### Business Validations & Exception Handling
 Do business validations on order processing and cover exception handling
 
@@ -76,8 +77,13 @@ Do business validations on order processing and cover exception handling
     * Invalid Arrival Date
     * Invalid Promo Code Applied
     * Unable to place your order
-    
+
+Create N number of custom exception and throw it via single Controller advice.
+Pipe operation.
+Try with resources.
+
 ### Applying Design Patterns 
 1. Singleton - Define fixed promo codes and use them as a part of Singleton class
-
+               Cover all loopholes - many ways to implemented
+             
 ### Mockito

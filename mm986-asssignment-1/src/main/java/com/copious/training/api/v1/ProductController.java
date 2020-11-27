@@ -1,13 +1,16 @@
-package com.copious.training.api;
+package com.copious.training.api.v1;
 
 import com.copious.training.domain.Sku;
 import com.copious.training.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Mahesh More
@@ -53,4 +56,14 @@ public class ProductController {
         return productService.getExpensiveProduct();
     }
 
+    /**
+     * POST API to validate mock Product.
+     *
+     * @return Order
+     * @throws IOException
+     */
+    @PostMapping(value = {"/product"})
+    Optional<Sku> validateOrder(@RequestBody Sku product) {
+        return productService.validateProduct(product);
+    }
 }
