@@ -1,20 +1,18 @@
 package com.copious.training.dao;
 
+import com.copious.training.designpattern.ObjectMapperSingleton;
 import com.copious.training.domain.Order;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.OffsetDateTimeSerializer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.io.InputStream;
 
 /**
  * @author Mahesh More
+ * <p>
  * Order Repository to get mock orders.
+ * Demonstration of Try with resources.
  */
 @Component
 public class OrderRepository {
@@ -25,13 +23,8 @@ public class OrderRepository {
      * @throws IOException
      */
     public Order getMockOrder() throws IOException {
-
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule()
-                        .addSerializer(OffsetDateTimeSerializer.INSTANCE)
-                        .addSerializer(LocalDateSerializer.INSTANCE)
-                        .addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE));
-
-        return mapper.readValue(new ClassPathResource("mock/order.json").getFile(), Order.class);
+        try (InputStream mockOrder = new ClassPathResource("mock/order.json").getInputStream()) {
+            return ObjectMapperSingleton.getInstance().mapper.readValue(mockOrder, Order.class);
+        }
     }
 }

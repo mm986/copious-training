@@ -1,12 +1,10 @@
 package com.copious.training.api.v1;
 
+import com.copious.training.constants.ProductCategory;
 import com.copious.training.domain.Sku;
 import com.copious.training.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +20,19 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+
+    /**
+     * API to get Products by Product Category
+     *
+     * @return Sku's
+     * @throws IOException
+     */
+    @GetMapping(value = {"/products"})
+    List<Sku> getProductsByCategory(
+            @RequestParam(value = "category", required = true) ProductCategory category)
+            throws IOException {
+        return productService.getProducts(category);
+    }
 
     /**
      * API to get mock Products [ArrayList Implementation].

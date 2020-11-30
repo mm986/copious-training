@@ -1,7 +1,9 @@
 package com.copious.training.service;
 
 import com.copious.training.api.errors.InvalidProductException;
+import com.copious.training.constants.ProductCategory;
 import com.copious.training.dao.ProductRepository;
+import com.copious.training.designpattern.factory.ProductFactory;
 import com.copious.training.domain.Sku;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,9 @@ public class ProductService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    ProductFactory productFactory;
 
     Logger logger = LoggerFactory.getLogger(ProductService.class);
 
@@ -122,6 +127,17 @@ public class ProductService {
             logger.error("Exception during validation of Product/SKU. {} : {} : {}", e.getCause(), e.getMessage(), e.getStackTrace());
             throw e;
         }
+    }
+
+    /**
+     * Product method to get products by category.
+     * Demonstration of factory design pattern.
+     * @param category
+     * @return
+     * @throws IOException
+     */
+    public List<Sku> getProducts(ProductCategory category) throws IOException {
+        return productFactory.getProducts(category, productRepository.getMockProducts());
     }
 }
 
