@@ -3,13 +3,10 @@ package com.copious.training.designpattern.factory;
 import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.constants.ProductCategory;
 import com.copious.training.designpattern.factory.varients.*;
-import com.copious.training.domain.Sku;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Mahesh More
@@ -20,32 +17,33 @@ import java.util.List;
 public class ProductFactory {
     /**
      * Factory method to get products by category.
+     *
      * @param category
      * @return
      * @throws IOException
      */
-    public List<Sku> getProducts(ProductCategory category, List<Sku> products) throws IOException {
+    public Product getProductFactory(ProductCategory category) throws IOException {
         switch (category) {
             case MEDICAL_HEALTH:
-                return new MedicalHealthProduct().getProducts(products);
+                return new MedicalHealthProduct();
             case SPORTING_GOODS:
-                return new SportingGoodsProduct().getProducts(products);
+                return new SportingGoodsProduct();
             case HOME_AND_GARDEN:
-                return new HomeAndGardenProduct().getProducts(products);
+                return new HomeAndGardenProduct();
             case HOME_IMPROVEMENT:
-                return new HomeImprovementProduct().getProducts(products);
+                return new HomeImprovementProduct();
             case STYLE_AND_FASHION:
-                return new StyleAndFashionProduct().getProducts(products);
+                return new StyleAndFashionProduct();
             case HEALTH_AND_WELLNESS:
-                return new HealthAndWellnessProduct().getProducts(products);
+                return new HealthAndWellnessProduct();
             case CHILDREN_AND_INFANTS:
-                return new ChildrenAndInfantsProduct().getProducts(products);
+                return new ChildrenAndInfantsProduct();
             case PETS_AND_PET_SUPPLIES:
-                return new PetsAndPetSuppliersProduct().getProducts(products);
+                return new PetsAndPetSuppliersProduct();
             case APPAREL_AND_ACCESSORIES:
-                return new ApparelAndAccessoriesProduct().getProducts(products);
+                return new ApparelAndAccessoriesProduct();
             case CONSUMER_ELECTRONIC_GOODS:
-                return new ConsumerElectronicGoodsProduct().getProducts(products);
+                return new ConsumerElectronicGoodsProduct();
             default:
                 throw new InvalidProductException(HttpStatus.BAD_REQUEST, "Invalid Product Category. "
                         + "Product Category should be one of the following: "

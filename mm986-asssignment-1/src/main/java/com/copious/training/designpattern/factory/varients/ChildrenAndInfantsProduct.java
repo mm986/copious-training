@@ -1,9 +1,7 @@
 package com.copious.training.designpattern.factory.varients;
 
 import com.copious.training.constants.ProductCategory;
-import com.copious.training.dao.ProductRepository;
 import com.copious.training.domain.Sku;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,7 +23,7 @@ public class ChildrenAndInfantsProduct implements Product {
      * @throws IOException
      */
     @Override
-    public List<Sku> getProducts(List<Sku> products) throws IOException {
+    public List<Sku> getProducts(List<Sku> products) {
         return products
                 .stream()
                 .filter(sku -> ProductCategory.CHILDREN_AND_INFANTS.equals(sku.getCategory()))

@@ -38,7 +38,7 @@ public class ProductService {
     /**
      * Service method to get sorted list of available Products [ArrayList Implementation].
      *
-     * @return Sku's
+     * @return Products
      * @throws IOException
      */
     public List<Sku> getProductListFromArrayList() throws IOException {
@@ -60,7 +60,7 @@ public class ProductService {
     /**
      * Service method to get sorted list of available Products [LinkedList Implementation].
      *
-     * @return Sku's
+     * @return Products
      * @throws IOException
      */
     public List<Sku> getProductListFromLinkedList() throws IOException {
@@ -81,7 +81,7 @@ public class ProductService {
     /**
      * Service method to get expensive Product from list of available Products.
      *
-     * @return Sku
+     * @return Product
      * @throws IOException
      */
     public Sku getExpensiveProduct() throws IOException {
@@ -119,7 +119,7 @@ public class ProductService {
                                     + " should have valid +ve price."
                             );
                         }
-                        logger.info("Valid SKU: Sku" + sku.getSku() + " posted successfully");
+                        logger.info("Valid SKU: Sku " + sku.getSku() + " posted successfully");
                         return sku;
                     })
                     .findFirst();
@@ -132,12 +132,15 @@ public class ProductService {
     /**
      * Product method to get products by category.
      * Demonstration of factory design pattern.
+     *
      * @param category
-     * @return
+     * @return Products
      * @throws IOException
      */
     public List<Sku> getProducts(ProductCategory category) throws IOException {
-        return productFactory.getProducts(category, productRepository.getMockProducts());
+        return productFactory
+                .getProductFactory(category)
+                .getProducts(productRepository.getMockProducts());
     }
 }
 

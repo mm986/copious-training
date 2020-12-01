@@ -11,5 +11,5 @@ import java.util.List;
  * Product Interface for Product factroy.
  */
 public interface Product {
-    List<Sku> getProducts(List<Sku> products) throws IOException;
+    List<Sku> getProducts(List<Sku> products);
 }

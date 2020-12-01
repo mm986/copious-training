@@ -23,7 +23,7 @@ public class HomeImprovementProduct implements Product {
      * @throws IOException
      */
     @Override
-    public List<Sku> getProducts(List<Sku> products) throws IOException {
+    public List<Sku> getProducts(List<Sku> products) {
         return products
                 .stream()
                 .filter(sku -> ProductCategory.HOME_IMPROVEMENT.equals(sku.getCategory()))

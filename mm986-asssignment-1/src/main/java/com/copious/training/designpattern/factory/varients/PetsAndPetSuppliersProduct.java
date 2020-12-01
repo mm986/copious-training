@@ -23,7 +23,7 @@ public class PetsAndPetSuppliersProduct implements Product {
      * @throws IOException
      */
     @Override
-    public List<Sku> getProducts(List<Sku> products) throws IOException {
+    public List<Sku> getProducts(List<Sku> products) {
         return products
                 .stream()
                 .filter(sku -> ProductCategory.PETS_AND_PET_SUPPLIES.equals(sku.getCategory()))

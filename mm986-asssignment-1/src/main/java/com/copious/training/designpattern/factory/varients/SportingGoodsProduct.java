@@ -23,7 +23,7 @@ public class SportingGoodsProduct implements Product {
      * @throws IOException
      */
     @Override
-    public List<Sku> getProducts(List<Sku> products) throws IOException {
+    public List<Sku> getProducts(List<Sku> products) {
         return products
                 .stream()
                 .filter(sku -> ProductCategory.SPORTING_GOODS.equals(sku.getCategory()))
