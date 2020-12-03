@@ -15,6 +15,11 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * @author Mahesh More.
+ * <p>
+ * Test class to test various operations on Order.
+ */
 @SpringBootTest
 public class OrderServiceTest {
 
@@ -25,11 +30,21 @@ public class OrderServiceTest {
 
     private static final String MOCK_ORDER_ID = "123ABC";
 
+    /**
+     * Intended to test GetMockOrder
+     *
+     * @throws IOException
+     */
     @Test
     public void testGetMockOrder() throws IOException {
         assertEquals(MOCK_ORDER_ID, orderService.getMockOrder().getOrderId());
     }
 
+    /**
+     * Intended to test ValidateOrder successfully
+     *
+     * @throws IOException
+     */
     @Test
     public void testValidateOrder() throws IOException {
         assertEquals(MOCK_ORDER_ID, orderService
@@ -39,6 +54,11 @@ public class OrderServiceTest {
         );
     }
 
+    /**
+     * Intended to test OrderWithInvalidOrderDate.
+     *
+     * @throws IOException
+     */
     @Test
     public void testOrderWithInvalidOrderDate() throws IOException {
         try {
@@ -51,6 +71,11 @@ public class OrderServiceTest {
         }
     }
 
+    /**
+     * Intended to test OrderWithInvalidShippingDate.
+     *
+     * @throws IOException
+     */
     @Test
     public void testOrderWithInvalidShippingDate() throws IOException {
         try {
@@ -63,6 +88,12 @@ public class OrderServiceTest {
         }
     }
 
+    /**
+     * Mocking ValidOrder
+     *
+     * @return Order
+     * @throws IOException
+     */
     private Order getValidOrder() throws IOException {
         return ImmutableOrder
                 .builder()
@@ -72,6 +103,12 @@ public class OrderServiceTest {
                 .build();
     }
 
+    /**
+     * Mocking OrderWithInvalidOrderDate
+     *
+     * @return Order
+     * @throws IOException
+     */
     private Order getOrderWithInvalidOrderDate() throws IOException {
         return ImmutableOrder
                 .builder()
@@ -81,6 +118,12 @@ public class OrderServiceTest {
                 .build();
     }
 
+    /**
+     * Mocking OrderWithInvalidShippingDate
+     *
+     * @return Order
+     * @throws IOException
+     */
     private Order getOrderWithInvalidShippingDate() throws IOException {
         return ImmutableOrder
                 .builder()
