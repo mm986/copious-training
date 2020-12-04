@@ -95,6 +95,7 @@ We don't have database at the backend all data is mock and serialized from JSON.
     * Refer following link for HashSet, LinkedHashSet and TreeSet
     https://www.geeksforgeeks.org/difference-and-similarities-between-hashset-linkedhashset-and-treeset-in-java/ 
 ##Business Validations & Exception Handling
+
 ###Custom Exception Creation 
 Do business validations on order processing and cover exception handling
 
@@ -113,8 +114,10 @@ Pipe operation.
 An implemented try with resources while reading mock data from JSON files.
 
 ## Applying Design Patterns 
+
 ###Singleton
     Define fixed promo codes and use them as a part of Singleton class. Cover all loopholes - many ways to implemented. Threadsafe Singleton pattern implemented to create a global instance of ObjectMapper.
+
 ###Factory Pattern
     Implemented ECom Product factory to segregate and get differnet types of Products.
     - APPAREL_AND_ACCESSORIES,
