@@ -86,7 +86,7 @@ We don't have database at the backend all data is mock and serialized from JSON.
            ]
        }
     		
-### Your Orders - Play with Collections 
+## Your Orders - Play with Collections 
     * Provide filters based on order status arrival date
     * Sort based on price, arrival date, order date
     * Use ArrayList to perform above operations
@@ -94,8 +94,8 @@ We don't have database at the backend all data is mock and serialized from JSON.
     * Use Map to store and operate on above operations
     * Refer following link for HashSet, LinkedHashSet and TreeSet
     https://www.geeksforgeeks.org/difference-and-similarities-between-hashset-linkedhashset-and-treeset-in-java/ 
-### Business Validations & Exception Handling
-####Custom Exception Creation 
+##Business Validations & Exception Handling
+###Custom Exception Creation 
 Do business validations on order processing and cover exception handling
 
     Order -
@@ -109,13 +109,13 @@ Do business validations on order processing and cover exception handling
 Create N number of custom exception and throw it via single Controller advice.
 Pipe operation.
 
-####Try with resources.
+###Try with resources.
 An implemented try with resources while reading mock data from JSON files.
 
-### Applying Design Patterns 
-####Singleton
+## Applying Design Patterns 
+###Singleton
     Define fixed promo codes and use them as a part of Singleton class. Cover all loopholes - many ways to implemented. Threadsafe Singleton pattern implemented to create a global instance of ObjectMapper.
-####Factory Pattern
+###Factory Pattern
     Implemented ECom Product factory to segregate and get differnet types of Products.
     - APPAREL_AND_ACCESSORIES,
     - STYLE_AND_FASHION,
@@ -128,13 +128,13 @@ An implemented try with resources while reading mock data from JSON files.
     - CONSUMER_ELECTRONIC_GOODS,
     - HOME_IMPROVEMENT   
 
-### Properties class in Java
+## Properties class in Java
 Properties class implementation to read System properties and provide it to rest api.
 
-### LocalDate operations
+## LocalDate operations
 LocalDate operations includes ObjectMapper config to serialize LocalDate type in Java. Also the operations like before, after, minusDays are implemented as a part of this assignment.
 
-### JUnit/Mockito
+## JUnit/Mockito
 Included JUnit test cases to cover all Service class and repository logic. Following are the major test cases:
     
     - Getting Order
