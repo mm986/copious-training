@@ -36,7 +36,7 @@ public class OrderService {
     public Order getMockOrder() throws IOException {
         return orderRepository.getMockOrder();
     }
-    
+
     /**
      * Service method to validate single order.
      *
@@ -48,12 +48,12 @@ public class OrderService {
             return Stream.of(order)
                     .map(o -> {
                         if (o.getOrderDate().isBefore(LocalDate.now())) {
-                            throw new InvalidOrderException(HttpStatus.BAD_REQUEST
-                                    , "Order Expired: Order date is in past for OrderId: " + order.getOrderId()
+                            throw new InvalidOrderException(HttpStatus.BAD_REQUEST,
+                                    "Order Expired: Order date is in past for OrderId: " + order.getOrderId()
                             );
                         } else if (o.getShippingDate().isBefore(LocalDate.now())) {
-                            throw new InvalidOrderException(HttpStatus.BAD_REQUEST
-                                    , "Order Expired: Shipping date is in past for OrderId: " + order.getOrderId()
+                            throw new InvalidOrderException(HttpStatus.BAD_REQUEST,
+                                    "Order Expired: Shipping date is in past for OrderId: " + order.getOrderId()
                             );
                         }
                         logger.info("Valid Order: Order {} placed successfully", order.getOrderId());
@@ -61,7 +61,11 @@ public class OrderService {
                     })
                     .findFirst();
         } catch (Exception e) {
-            logger.error("Exception during validation of incoming Order. {} : {} : {}", e.getCause(), e.getMessage(), e.getStackTrace());
+            logger.error("Exception during validation of incoming Order. {} : {} : {}",
+                    e.getCause(),
+                    e.getMessage(),
+                    e.getStackTrace()
+            );
             throw e;
         }
     }

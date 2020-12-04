@@ -11,8 +11,7 @@ import java.io.InputStream;
 /**
  * @author Mahesh More
  * <p>
- * Order Repository to get mock orders.
- * Demonstration of Try with resources.
+ * Order Repository to get mock orders. Demonstration of Try with resources.
  */
 @Component
 public class OrderRepository {

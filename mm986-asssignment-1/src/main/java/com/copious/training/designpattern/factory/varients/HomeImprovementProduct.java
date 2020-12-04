@@ -19,7 +19,7 @@ public class HomeImprovementProduct implements Product {
     /**
      * Factory method to get products by HOME_IMPROVEMENT category.
      *
-     * @return
+     * @return Product's
      * @throws IOException
      */
     @Override

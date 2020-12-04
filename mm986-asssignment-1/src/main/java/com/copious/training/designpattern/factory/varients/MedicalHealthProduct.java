@@ -19,7 +19,7 @@ public class MedicalHealthProduct implements Product {
     /**
      * Factory method to get products by MEDICAL_HEALTH category.
      *
-     * @return
+     * @return Product's
      * @throws IOException
      */
     @Override

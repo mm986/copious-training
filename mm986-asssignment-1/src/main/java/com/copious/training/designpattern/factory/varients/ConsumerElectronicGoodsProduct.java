@@ -19,7 +19,7 @@ public class ConsumerElectronicGoodsProduct implements Product {
     /**
      * Factory method to get products by CONSUMER_ELECTRONIC_GOODS category.
      *
-     * @return
+     * @return Product's
      * @throws IOException
      */
     @Override

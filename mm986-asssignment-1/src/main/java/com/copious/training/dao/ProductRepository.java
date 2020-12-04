@@ -18,8 +18,7 @@ import java.util.List;
 @Repository
 public class ProductRepository {
     /**
-     * Method to get single Mock products.
-     * Demonstration of Try with resources.
+     * Method to get single Mock products. Demonstration of Try with resources.
      *
      * @return Order
      * @throws IOException

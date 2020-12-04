@@ -20,10 +20,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author Mahesh More.
+ * <p>
+ * Defining Global Exception Handler to handle multiple business exceptions
+ * related to Product and Order.
+ */
 @ControllerAdvice
 @Component
 public class GlobalExceptionHandler {
 
+    /**
+     * Handler to handle and convert MethodArgumentTypeMismatchException
+     *
+     * @param exception
+     * @return Exception Map
+     */
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -36,6 +48,12 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
+    /**
+     * Handler to handle and convert MethodArgumentNotValidException
+     *
+     * @param exception
+     * @return Exception Map
+     */
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -49,6 +67,12 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
+    /**
+     * Handler to handle and convert InvalidOrderException
+     *
+     * @param exception
+     * @return Exception Map
+     */
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -61,6 +85,12 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
+    /**
+     * Handler to handle and convert InvalidProductException
+     *
+     * @param exception
+     * @return Exception Map
+     */
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -73,6 +103,12 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
+    /**
+     * Handler to handle and convert ResourceNotFoundException
+     *
+     * @param exception
+     * @return Exception Map
+     */
     @ExceptionHandler
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -85,11 +121,24 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
-
+    /**
+     * Intended to convert Exceptions to Exception Map.
+     *
+     * @param message
+     * @return
+     */
     private Map error(Object message) {
         return Collections.singletonMap("errors", message);
     }
 
+
+    /**
+     * Intended to convert Custom user defined ExceptionCode's to HttpStatus codes.
+     *
+     * @param status
+     * @param message
+     * @return
+     */
     public static RuntimeException convert(ExceptionCode status, String message) {
         switch (status) {
             case NOT_FOUND:

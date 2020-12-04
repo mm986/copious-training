@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 /**
  * @author Mahesh More
+ * <p>
  * Model to store SKU details.
  */
 @Value.Immutable

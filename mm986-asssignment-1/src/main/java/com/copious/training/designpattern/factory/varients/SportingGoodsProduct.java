@@ -19,7 +19,7 @@ public class SportingGoodsProduct implements Product {
     /**
      * Factory method to get products by SPORTING_GOODS category.
      *
-     * @return
+     * @return Product's
      * @throws IOException
      */
     @Override

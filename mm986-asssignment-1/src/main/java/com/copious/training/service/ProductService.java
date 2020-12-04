@@ -124,14 +124,17 @@ public class ProductService {
                     })
                     .findFirst();
         } catch (Exception e) {
-            logger.error("Exception during validation of Product/SKU. {} : {} : {}", e.getCause(), e.getMessage(), e.getStackTrace());
+            logger.error("Exception during validation of Product/SKU. {} : {} : {}",
+                    e.getCause(),
+                    e.getMessage(),
+                    e.getStackTrace()
+            );
             throw e;
         }
     }
 
     /**
-     * Product method to get products by category.
-     * Demonstration of factory design pattern.
+     * Product method to get products by category. Demonstration of factory design pattern.
      *
      * @param category
      * @return Products

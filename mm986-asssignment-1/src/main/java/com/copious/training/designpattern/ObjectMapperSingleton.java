@@ -19,6 +19,9 @@ public class ObjectMapperSingleton {
 
     public ObjectMapper mapper;
 
+    /**
+     * Private constructor to implement Singleton.
+     */
     private ObjectMapperSingleton() {
         mapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule()

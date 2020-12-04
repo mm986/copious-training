@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * @author Mahesh More
+ * <p>
  * This is model class to store the order details for specific cart order.
  */
 @Value.Immutable

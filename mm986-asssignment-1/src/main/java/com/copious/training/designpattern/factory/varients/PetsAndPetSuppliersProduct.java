@@ -19,7 +19,7 @@ public class PetsAndPetSuppliersProduct implements Product {
     /**
      * Factory method to get products by PETS_AND_PET_SUPPLIES category.
      *
-     * @return
+     * @return Product's
      * @throws IOException
      */
     @Override

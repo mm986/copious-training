@@ -19,7 +19,7 @@ public class ProductFactory {
      * Factory method to get products by category.
      *
      * @param category
-     * @return
+     * @return Product
      * @throws IOException
      */
     public Product getProductFactory(ProductCategory category) throws IOException {
@@ -45,9 +45,9 @@ public class ProductFactory {
             case CONSUMER_ELECTRONIC_GOODS:
                 return new ConsumerElectronicGoodsProduct();
             default:
-                throw new InvalidProductException(HttpStatus.BAD_REQUEST, "Invalid Product Category. "
-                        + "Product Category should be one of the following: "
-                        + ProductCategory.values()
+                throw new InvalidProductException(HttpStatus.BAD_REQUEST,
+                        "Invalid Product Category Product Category should be one of the following: "
+                                + ProductCategory.values()
                 );
         }
     }

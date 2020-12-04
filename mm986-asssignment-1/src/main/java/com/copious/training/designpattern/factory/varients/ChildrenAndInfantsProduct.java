@@ -19,7 +19,7 @@ public class ChildrenAndInfantsProduct implements Product {
     /**
      * Factory method to get products by CHILDREN_AND_INFANTS category.
      *
-     * @return
+     * @return Product's
      * @throws IOException
      */
     @Override

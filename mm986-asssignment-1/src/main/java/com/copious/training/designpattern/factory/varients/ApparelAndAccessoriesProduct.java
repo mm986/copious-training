@@ -19,7 +19,7 @@ public class ApparelAndAccessoriesProduct implements Product {
     /**
      * Factory method to get products by APPAREL_AND_ACCESSORIES category.
      *
-     * @return
+     * @return Product's
      * @throws IOException
      */
     @Override
