@@ -3,11 +3,20 @@ package com.copious.training;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author Mahesh More
+ * <p>
+ * Spring Boot application to implement Java8 basic features Assignment1 under copious training.
+ */
 @SpringBootApplication
 public class AsssignmentApp {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AsssignmentApp.class, args);
-	}
-
+    /**
+     * Main method to boot-up this app.
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(AsssignmentApp.class, args);
+    }
 }

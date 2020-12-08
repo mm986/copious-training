@@ -1,5 +1,7 @@
 package com.copious.training.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
 import java.math.BigDecimal;
@@ -8,9 +10,12 @@ import java.util.List;
 
 /**
  * @author Mahesh More
+ * <p>
  * This is model class to store the order details for specific cart order.
  */
 @Value.Immutable
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonDeserialize(builder = ImmutableOrder.Builder.class)
 public interface Order {
 
     //Basic Order Details
