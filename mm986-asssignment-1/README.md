@@ -146,3 +146,15 @@ Included JUnit test cases to cover all Service class and repository logic. Follo
     - Getting Products 
     - Validating Products (All +ve and -ve test cases)
     - Getting Product by Category (For all categories)
+    
+## Tue 8th Discussion
+
+- Use and purpose of Swagger
+- Authorization for Swagger
+- Controller level mapping for API
+- Annotations for Swagger
+    http://localhost:8080/assignment1/swagger-ui/
+Tomorrow To Discuss-
+- Security
+- Multi-module project - Parent-child relationship for pom
+- MDC logs (Park it for later)

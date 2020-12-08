@@ -3,6 +3,8 @@ package com.copious.training.api.v1;
 import com.copious.training.constants.ProductCategory;
 import com.copious.training.domain.Sku;
 import com.copious.training.service.ProductService;
+import io.swagger.annotations.*;
+import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.Optional;
  * <p>
  * Controller class to perform CRUD on available Products for Order
  */
+@Api(value = "Product Service Controller")
 @RestController
 public class ProductController {
 
@@ -27,10 +30,18 @@ public class ProductController {
      * @return Sku's
      * @throws IOException
      */
+    @ApiOperation(value = "Gets products by category.", notes = "Gets products by category.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Products loaded successfully", response = Sku.class, responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Bad Request", response = Response.class),
+            @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+    })
     @GetMapping(value = {"/products"})
     List<Sku> getProductsByCategory(
-            @RequestParam(value = "category", required = true) ProductCategory category)
-            throws IOException {
+            @ApiParam(value = "Category of the Product.", example = "2018-01-01", name = "category")
+            @RequestParam(value = "category", required = true) ProductCategory category
+    ) throws IOException {
         return productService.getProducts(category);
     }
 
@@ -40,6 +51,13 @@ public class ProductController {
      * @return Sku's
      * @throws IOException
      */
+    @ApiOperation(value = "Gets mock Products available in system.", notes = "Gets mock Products available in system.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Products loaded successfully", response = Sku.class, responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Bad Request", response = Response.class),
+            @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+    })
     @GetMapping(value = {"/products/with/arraylist"})
     List<Sku> getMockProductsFromArrayList() throws IOException {
         return productService.getProductListFromArrayList();
@@ -51,6 +69,13 @@ public class ProductController {
      * @return Sku's
      * @throws IOException
      */
+    @ApiOperation(value = "Gets mock Products available in system.", notes = "Gets mock Products available in system.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Products loaded successfully", response = Sku.class, responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Bad Request", response = Response.class),
+            @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+    })
     @GetMapping(value = {"/products/with/linkedlist"})
     List<Sku> getMockProductsFromLinkedList() throws IOException {
         return productService.getProductListFromLinkedList();
@@ -62,8 +87,15 @@ public class ProductController {
      * @return Order
      * @throws IOException
      */
+    @ApiOperation(value = "Gets most expensive Product available in system.", notes = "Gets most expensive Product available in system.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Product loaded successfully", response = Sku.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = Response.class),
+            @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+    })
     @GetMapping(value = {"/product/expensive"})
-    Sku getMockOrder() throws IOException {
+    Sku getMockProduct() throws IOException {
         return productService.getExpensiveProduct();
     }
 
@@ -73,8 +105,15 @@ public class ProductController {
      * @return Order
      * @throws IOException
      */
+    @ApiOperation(value = "Validates Product as per the business rules.", notes = "Validates Product as per the business rules.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Product validated successfully", response = Sku.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = Response.class),
+            @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+    })
     @PostMapping(value = {"/product"})
-    Optional<Sku> validateOrder(@RequestBody Sku product) {
+    Optional<Sku> validateProduct(@RequestBody Sku product) {
         return productService.validateProduct(product);
     }
 }
