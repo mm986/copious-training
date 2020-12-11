@@ -146,15 +146,77 @@ Included JUnit test cases to cover all Service class and repository logic. Follo
     - Getting Products 
     - Validating Products (All +ve and -ve test cases)
     - Getting Product by Category (For all categories)
-    
+
+## Swagger Annotations and Authorization
+
+BCrypt Paswsowrds
+    hydrosigma $2y$12$vsqTdSd6riwSk5YPdxa1bOr57hW4Ilznq0.QHlRN/r7AZM1Y1hj66
+    mm986   $2y$12$tW8sqhdq9oWPuHZATqfvQe7IOXDTrLjwCNdeCaekeJhW0Gto3bIx6  
+
+# MOM's
 ## Tue 8th Discussion
 
 - Use and purpose of Swagger
 - Authorization for Swagger
 - Controller level mapping for API
 - Annotations for Swagger
-    http://localhost:8080/assignment1/swagger-ui/
+    http://localhost:8080/assignment1/swagger-ui.html
+
 Tomorrow To Discuss-
 - Security
+
+
+## Wed 9th Dec Discussion (With Akhand)
+
+- Swagger config for sending authorization token.
+- How to use properties in pom.xml
+- What is a difference between provided and compile scope of dependency?
+- OnePerRequestDFilter for security filter
+    Example- Logging, Validation, Alarm for rest call
+- Usage and importance of Order annotation for filters 
+- Filter is a lifecycle class
+- HTTP Headers (All standard)
+- JWT Token generation logic
+- JWT Token Validation logic
+- Static and Dynamic tokens/ Pre login and post login call
+- Request dispatcher sending error
+
+Discussions pending (TODO) -
+
+- Concurrent collection
+- Exception Handling  - Need to handle All exceptions to common responses.
 - Multi-module project - Parent-child relationship for pom
 - MDC logs (Park it for later)
+
+## Internal Team Discussion 9th Dec 
+
+- Solved issues with Swagger-UI
+- Swagger authorization configuration
+- Steps to implement JWT-AUTH
+    1. Implement User Login service and generate and return JWT to client/user
+    2. Implement JWT validation flow to unmarshal and validate the JWT
+    3. Web security config to allow and restrict api's 
+    4. Testing of above flows from Swagger-UI
+ 
+## Thur 10th Dec Discussion (With Akhand)
+- Swagger implementation demo from team.
+- class level mapping for RestController
+- private for @Autowiring
+- How to skip the tests
+- How to connect two different db's from single service (Primary & Secondary DB's)
+- How to add landing page url to app to automatically open chrome.
+- Server port customization.
+- Exception handling beginning
+    How to write Exception Enum?
+    How to write GenericResponse?
+    How to write ExceptionResolver?
+    
+    
+## Friday 11th Dec Discussion (With Akhand)    
+
+- Add JWT token in response header
+- JWT Token is not session specific
+- Java Predicates - Combining more than one filter conditions and use if once
+- Atomic Variables in Lambdas
+- JSON Schema to POJO (Maven configurations)
+- Exception Handling Implementation.

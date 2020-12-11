@@ -24,7 +24,7 @@ import java.util.Map;
 public class PropertyController {
 
     @Autowired
-    PropertyService propertyService;
+    private PropertyService propertyService;
 
     /**
      * API to get all System Properties.

@@ -1,5 +1,6 @@
 package com.copious.training.api.errors;
 
+import com.copious.training.constants.ExceptionCodeEnum;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -9,11 +10,30 @@ import org.springframework.http.HttpStatus;
  */
 public class InvalidOrderException extends RuntimeException {
 
-    private final HttpStatus status;
+    private static final Long serialVersionId = 123456L;
 
-    public InvalidOrderException(HttpStatus status, String message) {
+    private final ExceptionCodeEnum exceptionCodeEnum;
+
+    private final String errorDetails;
+
+    public InvalidOrderException(ExceptionCodeEnum exceptionCodeEnum, String message, String errorDetails) {
         super(message);
-        this.status = status;
+        this.exceptionCodeEnum = exceptionCodeEnum;
+        this.errorDetails = errorDetails;
+    }
+
+    public InvalidOrderException(ExceptionCodeEnum code, String message, Throwable throwable) {
+        super(message, throwable);
+        this.exceptionCodeEnum = code;
+        this.errorDetails = message;
+    }
+
+    public ExceptionCodeEnum getCode() {
+        return exceptionCodeEnum;
+    }
+
+    public String getErrorDetails() {
+        return errorDetails;
     }
 
     /**
@@ -22,7 +42,7 @@ public class InvalidOrderException extends RuntimeException {
      * @return HttpStatus
      */
     public HttpStatus getStatus() {
-        return this.status;
+        return exceptionCodeEnum.getHttpStatus();
     }
 }
 

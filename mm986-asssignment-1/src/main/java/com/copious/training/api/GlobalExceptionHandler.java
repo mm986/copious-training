@@ -1,10 +1,8 @@
 package com.copious.training.api;
 
-import com.copious.training.api.errors.InternalServerErrorException;
 import com.copious.training.api.errors.InvalidOrderException;
 import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.api.errors.ResourceNotFoundException;
-import com.copious.training.constants.ExceptionCode;
 import com.copious.training.domain.ImmutableError;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -85,6 +83,11 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
+//    @ExceptionHandler(value = {InvalidOrderException.class})
+//    private ResponseEntity<Object> handle(InvalidOrderException exception, WebRequest webRequest) {
+//
+//    }
+
     /**
      * Handler to handle and convert InvalidProductException
      *
@@ -131,27 +134,4 @@ public class GlobalExceptionHandler {
         return Collections.singletonMap("errors", message);
     }
 
-
-    /**
-     * Intended to convert Custom user defined ExceptionCode's to HttpStatus codes.
-     *
-     * @param status
-     * @param message
-     * @return
-     */
-    public static RuntimeException convert(ExceptionCode status, String message) {
-        switch (status) {
-            case NOT_FOUND:
-                return new ResourceNotFoundException(HttpStatus.NOT_FOUND, message);
-
-            case INVALID_PRODUCT:
-                return new InvalidProductException(HttpStatus.BAD_REQUEST, message);
-
-            case INVALID_ORDER:
-                return new InvalidOrderException(HttpStatus.BAD_REQUEST, message);
-
-            default:
-                return new InternalServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, message);
-        }
-    }
 }

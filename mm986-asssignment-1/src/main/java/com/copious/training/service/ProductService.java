@@ -28,10 +28,10 @@ import java.util.stream.Stream;
 public class ProductService {
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    ProductFactory productFactory;
+    private ProductFactory productFactory;
 
     Logger logger = LoggerFactory.getLogger(ProductService.class);
 

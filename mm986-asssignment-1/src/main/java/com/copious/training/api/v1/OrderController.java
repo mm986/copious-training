@@ -8,10 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -23,10 +20,11 @@ import java.util.Optional;
  */
 @Api(value = "Order Service Controller")
 @RestController
+@RequestMapping(value = "/order")
 public class OrderController {
 
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
 
     /**
      * GET API to get mock Order.
@@ -41,7 +39,7 @@ public class OrderController {
             @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
-    @GetMapping(value = {"/order"})
+    @GetMapping
     Order getMockOrder() throws IOException {
         return orderService.getMockOrder();
     }
@@ -59,7 +57,7 @@ public class OrderController {
             @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
-    @PostMapping(value = {"/order"})
+    @PostMapping
     Optional<Order> validateOrder(@RequestBody Order order) {
         return orderService.validateOrder(order);
     }

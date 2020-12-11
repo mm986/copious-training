@@ -19,10 +19,11 @@ import java.util.Optional;
  */
 @Api(value = "Product Service Controller")
 @RestController
+@RequestMapping(value = "/product")
 public class ProductController {
 
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     /**
      * API to get Products by Product Category
@@ -37,7 +38,7 @@ public class ProductController {
             @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
-    @GetMapping(value = {"/products"})
+    @GetMapping(value = {"/by/category"})
     List<Sku> getProductsByCategory(
             @ApiParam(value = "Category of the Product.", example = "2018-01-01", name = "category")
             @RequestParam(value = "category", required = true) ProductCategory category
@@ -58,7 +59,7 @@ public class ProductController {
             @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
-    @GetMapping(value = {"/products/with/arraylist"})
+    @GetMapping(value = {"/with/arraylist"})
     List<Sku> getMockProductsFromArrayList() throws IOException {
         return productService.getProductListFromArrayList();
     }
@@ -76,7 +77,7 @@ public class ProductController {
             @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
-    @GetMapping(value = {"/products/with/linkedlist"})
+    @GetMapping(value = {"/with/linkedlist"})
     List<Sku> getMockProductsFromLinkedList() throws IOException {
         return productService.getProductListFromLinkedList();
     }
@@ -94,7 +95,7 @@ public class ProductController {
             @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
-    @GetMapping(value = {"/product/expensive"})
+    @GetMapping(value = {"/expensive"})
     Sku getMockProduct() throws IOException {
         return productService.getExpensiveProduct();
     }
@@ -112,7 +113,7 @@ public class ProductController {
             @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
-    @PostMapping(value = {"/product"})
+    @PostMapping
     Optional<Sku> validateProduct(@RequestBody Sku product) {
         return productService.validateProduct(product);
     }
