@@ -1,11 +1,14 @@
 package com.copious.training.api.v1;
 
 import com.copious.training.constants.ProductCategory;
+import com.copious.training.domain.GenericResponse;
 import com.copious.training.domain.Sku;
 import com.copious.training.service.ProductService;
 import io.swagger.annotations.*;
 import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -39,11 +42,17 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping(value = {"/by/category"})
-    List<Sku> getProductsByCategory(
+    ResponseEntity<GenericResponse<List<Sku>>> getProductsByCategory(
             @ApiParam(value = "Category of the Product.", example = "2018-01-01", name = "category")
             @RequestParam(value = "category", required = true) ProductCategory category
     ) throws IOException {
-        return productService.getProducts(category);
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        productService.getProducts(category)
+                ),
+                HttpStatus.OK
+        );
     }
 
     /**
@@ -60,8 +69,14 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping(value = {"/with/arraylist"})
-    List<Sku> getMockProductsFromArrayList() throws IOException {
-        return productService.getProductListFromArrayList();
+    ResponseEntity<GenericResponse<List<Sku>>> getMockProductsFromArrayList() throws IOException {
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        productService.getProductListFromArrayList()
+                ),
+                HttpStatus.OK
+        );
     }
 
     /**
@@ -78,8 +93,14 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping(value = {"/with/linkedlist"})
-    List<Sku> getMockProductsFromLinkedList() throws IOException {
-        return productService.getProductListFromLinkedList();
+    ResponseEntity<GenericResponse<List<Sku>>> getMockProductsFromLinkedList() throws IOException {
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        productService.getProductListFromLinkedList()
+                ),
+                HttpStatus.OK
+        );
     }
 
     /**
@@ -96,8 +117,14 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping(value = {"/expensive"})
-    Sku getMockProduct() throws IOException {
-        return productService.getExpensiveProduct();
+    ResponseEntity<GenericResponse<Sku>> getMockProduct() throws IOException {
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        productService.getExpensiveProduct()
+                ),
+                HttpStatus.OK
+        );
     }
 
     /**
@@ -114,7 +141,13 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @PostMapping
-    Optional<Sku> validateProduct(@RequestBody Sku product) {
-        return productService.validateProduct(product);
+    ResponseEntity<GenericResponse<Optional<Sku>>> validateProduct(@RequestBody Sku product) {
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        productService.validateProduct(product)
+                ),
+                HttpStatus.OK
+        );
     }
 }

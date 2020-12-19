@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
  */
 public enum ExceptionCodeEnum {
     NOT_FOUND("Resource Not Found.", HttpStatus.NOT_FOUND, ErrorType.FATAL),
+    BAD_REQUEST("Bad Request.", HttpStatus.BAD_REQUEST, ErrorType.FATAL),
+    INTERNAL_SERVER_ERROR("Internal Server Error.", HttpStatus.INTERNAL_SERVER_ERROR, ErrorType.FATAL),
     INVALID_PRODUCT("Invalid Product.", HttpStatus.BAD_REQUEST, ErrorType.FATAL),
     INVALID_ORDER("Invalid Order.", HttpStatus.BAD_REQUEST, ErrorType.FATAL);
 

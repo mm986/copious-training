@@ -1,5 +1,6 @@
 package com.copious.training.api.errors;
 
+import com.copious.training.constants.ExceptionCodeEnum;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -8,11 +9,41 @@ import org.springframework.http.HttpStatus;
  * Defining custom exception to handle Internal Server Error.
  */
 public class InternalServerErrorException extends RuntimeException {
-    private final HttpStatus status;
 
-    public InternalServerErrorException(HttpStatus status, String message) {
+    private static final Long serialVersionId = 123456L;
+
+    private final ExceptionCodeEnum exceptionCodeEnum;
+
+    private final String errorDetails;
+
+    public InternalServerErrorException(ExceptionCodeEnum exceptionCodeEnum, String message, String errorDetails) {
         super(message);
-        this.status = status;
+        this.exceptionCodeEnum = exceptionCodeEnum;
+        this.errorDetails = errorDetails;
+    }
+
+    public InternalServerErrorException(ExceptionCodeEnum code, String message, Throwable throwable) {
+        super(message, throwable);
+        this.exceptionCodeEnum = code;
+        this.errorDetails = message;
+    }
+
+    /**
+     * Intended to get ExceptionCodeEnum of custom exception.
+     *
+     * @return HttpStatus
+     */
+    public ExceptionCodeEnum getExceptionCodeEnum() {
+        return exceptionCodeEnum;
+    }
+
+    /**
+     * Intended to get ErrorDetails.
+     *
+     * @return HttpStatus
+     */
+    public String getErrorDetails() {
+        return errorDetails;
     }
 
     /**
@@ -21,6 +52,6 @@ public class InternalServerErrorException extends RuntimeException {
      * @return HttpStatus
      */
     public HttpStatus getStatus() {
-        return this.status;
+        return exceptionCodeEnum.getHttpStatus();
     }
 }

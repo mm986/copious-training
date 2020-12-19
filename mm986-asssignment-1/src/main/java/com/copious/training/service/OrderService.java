@@ -49,12 +49,12 @@ public class OrderService {
                     .map(o -> {
                         if (o.getOrderDate().isBefore(LocalDate.now())) {
                             throw new InvalidOrderException(ExceptionCodeEnum.INVALID_ORDER,
-                                    "Invalid Order.",
+                                    ExceptionCodeEnum.INVALID_ORDER.getMessage(),
                                     "Order Expired: Order date is in past for OrderId: " + order.getOrderId()
                             );
                         } else if (o.getShippingDate().isBefore(LocalDate.now())) {
                             throw new InvalidOrderException(ExceptionCodeEnum.INVALID_ORDER,
-                                    "Invalid Order.",
+                                    ExceptionCodeEnum.INVALID_ORDER.getMessage(),
                                     "Order Expired: Shipping date is in past for OrderId: " + order.getOrderId()
                             );
                         }

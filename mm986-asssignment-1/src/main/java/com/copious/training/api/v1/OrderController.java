@@ -66,7 +66,12 @@ public class OrderController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @PostMapping
-    Optional<Order> validateOrder(@RequestBody Order order) {
-        return orderService.validateOrder(order);
+    ResponseEntity<GenericResponse<Optional<Order>>> validateOrder(@RequestBody Order order) {
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        orderService.validateOrder(order)),
+                HttpStatus.OK
+        );
     }
 }

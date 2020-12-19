@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -24,9 +25,9 @@ public class ChildrenAndInfantsProduct implements Product {
      */
     @Override
     public List<Sku> getProducts(List<Sku> products) {
+        Predicate<Sku> skuPredicate = sku -> ProductCategory.CHILDREN_AND_INFANTS.equals(sku.getCategory());
         return products
                 .stream()
-                .filter(sku -> ProductCategory.CHILDREN_AND_INFANTS.equals(sku.getCategory()))
                 .collect(Collectors.toList());
     }
 }
