@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AsssignmentApp {
 
     /**
-     * Main method to boot-up this app.
+     * Main method to boot-up order processing app.
      *
      * @param args
      */

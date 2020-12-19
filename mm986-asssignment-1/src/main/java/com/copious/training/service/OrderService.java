@@ -1,12 +1,12 @@
 package com.copious.training.service;
 
 import com.copious.training.api.errors.InvalidOrderException;
+import com.copious.training.constants.ExceptionCodeEnum;
 import com.copious.training.dao.OrderRepository;
 import com.copious.training.domain.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class OrderService {
 
     @Autowired
-    OrderRepository orderRepository;
+    private OrderRepository orderRepository;
 
     Logger logger = LoggerFactory.getLogger(OrderService.class);
 
@@ -48,11 +48,13 @@ public class OrderService {
             return Stream.of(order)
                     .map(o -> {
                         if (o.getOrderDate().isBefore(LocalDate.now())) {
-                            throw new InvalidOrderException(HttpStatus.BAD_REQUEST,
+                            throw new InvalidOrderException(ExceptionCodeEnum.INVALID_ORDER,
+                                    "Invalid Order.",
                                     "Order Expired: Order date is in past for OrderId: " + order.getOrderId()
                             );
                         } else if (o.getShippingDate().isBefore(LocalDate.now())) {
-                            throw new InvalidOrderException(HttpStatus.BAD_REQUEST,
+                            throw new InvalidOrderException(ExceptionCodeEnum.INVALID_ORDER,
+                                    "Invalid Order.",
                                     "Order Expired: Shipping date is in past for OrderId: " + order.getOrderId()
                             );
                         }
