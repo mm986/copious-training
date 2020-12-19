@@ -220,3 +220,55 @@ Discussions pending (TODO) -
 - Atomic Variables in Lambdas
 - JSON Schema to POJO (Maven configurations)
 - Exception Handling Implementation.
+
+
+## Friday 11th Dec Discussion - Internal Discussion
+
+JWT Auth code walk through & Flow -
+    Token Generation Flow -
+        For first time during user login
+        1. login API
+        2. UserDetailsService - Hardcoded user/pass
+        3. Token Generation Logic
+         
+   Token Validation Flow -
+        When user will hit any API -
+        1. Check for WebSecurity config
+        2. Validate in the filter
+        3. Then execute actual business Login 
+
+
+## Thursday 17th Dec Discussion (With Akhand)
+- transient 
+- Order of calling constructor - Final var with no arg constructor
+- WebRequest R&D
+- String Formatting
+- ResponseEntityExceptionHandler methods
+- All controller should return ResponseEntity<GenericResponse>
+
+
+## Saturday 19th Dec Discussion (Guru Code Walk-through)
+### Session 1
+Spring Security -Web Security Configuration
+
+- WebSecurity vs HttpSecurity
+- Cors - To allow api access from Cross Origins / We can restrict calls from specific origin  
+- Csrf - To detect and filter any alteration in request in between
+- Xss - Enable/Disable
+- Framing Options - Enable/Disable
+- Cache Control - Enable/Disable
+- Session Creation Policy - Stateless
+- OncePerRequestFilter - why we are using this?
+- OPTIONS method - pre flight check - Angular
+
+- Master data loading during start-up (New Use case). There is solution that is provided by spring-boot - via Static Data Config
+     ImplementApplicationRunner Interface - tasks to do on start-up.
+ 
+- Scope of Bean in spring? Singleton default - One instance per spring container, Prototype, session
+- Use of @Component? Register bean
+
+### Session 2
+- LocalDate operations.
+- Using Joda-Time utility
+- Executor framework - Completable Future.
+    
