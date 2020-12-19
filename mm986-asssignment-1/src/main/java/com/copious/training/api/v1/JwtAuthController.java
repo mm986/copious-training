@@ -1,10 +1,10 @@
 package com.copious.training.api.v1;
 
-import com.copious.training.domain.JwtRequest;
-import com.copious.training.domain.JwtResponse;
-import com.copious.training.config.JwtUserDetailsService;
 import com.copious.training.config.JwtTokenUtil;
+import com.copious.training.config.JwtUserDetailsService;
+import com.copious.training.domain.JwtRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,8 +36,12 @@ public class JwtAuthController {
                 .loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new JwtResponse(token));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("jwt-token", token);
+        return ResponseEntity
+                .ok()
+                .headers(httpHeaders)
+                .body("User logged in successfully!!");
     }
 
     private void authenticate(String username, String password) throws Exception {

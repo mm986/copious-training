@@ -1,5 +1,6 @@
 package com.copious.training.api.v1;
 
+import com.copious.training.domain.GenericResponse;
 import com.copious.training.domain.Order;
 import com.copious.training.service.OrderService;
 import io.swagger.annotations.Api;
@@ -8,6 +9,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -40,8 +43,13 @@ public class OrderController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping
-    Order getMockOrder() throws IOException {
-        return orderService.getMockOrder();
+    ResponseEntity<GenericResponse<Order>> getMockOrder() throws IOException {
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        orderService.getMockOrder()),
+                HttpStatus.OK
+        );
     }
 
     /**

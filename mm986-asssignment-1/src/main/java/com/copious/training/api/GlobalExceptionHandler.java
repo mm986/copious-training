@@ -3,15 +3,22 @@ package com.copious.training.api;
 import com.copious.training.api.errors.InvalidOrderException;
 import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.api.errors.ResourceNotFoundException;
+import com.copious.training.constants.ExceptionCodeEnum;
+import com.copious.training.domain.GenericResponse;
 import com.copious.training.domain.ImmutableError;
+import com.copious.training.domain.Response;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Collections;
 import java.util.Map;
@@ -26,7 +33,7 @@ import java.util.stream.Stream;
  */
 @ControllerAdvice
 @Component
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Handler to handle and convert MethodArgumentTypeMismatchException
@@ -71,22 +78,35 @@ public class GlobalExceptionHandler {
      * @param exception
      * @return Exception Map
      */
-    @ExceptionHandler
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map handle(InvalidOrderException exception) {
-        return error(Stream.of(exception)
-                .map(e -> ImmutableError.builder()
-                        .code(HttpStatus.BAD_REQUEST.toString())
-                        .message(e.getMessage())
-                        .build())
-                .collect(Collectors.toList()));
-    }
-
-//    @ExceptionHandler(value = {InvalidOrderException.class})
-//    private ResponseEntity<Object> handle(InvalidOrderException exception, WebRequest webRequest) {
+//    @ExceptionHandler
+//    public GenericResponse handle(InvalidOrderException exception) {
 //
+//
+////        return error(Stream.of(exception)
+////                .map(e -> ImmutableError.builder()
+////                        .code(e.getCode().getHttpStatus().getReasonPhrase())
+////                        .message(e.getMessage())
+////                        .errorType(e.getCode().getErrorType().name())
+////                        .build())
+////                .collect(Collectors.toList()));
 //    }
+
+    @ExceptionHandler(value = {InvalidOrderException.class})
+    private ResponseEntity<Object> handle(InvalidOrderException exception, WebRequest webRequest) {
+        Response response = new Response();
+        response.setMessage(ExceptionCodeEnum.INVALID_ORDER.getMessage());
+
+        GenericResponse<Response> genericResponse =
+                new GenericResponse<>(false,
+                        ExceptionCodeEnum.INVALID_ORDER.getHttpStatus().name(),
+                        response);
+
+        return handleExceptionInternal(exception,
+                genericResponse,
+                new HttpHeaders(),
+                ExceptionCodeEnum.INVALID_ORDER.getHttpStatus(),
+                webRequest);
+    }
 
     /**
      * Handler to handle and convert InvalidProductException

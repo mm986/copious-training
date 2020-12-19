@@ -2,6 +2,7 @@ package com.copious.training.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.jetbrains.annotations.Nullable;
 import org.immutables.value.Value;
 
 /**
@@ -15,4 +16,6 @@ import org.immutables.value.Value;
 public interface Error {
     String getCode();
     String getMessage();
+    @Nullable
+    String getErrorType();
 }
