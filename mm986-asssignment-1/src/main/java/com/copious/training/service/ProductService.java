@@ -2,7 +2,7 @@ package com.copious.training.service;
 
 import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.constants.ExceptionCodeEnum;
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.dao.ProductRepository;
 import com.copious.training.designpattern.factory.ProductFactory;
 import com.copious.training.domain.Sku;
@@ -142,7 +142,7 @@ public class ProductService {
      * @return Products
      * @throws IOException
      */
-    public List<Sku> getProducts(ProductCategory category) throws IOException {
+    public List<Sku> getProducts(ProductCategoryEnum category) throws IOException {
         return productFactory
                 .getProductFactory(category)
                 .getProducts(productRepository.getMockProducts());

@@ -2,7 +2,7 @@ package com.copious.training.designpattern.factory;
 
 import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.constants.ExceptionCodeEnum;
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.designpattern.factory.varients.*;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class ProductFactory {
      * @return Product
      * @throws IOException
      */
-    public Product getProductFactory(ProductCategory category) throws IOException {
+    public Product getProductFactory(ProductCategoryEnum category) throws IOException {
         switch (category) {
             case MEDICAL_HEALTH:
                 return new MedicalHealthProduct();
@@ -48,7 +48,7 @@ public class ProductFactory {
                 throw new InvalidProductException(ExceptionCodeEnum.BAD_REQUEST,
                         ExceptionCodeEnum.BAD_REQUEST.getMessage(),
                         "Invalid Product Category Product Category should be one of the following: "
-                                + ProductCategory.values()
+                                + ProductCategoryEnum.values()
                 );
         }
     }

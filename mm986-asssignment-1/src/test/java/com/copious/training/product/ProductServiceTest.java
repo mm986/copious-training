@@ -1,10 +1,9 @@
 package com.copious.training.product;
 
 import com.copious.training.api.errors.InvalidProductException;
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.domain.ImmutableSku;
 import com.copious.training.domain.Sku;
-import com.copious.training.order.OrderServiceTest;
 import com.copious.training.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public class ProductServiceTest {
 
     private static final String EXPENSIVE_PRODUCT = "1112296";
 
-    Logger logger = LoggerFactory.getLogger(OrderServiceTest.class);
+    Logger logger = LoggerFactory.getLogger(ProductServiceTest.class);
 
     /**
      * Intended to test GetProductListFromArrayList
@@ -69,16 +68,16 @@ public class ProductServiceTest {
      */
     @Test
     public void testGetProductsByCategory() throws IOException {
-        assertEquals(1, productService.getProducts(ProductCategory.HEALTH_AND_WELLNESS).size());
-        assertEquals(1, productService.getProducts(ProductCategory.STYLE_AND_FASHION).size());
-        assertEquals(0, productService.getProducts(ProductCategory.APPAREL_AND_ACCESSORIES).size());
-        assertEquals(0, productService.getProducts(ProductCategory.CHILDREN_AND_INFANTS).size());
-        assertEquals(0, productService.getProducts(ProductCategory.CONSUMER_ELECTRONIC_GOODS).size());
-        assertEquals(0, productService.getProducts(ProductCategory.HOME_AND_GARDEN).size());
-        assertEquals(0, productService.getProducts(ProductCategory.HOME_IMPROVEMENT).size());
-        assertEquals(0, productService.getProducts(ProductCategory.MEDICAL_HEALTH).size());
-        assertEquals(0, productService.getProducts(ProductCategory.PETS_AND_PET_SUPPLIES).size());
-        assertEquals(0, productService.getProducts(ProductCategory.SPORTING_GOODS).size());
+        assertEquals(1, productService.getProducts(ProductCategoryEnum.HEALTH_AND_WELLNESS).size());
+        assertEquals(1, productService.getProducts(ProductCategoryEnum.STYLE_AND_FASHION).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.APPAREL_AND_ACCESSORIES).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.CHILDREN_AND_INFANTS).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.CONSUMER_ELECTRONIC_GOODS).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.HOME_AND_GARDEN).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.HOME_IMPROVEMENT).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.MEDICAL_HEALTH).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.PETS_AND_PET_SUPPLIES).size());
+        assertEquals(0, productService.getProducts(ProductCategoryEnum.SPORTING_GOODS).size());
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.copious.training.designpattern.factory.varients;
 
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.domain.Sku;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ public class PetsAndPetSuppliersProduct implements Product {
     public List<Sku> getProducts(List<Sku> products) {
         return products
                 .stream()
-                .filter(sku -> ProductCategory.PETS_AND_PET_SUPPLIES.equals(sku.getCategory()))
+                .filter(sku -> ProductCategoryEnum.PETS_AND_PET_SUPPLIES.equals(sku.getCategory()))
                 .collect(Collectors.toList());
     }
 }

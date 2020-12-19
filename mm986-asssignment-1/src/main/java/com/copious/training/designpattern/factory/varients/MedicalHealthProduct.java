@@ -1,6 +1,6 @@
 package com.copious.training.designpattern.factory.varients;
 
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.domain.Sku;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ public class MedicalHealthProduct implements Product {
     public List<Sku> getProducts(List<Sku> products) {
         return products
                 .stream()
-                .filter(sku -> ProductCategory.MEDICAL_HEALTH.equals(sku.getCategory()))
+                .filter(sku -> ProductCategoryEnum.MEDICAL_HEALTH.equals(sku.getCategory()))
                 .collect(Collectors.toList());
     }
 }

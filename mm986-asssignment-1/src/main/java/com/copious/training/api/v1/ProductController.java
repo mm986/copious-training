@@ -1,6 +1,6 @@
 package com.copious.training.api.v1;
 
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.domain.GenericResponse;
 import com.copious.training.domain.Sku;
 import com.copious.training.service.ProductService;
@@ -44,7 +44,7 @@ public class ProductController {
     @GetMapping(value = {"/by/category"})
     ResponseEntity<GenericResponse<List<Sku>>> getProductsByCategory(
             @ApiParam(value = "Category of the Product.", example = "2018-01-01", name = "category")
-            @RequestParam(value = "category", required = true) ProductCategory category
+            @RequestParam(value = "category", required = true) ProductCategoryEnum category
     ) throws IOException {
         return new ResponseEntity<>(
                 new GenericResponse<>(true,
