@@ -2,9 +2,12 @@ package com.copious.training.api.v1;
 
 import com.copious.training.config.JwtTokenUtil;
 import com.copious.training.config.JwtUserDetailsService;
+import com.copious.training.domain.GenericResponse;
 import com.copious.training.domain.JwtRequest;
+import com.copious.training.domain.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -30,7 +35,7 @@ public class JwtAuthController {
     private JwtUserDetailsService userDetailsService;
 
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+    public ResponseEntity<GenericResponse<String>> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
@@ -38,10 +43,14 @@ public class JwtAuthController {
         final String token = jwtTokenUtil.generateToken(userDetails);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("jwt-token", token);
-        return ResponseEntity
-                .ok()
-                .headers(httpHeaders)
-                .body("User logged in successfully!!");
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        "User logged in successfully!!"
+                ),
+                httpHeaders,
+                HttpStatus.OK
+        );
     }
 
     private void authenticate(String username, String password) throws Exception {
