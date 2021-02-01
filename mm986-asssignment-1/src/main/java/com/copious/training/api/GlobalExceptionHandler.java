@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * related to Product and Order.
  */
 @ControllerAdvice
-@Component
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**

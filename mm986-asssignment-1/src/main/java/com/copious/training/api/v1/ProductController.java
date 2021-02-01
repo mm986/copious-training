@@ -4,12 +4,22 @@ import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.domain.GenericResponse;
 import com.copious.training.domain.Sku;
 import com.copious.training.service.ProductService;
-import io.swagger.annotations.*;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiResponse;
 import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,7 +55,7 @@ public class ProductController {
     ResponseEntity<GenericResponse<List<Sku>>> getProductsByCategory(
             @ApiParam(value = "Category of the Product.", example = "2018-01-01", name = "category")
             @RequestParam(value = "category", required = true) ProductCategoryEnum category
-    ) throws IOException {
+    ) throws IOException, InterruptedException {
         return new ResponseEntity<>(
                 new GenericResponse<>(true,
                         HttpStatus.OK.name(),
@@ -69,7 +79,7 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping(value = {"/with/arraylist"})
-    ResponseEntity<GenericResponse<List<Sku>>> getMockProductsFromArrayList() throws IOException {
+    ResponseEntity<GenericResponse<List<Sku>>> getMockProductsFromArrayList() throws IOException, InterruptedException {
         return new ResponseEntity<>(
                 new GenericResponse<>(true,
                         HttpStatus.OK.name(),
@@ -93,7 +103,7 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping(value = {"/with/linkedlist"})
-    ResponseEntity<GenericResponse<List<Sku>>> getMockProductsFromLinkedList() throws IOException {
+    ResponseEntity<GenericResponse<List<Sku>>> getMockProductsFromLinkedList() throws IOException, InterruptedException {
         return new ResponseEntity<>(
                 new GenericResponse<>(true,
                         HttpStatus.OK.name(),
@@ -117,7 +127,7 @@ public class ProductController {
             @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
     })
     @GetMapping(value = {"/expensive"})
-    ResponseEntity<GenericResponse<Sku>> getMockProduct() throws IOException {
+    ResponseEntity<GenericResponse<Sku>> getMockProduct() throws IOException, InterruptedException {
         return new ResponseEntity<>(
                 new GenericResponse<>(true,
                         HttpStatus.OK.name(),

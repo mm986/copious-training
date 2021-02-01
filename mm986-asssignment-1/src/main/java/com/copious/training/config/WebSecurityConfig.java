@@ -38,7 +38,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth
+				.userDetailsService(userDetailsService)
+				.passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -49,11 +51,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.csrf()
-				.disable()
-				.headers().frameOptions().deny()
-				.cacheControl().disable()
-				.httpStrictTransportSecurity().and().xssProtection().block(false);
+		http.csrf().disable()
+				.headers()
+					.frameOptions().deny()
+					.cacheControl().disable()
+					.httpStrictTransportSecurity()
+					.and()
+				.xssProtection()
+					.block(false);
 	}
 
 	@Override

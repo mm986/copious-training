@@ -16,14 +16,14 @@ import java.util.List;
  * Product Repository to get mock Sku's.
  */
 @Repository
-public class ProductRepository {
+public class ProductMock {
     /**
      * Method to get single Mock products. Demonstration of Try with resources.
      *
      * @return Order
      * @throws IOException
      */
-    public List<Sku> getMockProducts() throws IOException {
+    public List<Sku> getMockProducts() throws IOException, InterruptedException {
         try (InputStream mockProduct = new ClassPathResource("mock/products.json").getInputStream()) {
             return ObjectMapperSingleton.getInstance().mapper.readValue(mockProduct,
                     new TypeReference<List<Sku>>() {

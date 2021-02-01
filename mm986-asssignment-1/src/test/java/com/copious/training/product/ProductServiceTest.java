@@ -5,11 +5,12 @@ import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.domain.ImmutableSku;
 import com.copious.training.domain.Sku;
 import com.copious.training.service.ProductService;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -22,14 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test class to test various operations on Products.
  */
 @SpringBootTest
+@Log4j2
 public class ProductServiceTest {
 
-    @Autowired
+    @InjectMocks
     ProductService productService;
 
     private static final String EXPENSIVE_PRODUCT = "1112296";
-
-    Logger logger = LoggerFactory.getLogger(ProductServiceTest.class);
 
     /**
      * Intended to test GetProductListFromArrayList
@@ -37,7 +37,7 @@ public class ProductServiceTest {
      * @throws IOException
      */
     @Test
-    public void testGetProductListFromArrayList() throws IOException {
+    public void testGetProductListFromArrayList() throws IOException, InterruptedException {
         assertEquals(2, productService.getProductListFromArrayList().size());
     }
 
@@ -47,7 +47,7 @@ public class ProductServiceTest {
      * @throws IOException
      */
     @Test
-    public void testGetProductListFromLinkedList() throws IOException {
+    public void testGetProductListFromLinkedList() throws IOException, InterruptedException {
         assertEquals(2, productService.getProductListFromLinkedList().size());
     }
 
@@ -57,7 +57,7 @@ public class ProductServiceTest {
      * @throws IOException
      */
     @Test
-    public void testGetExpensiveProduct() throws IOException {
+    public void testGetExpensiveProduct() throws IOException, InterruptedException {
         assertEquals(EXPENSIVE_PRODUCT, productService.getExpensiveProduct().getSku());
     }
 
@@ -67,7 +67,7 @@ public class ProductServiceTest {
      * @throws IOException
      */
     @Test
-    public void testGetProductsByCategory() throws IOException {
+    public void testGetProductsByCategory() throws IOException, InterruptedException {
         assertEquals(1, productService.getProducts(ProductCategoryEnum.HEALTH_AND_WELLNESS).size());
         assertEquals(1, productService.getProducts(ProductCategoryEnum.STYLE_AND_FASHION).size());
         assertEquals(0, productService.getProducts(ProductCategoryEnum.APPAREL_AND_ACCESSORIES).size());
@@ -86,7 +86,7 @@ public class ProductServiceTest {
      * @throws IOException
      */
     @Test
-    public void testValidateProduct() throws IOException {
+    public void testValidateProduct() throws IOException, InterruptedException {
         assertEquals(EXPENSIVE_PRODUCT, productService
                 .validateProduct(getValidProduct())
                 .map(Sku::getSku)
@@ -103,8 +103,8 @@ public class ProductServiceTest {
     public void testProductWithInvalidName() throws IOException {
         try {
             productService.validateProduct(getProductWithInvalidName());
-        } catch (InvalidProductException e) {
-            logger.info("Test case testProductWithInvalidName pass. Caught {} :: {}",
+        } catch (InvalidProductException | InterruptedException e) {
+            log.info("Test case testProductWithInvalidName pass. Caught {} :: {}",
                     e.getClass(),
                     e.getMessage()
             );
@@ -120,8 +120,8 @@ public class ProductServiceTest {
     public void testProductWithInvalidPrice() throws IOException {
         try {
             productService.validateProduct(getProductWithInvalidPrice());
-        } catch (InvalidProductException e) {
-            logger.info("Test case testProductWithInvalidPrice pass. Caught {} :: {}",
+        } catch (InvalidProductException | InterruptedException e) {
+            log.info("Test case testProductWithInvalidPrice pass. Caught {} :: {}",
                     e.getClass(),
                     e.getMessage()
             );
@@ -134,7 +134,7 @@ public class ProductServiceTest {
      * @return Product
      * @throws IOException
      */
-    private Sku getValidProduct() throws IOException {
+    private Sku getValidProduct() throws IOException, InterruptedException {
         return ImmutableSku
                 .builder()
                 .from(productService.getExpensiveProduct())
@@ -147,7 +147,7 @@ public class ProductServiceTest {
      * @return Product
      * @throws IOException
      */
-    private Sku getProductWithInvalidPrice() throws IOException {
+    private Sku getProductWithInvalidPrice() throws IOException, InterruptedException {
         return ImmutableSku
                 .builder()
                 .from(productService.getExpensiveProduct())
@@ -161,7 +161,7 @@ public class ProductServiceTest {
      * @return Product
      * @throws IOException
      */
-    private Sku getProductWithInvalidName() throws IOException {
+    private Sku getProductWithInvalidName() throws IOException, InterruptedException {
         return ImmutableSku
                 .builder()
                 .from(productService.getExpensiveProduct())

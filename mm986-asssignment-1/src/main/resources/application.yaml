@@ -1,0 +1,81 @@
+
+---
+spring:
+    profiles: local
+    datasource:
+        # SPRING DataSource JNDI Connection properties
+#        jndi-name: java:/comp/env/jdbc/LocalMySql
+
+        # SPRING DataSource Connection properties to make automatic connection to DB
+        url: jdbc:mysql://localhost:3306/cop_training
+        username: root
+        password: hydrosigma
+
+        # SPRING DataSource properties to load static data via SQL
+        data: classpath:sql/data.sql
+        initialization-mode: always
+        continueOnError: true
+    jpa:
+        hibernate.ddl-auto: update
+        show-sql: true
+
+hibernate:
+    cache:
+        provider_class: org.hibernate.cache.EhCacheProvider
+        region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+        use_second_level_cache: true
+        use_query_cache: true
+
+# Async Executor Configuration
+async:
+    core.pool.size: 2
+    max.pool.size: 10
+    queue.capacity: 100
+    shutdown: true
+
+net.sf.ehcache.configurationResourceName: ehcache.xml
+
+server:
+    port: 8181
+
+jwt.secret: mm986
+logging:
+    level:
+        com.copious.training: DEBUG
+#        org.apache.catalina: DEBUG
+        root: DEBUG
+---
+spring:
+    profiles: dev
+    jpa:
+        hibernate.ddl-auto: update
+        show-sql: true
+        datasource:
+            jndi-name: java:/comp/env/jdbc/LocalMySql
+    #        url: jdbc:mysql://localhost:3306/cop_training
+    #        username: root
+    #        password: hydrosigma
+
+jwt.secret: mm1234
+
+logging:
+    level:
+        com.copious.training: INFO
+
+---
+spring:
+    profiles: qa
+    jpa:
+        hibernate.ddl-auto: update
+        show-sql: true
+        datasource:
+            jndi-name: java:/comp/env/jdbc/LocalMySql
+    #        url: jdbc:mysql://localhost:3306/cop_training
+    #        username: root
+    #        password: hydrosigma
+
+jwt.secret: mm9876
+url: https://qa/test
+logging:
+    level:
+        com.copious.training: ERROR

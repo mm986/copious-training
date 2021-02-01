@@ -14,14 +14,14 @@ import java.io.InputStream;
  * Order Repository to get mock orders. Demonstration of Try with resources.
  */
 @Component
-public class OrderRepository {
+public class OrderMock {
     /**
      * Method to get single Mock order.
      *
      * @return Order
      * @throws IOException
      */
-    public Order getMockOrder() throws IOException {
+    public Order getMockOrder() throws IOException, InterruptedException {
         try (InputStream mockOrder = new ClassPathResource("mock/order.json").getInputStream()) {
             return ObjectMapperSingleton.getInstance().mapper.readValue(mockOrder, Order.class);
         }

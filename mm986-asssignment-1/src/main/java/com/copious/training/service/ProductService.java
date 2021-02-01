@@ -3,11 +3,12 @@ package com.copious.training.service;
 import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.constants.ExceptionCodeEnum;
 import com.copious.training.constants.ProductCategoryEnum;
-import com.copious.training.dao.ProductRepository;
+import com.copious.training.dao.ProductMock;
 import com.copious.training.designpattern.factory.ProductFactory;
 import com.copious.training.domain.Sku;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.copious.training.entity.Item;
+import com.copious.training.repository.ProductRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,15 +26,17 @@ import java.util.stream.Stream;
  * Service class to operate on Products and play with collections and streams
  */
 @Service
+@Log4j2
 public class ProductService {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductMock productMock;
 
     @Autowired
     private ProductFactory productFactory;
 
-    Logger logger = LoggerFactory.getLogger(ProductService.class);
+    @Autowired
+    private ProductRepository productRepository;
 
     /**
      * Service method to get sorted list of available Products [ArrayList Implementation].
@@ -41,11 +44,10 @@ public class ProductService {
      * @return Products
      * @throws IOException
      */
-    public List<Sku> getProductListFromArrayList() throws IOException {
+    public List<Sku> getProductListFromArrayList() throws IOException, InterruptedException {
 
         List<Sku> products = new ArrayList<>();
-
-        products.addAll(productRepository
+        products.addAll(productMock
                 .getMockProducts()
                 .stream()
                 .sorted(Comparator.comparing(Sku::getSku)
@@ -63,10 +65,11 @@ public class ProductService {
      * @return Products
      * @throws IOException
      */
-    public List<Sku> getProductListFromLinkedList() throws IOException {
+    public List<Sku> getProductListFromLinkedList() throws IOException, InterruptedException {
         List<Sku> products = new LinkedList<>();
 
-        products.addAll(productRepository
+
+        products.addAll(productMock
                 .getMockProducts()
                 .stream()
                 .sorted(Comparator.comparing(Sku::getSku)
@@ -74,7 +77,7 @@ public class ProductService {
                         .thenComparing(Sku::getTotalPrice))
                 .collect(Collectors.toList())
         );
-
+        products.get(0);
         return products;
     }
 
@@ -84,8 +87,8 @@ public class ProductService {
      * @return Product
      * @throws IOException
      */
-    public Sku getExpensiveProduct() throws IOException {
-        return productRepository
+    public Sku getExpensiveProduct() throws IOException, InterruptedException {
+        return productMock
                 .getMockProducts()
                 .stream()
                 .max(Comparator.comparing(Sku::getTotalPrice))
@@ -121,12 +124,12 @@ public class ProductService {
                                     "Invalid SKU: Sku " + sku.getSku() + " should have valid +ve price."
                             );
                         }
-                        logger.info("Valid SKU: Sku " + sku.getSku() + " posted successfully");
+                        log.info("Valid SKU: Sku " + sku.getSku() + " posted successfully");
                         return sku;
                     })
                     .findFirst();
         } catch (Exception e) {
-            logger.error("Exception during validation of Product/SKU. {} : {} : {}",
+            log.error("Exception during validation of Product/SKU. {} : {} : {}",
                     e.getCause(),
                     e.getMessage(),
                     e.getStackTrace()
@@ -142,10 +145,20 @@ public class ProductService {
      * @return Products
      * @throws IOException
      */
-    public List<Sku> getProducts(ProductCategoryEnum category) throws IOException {
+    public List<Sku> getProducts(ProductCategoryEnum category) throws IOException, InterruptedException {
         return productFactory
                 .getProductFactory(category)
-                .getProducts(productRepository.getMockProducts());
+                .getProducts(productMock.getMockProducts());
+    }
+
+    public List<Item> getItemsByCategory(String sku) {
+        try {
+            return (List<Item>) productRepository.getItemsBySku(sku);
+        } catch (Exception e) {
+            log.error("{}{}", e.getMessage(), e.getStackTrace());
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

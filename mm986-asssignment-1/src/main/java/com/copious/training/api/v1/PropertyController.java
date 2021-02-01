@@ -1,6 +1,7 @@
 package com.copious.training.api.v1;
 
 import com.copious.training.domain.GenericResponse;
+import com.copious.training.domain.Label;
 import com.copious.training.service.PropertyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,6 +50,30 @@ public class PropertyController {
                 new GenericResponse<>(true,
                         HttpStatus.OK.name(),
                         propertyService.getSystemProperties()
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    /**
+     * API to get all System Properties.
+     *
+     * @return Sku's
+     * @throws IOException
+     */
+    @ApiOperation(value = "Gets system properties.", notes = "Gets system properties.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Properties loaded successfully", response = Map.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = Response.class),
+            @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+    })
+    @GetMapping(value = {"/owner"})
+    ResponseEntity<GenericResponse<Label>> getOwnerProperties() {
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.OK.name(),
+                        propertyService.getOwnerProperties()
                 ),
                 HttpStatus.OK
         );

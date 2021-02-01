@@ -3,7 +3,17 @@ package com.copious.training.designpattern.factory;
 import com.copious.training.api.errors.InvalidProductException;
 import com.copious.training.constants.ExceptionCodeEnum;
 import com.copious.training.constants.ProductCategoryEnum;
-import com.copious.training.designpattern.factory.varients.*;
+import com.copious.training.designpattern.factory.varients.HomeAndGardenProduct;
+import com.copious.training.designpattern.factory.varients.HomeImprovementProduct;
+import com.copious.training.designpattern.factory.varients.MedicalHealthProduct;
+import com.copious.training.designpattern.factory.varients.SportingGoodsProduct;
+import com.copious.training.designpattern.factory.varients.StyleAndFashionProduct;
+import com.copious.training.designpattern.factory.varients.HealthAndWellnessProduct;
+import com.copious.training.designpattern.factory.varients.ChildrenAndInfantsProduct;
+import com.copious.training.designpattern.factory.varients.PetsAndPetSuppliersProduct;
+import com.copious.training.designpattern.factory.varients.ApparelAndAccessoriesProduct;
+import com.copious.training.designpattern.factory.varients.ConsumerElectronicGoodsProduct;
+import com.copious.training.designpattern.factory.varients.Product;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

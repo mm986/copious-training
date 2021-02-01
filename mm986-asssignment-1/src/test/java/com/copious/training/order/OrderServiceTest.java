@@ -1,12 +1,13 @@
 package com.copious.training.order;
 
 import com.copious.training.api.errors.InvalidOrderException;
+import com.copious.training.dao.OrderMock;
 import com.copious.training.domain.ImmutableOrder;
 import com.copious.training.domain.Order;
 import com.copious.training.service.OrderService;
+import lombok.extern.log4j.Log4j2;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -21,12 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test class to test various operations on Order.
  */
 @SpringBootTest
+@Log4j2
 public class OrderServiceTest {
 
     @Autowired
     OrderService orderService;
 
-    Logger logger = LoggerFactory.getLogger(OrderServiceTest.class);
+    @Autowired
+    OrderMock orderMock;
 
     private static final String MOCK_ORDER_ID = "123ABC";
 
@@ -35,9 +38,10 @@ public class OrderServiceTest {
      *
      * @throws IOException
      */
+    @Ignore
     @Test
-    public void testGetMockOrder() throws IOException {
-        assertEquals(MOCK_ORDER_ID, orderService.getMockOrder().getOrderId());
+    public void testGetMockOrder() throws IOException, InterruptedException {
+        assertEquals(MOCK_ORDER_ID, orderService.getOrderById("").getOrderId());
     }
 
     /**
@@ -46,7 +50,7 @@ public class OrderServiceTest {
      * @throws IOException
      */
     @Test
-    public void testValidateOrder() throws IOException {
+    public void testValidateOrder() throws IOException, InterruptedException {
         assertEquals(MOCK_ORDER_ID, orderService
                 .validateOrder(getValidOrder())
                 .map(Order::getOrderId)
@@ -63,8 +67,8 @@ public class OrderServiceTest {
     public void testOrderWithInvalidOrderDate() throws IOException {
         try {
             orderService.validateOrder(getOrderWithInvalidOrderDate());
-        } catch (InvalidOrderException e) {
-            logger.info("Test case testOrderWithInvalidOrderDate pass. Caught {} :: {}",
+        } catch (InvalidOrderException | InterruptedException e) {
+            log.info("Test case testOrderWithInvalidOrderDate pass. Caught {} :: {}",
                     e.getClass(),
                     e.getMessage()
             );
@@ -80,8 +84,8 @@ public class OrderServiceTest {
     public void testOrderWithInvalidShippingDate() throws IOException {
         try {
             orderService.validateOrder(getOrderWithInvalidShippingDate());
-        } catch (InvalidOrderException e) {
-            logger.info("Test case testOrderWithInvalidShippingDate pass. Caught {} :: {}",
+        } catch (InvalidOrderException | InterruptedException e) {
+            log.info("Test case testOrderWithInvalidShippingDate pass. Caught {} :: {}",
                     e.getClass(),
                     e.getMessage()
             );
@@ -94,10 +98,10 @@ public class OrderServiceTest {
      * @return Order
      * @throws IOException
      */
-    private Order getValidOrder() throws IOException {
+    private Order getValidOrder() throws IOException, InterruptedException {
         return ImmutableOrder
                 .builder()
-                .from(orderService.getMockOrder())
+                .from(orderMock.getMockOrder())
                 .orderDate(LocalDate.now())
                 .shippingDate(LocalDate.now())
                 .build();
@@ -109,10 +113,10 @@ public class OrderServiceTest {
      * @return Order
      * @throws IOException
      */
-    private Order getOrderWithInvalidOrderDate() throws IOException {
+    private Order getOrderWithInvalidOrderDate() throws IOException, InterruptedException {
         return ImmutableOrder
                 .builder()
-                .from(orderService.getMockOrder())
+                .from(orderMock.getMockOrder())
                 .orderDate(LocalDate.now().minusDays(1))
                 .shippingDate(LocalDate.now())
                 .build();
@@ -124,10 +128,10 @@ public class OrderServiceTest {
      * @return Order
      * @throws IOException
      */
-    private Order getOrderWithInvalidShippingDate() throws IOException {
+    private Order getOrderWithInvalidShippingDate() throws IOException, InterruptedException {
         return ImmutableOrder
                 .builder()
-                .from(orderService.getMockOrder())
+                .from(orderMock.getMockOrder())
                 .orderDate(LocalDate.now())
                 .shippingDate(LocalDate.now().minusDays(1))
                 .build();
