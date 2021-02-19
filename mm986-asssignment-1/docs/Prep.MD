@@ -1,9 +1,6 @@
 #Interview Preparation
-## Core Java 
-### Exception handling
-
-## Java 8 Features with example
-Refer: https://www.journaldev.com/2389/java-8-features-with-examples
+## Java 8
+- Refer: https://www.journaldev.com/2389/java-8-features-with-examples
 ### forEach() method in Iterable interface
 - replaces while(iterator.hasNext()) logic which may cause mismatch during iteration.
     
@@ -188,7 +185,7 @@ facility to operate on data structures in Java 8.
 
 ##Java Collections
 - Collection Hierarchy
-    - Root Interface & Purpose is to play with group of objects.
+    - Root Interface is Iterable & Purpose is to play with group of objects.
     - Contains multiple Sub-Interfaces to provide different features.
     - Factors based on they are segregated - Storing, Insertion order, Access, Thread Safety(Sync/Async)
     - All collection interface classes implement Collection interface indirectly through Sub-Interfaces.
@@ -202,7 +199,7 @@ facility to operate on data structures in Java 8.
       (o==null ? e==null : o.equals(e)) 
     - Implementations are free to implement optimizations whereby the equals invocation is avoided, for example, by first comparing the hash codes of the two elements. (The hashCode()} specification guarantees that two objects with unequal hash codes cannot be equal.
     - Methods: 
-        - size()
+        - size()                
         - isEmpty()
         - contains(Object o)
         - iterator()
@@ -260,7 +257,10 @@ Only one null allowed.
 
 - **Comparison**
     - https://www.geeksforgeeks.org/difference-and-similarities-between-hashset-linkedhashset-and-treeset-in-java/
-    
+    - **When to use**
+        - If you don’t want to maintain insertion order but want store unique objects	
+        - If you want to maintain insertion order of elements then you can use LinkedHashSet	
+        - If you want to sort the elements according to some Comparator then use TreeSet
 ### Queue
 
 **Sub Interfaces -**
@@ -530,61 +530,57 @@ Java8 with examples Journal dev
 Consumers, Splitarators, Streams
 Three types - Splitarators
 
-## Interview discussion with Akhand (27 Jan 2021)
+# Interview discussion with Akhand (27 Jan 2021)
 
 ### Core Java
 - What is the difference between Abstract class, Abstraction, Interface?
-    These all deals with abstraction, It is a way to achieve abstraction in Java. We are hiding implementation details, and showing functionality. Focus on what instead of how.
+    - These all deals with abstraction, It is a way to achieve abstraction in Java. We are hiding implementation details, and showing functionality. Focus on what instead of how.
     There are levels of abstraction-
-    - Abstract class - 
-        - abstract methods & other
-        - concreate & non concreate methods
-        - all non final variables
-        - Extends
-        - when to use this 
-        - can i create instance of abstract class? No - what is the way if i want to create instance - adding main method inside 
-        - for default functionality we can use (code reusability) 
-        - faster than interfaces
-    - Interface -
-        - Only abstract methods
-        - now in Java 8 it provides  
-        - all are final variables 
-        - Implements multiple interfaces(multiple inheritance)
-        - when to use this - when u have to go with 100% abstraction.
-        - loose coupling 
-        - slower than abstract class
-
+    - Abstract class Vs Interface 
+        - **Type of methods**: Interface can have only abstract methods. Abstract class can have abstract and non-abstract methods.
+        - **Final Variables**: Variables declared in a Java interface are by default final. An abstract class may contain non-final variables.
+        - **Type of variables**: Abstract class can have final, non-final, static and non-static variables. Interface has only static and final variables.
+        - **Inheritance vs Abstraction**: A Java interface can be implemented using keyword “implements” and abstract class can be extended using keyword “extends”.
+        - **Accessibility of Data Members**: Members of a Java interface are public by default. A Java abstract class can have class members like private, protected, etc.
+        - **When to use** Interfaces are used to achieve 100%  abstraction(loose coupling) while Abstract classes are used where we have to implement default functionality(code reusability)
+        - **Speed** Abstract classes are faster than interfaces.
+        - Can i create instance of abstract class? No -> What is the way if i want to create instance? adding main method inside 
+       
 - Constructors in Java
-    - return type void
-    - types - 
-    - default vs arg constrctor
-    - Constructor chaining
+    - **Def**: It is a special method used to initialize the objects at the time of instantiation.
+    - **Return type**: void
+    - **Types**: 
+        - Default - 
+        - Parameterized 
+        - Copy
+    - **Constructor chaining**
         - process of calling one constructor from another constructor in the context of same object
         - In case of inheritance
         - this keyword should be the first line in calling constructor or else it will not work
         - they can be executed in any order
         - we are doing chanining because we want to initialize values
-        - Is there any other way we can achieve chaining? Java provides **init block** features {} during class load this is called before constructor.
+        - Is there any other way we can achieve chaining? Java provides **IIB** features {} during class load this is called before constructor.
         
-- What are Exception in Java? Exception Hierarchy in Java
-    - Exception is nothing but handling the execution flow and handling errors so the flow should not terminate normally 
-    - Checked vs Unchecked 
-    - Throwable class is root of exception - split into Exception & Error
-    - Error - OutOfMemory, StackOverflow
-    - Exception - IO, ClassNotFound, RuntimeException - NullPointer, Arithmetic
-    - Exception handling - try, catch, finally, throw(throw an exception), throws(declare in a method - so consumer will get informed)
+- What is Exception in Java? Exception Hierarchy in Java
+    - **Defin** - Exception is nothing but handling the execution flow and handling error's so the flow should not terminate normally 
+    - **Hierarchy** - subclasses of java.lang.Throwable class - split into Exception & Error
+    - **Error** - Errors are abnormal conditions, Errors belong to unchecked type and mostly occur at runtime. Eg. OutOfMemory, StackOverflow
+    - **Exception** - IO, ClassNotFound, RuntimeException - NullPointer, Arithmetic
+    - **Checked** -  known to the compiler at compile time. Eg. SQLException,IOException
+    - **Unchecked** exceptions like ArrayIndexOutOfBoundException known to the compiler at runtime. Eg. NullPointerException, ArithmeticException. 
+    - **Exception Handling** - try, catch, finally, throw(throw an exception), throws(declare in a method - so consumer will get informed)
     - Pipe feature in Exception catch
-    - remove finally block - and use try with resources - feature of Java 7 - AutoClosable interface 
-    - Exception Handling in spring - ControllerAdvice  - extends ResponseEntityExceptionHandler
+    - **try with resources** here we can remove finally block - and use this feature of Java 7 - where resources that implements AutoClosable interface are enclosed in that block.  
+    - Exception Handling in spring - **ControllerAdvice**  - extends ResponseEntityExceptionHandler
     - Without exception handling there is no java exception
-    - Custom exception handling - how we can include Internationalization in that 
-    - ResourceBundleMessageSource - picks property file contains exception messages
+    - **I18n** - Custom exception handling - how we can include Internationalization in that 
+        - ResourceBundleMessageSource - picks property file contains exception messages
     
 -  What is HashMap?
     - Implementation of Map - deals with (k,v) pairs 
     - default size 0-15
     - it can be used in non multithreaded environment
-    - hashmap keys should be immutable - String is mostly used as a key - Immutable
+    - hashmap keys should be immutable - String is mostly used as a key.
     - We can create Custom key - should be immutable object - should implement hashcode(), equals() (Not mandatory)
     - Hash-collision - Java7 - LinkedList, Java8 - Binary Search Tree
     - ConcurrentModificationException - solution is SynchronizedMap - but still has performance issue
@@ -603,18 +599,34 @@ Three types - Splitarators
         - variables doesn't take part in serialization & deserialization
         - we can't mark it as final
         - deserialization set's default value for that var's
-        
+      
     - volatile 
         - used in multithreaded env. 
         - When we have 2 threads r/w simultaneously. 
         - used where we need most recent value 
         - stored directly in main memory 
-
+        
+- Serialization & Deserialization -
+    - Serializable is a marker interface
+    - It is a process of converting java object into byte stream so that we can easily transfer it over network and store in files.
+    - SUID - serialVersionUID - here class name, sorted member names, modifiers, interfaces to SHA to compute hash value. This is further used to match with existing obj during deserialization, if not match then it throws InvalidClassException
+    - Compatible changes vs Incompatible changes in serializable class 
+                  
+                  private static final Long serialVersionId = 123456L;
+                  Advantage of this statement - If we make any compatible change in serializable class then we don't need to recompile and deploy - it will work
+                  If we don't provide this statement then we must have to recompile and redepoly class
+                  For any non compatible change we must have to recompile and redeploy the code.      
+    - Other ways to make object Serializable
+        - use Externalizable -> writeExternal(), readExternal()
+        - XML serialization
+        - roll-your-own - write content directly via ObjectOutputStream & DataOutputStream 
+                  
 - I have an ArrayList of Employee - has 5 vars - I want to sort list by name, age, salary
    - Comparable 
+        - A comparable object is capable of comparing itself with another object. 
+        - The class itself must implements the java.lang.Comparable interface to compare its instances. 
         - provides me single sorting 
         - has drawback is we have to modify existing class by overriding compareTo() 
-        - java.lang
         - Collectios.sort(list)
         - here we compare with current instance
         
@@ -627,7 +639,7 @@ Three types - Splitarators
    
    - all above is Java 7 - java 8 provides with streams           
 
-- What is OOP's concept?
+- OOP's in Java                                                                                                                                                                                                                                                                                                                                                                                                        - What is OOP's concept?
     - Abstraction
     - Encapsulation - coupling method and variables as asingle unit
     - Inheritance
@@ -771,7 +783,9 @@ Three types - Splitarators
        
        
 - Deep Copy & Shallow Copy
-              
+   - Shallow copy copies the existing references of object - we can do with default clone()  method  
+   - Deep copy we create new instance and then copy the values.
+            
 - JDBC - Core Java    
     - It is an API to provide common platfrom to connect with Relational database.
     - Driver classes - 
@@ -808,70 +822,835 @@ Three types - Splitarators
         - Consistency - Table level lock used to achieve this 
         - Isolation 
         - Durability - we can't change once committed.
-         
+
+- How will you map your Query result's in spring? RowMappers in JDBC
+    - this is with help of RowMapper
+    - RowMapper is an Interface which allows us to map the rows to user defined entities. (fetches the records from DB and contains Query())
+    - It iterates ResultSet and adds it to collecction
+    - What is the advantage over ResultSet?
+        - Select * from Students
+            ResultSet needs to iterate and add to collection manually
+            We can create RowMapper and override **mapRows()** and will map with entity
+            RowMapper used with JDBCTemplate         
 - Generics    
 
 - Garbage Collections
-
+    -  
+    Three sections 
 - Unit Testing    
     
-- Struts
-
 - Inner classes
 
 - Deadlock
     
 ### Spring
-- Which Design pattern Spring follows
-    - Template
-    - Singleton
-    - Factory
-    
-- Scope of Bean in Spring
-    - default scope is singleton for spring IOC container level
-    - prototype
-    - request - always deals with HttpRequest valid in web context
-    - session - available at the session
-    - global
-
-- SpringMVC flow
-    - There are key parties involved - DispatcherServlet, HandlerMapping, Controller, ModelAndView, ViewResolver, View
-    - Dispatcher servlet interacts with ->  UrlHandler Mapper to get mapping and then go to -> Controller - > service,repo processing -> returns ModelAndView -> DispatcherServlet takes view -
-    - HandlerMapperInterceptor
-        - three life cycle operations - afterCompletion(), prehandle(), postHandle()
-    - DispacherServlet -> web.xml
-    - ViewResolver -> need to see -> servlet.xml -> we configure which type ka view we need to render
+- What is Spring Application Container?
+    - Web container responsible for managing the lifecycle of servlets.
+    - Spring Application Container is IOC container that manages bean life cycle and perform dependency injection.  
+    - IoC container (Inversion of Control) which receives metadata from either an XML file, Java annotations, or Java code and works accordingly
+    - BeanFactory and ApplicationContext are two different IOC containers provided by Spring. 
+    - **BeanFactory** 
+        - Basic Interface defined in org.springframework.beans.factory.BeanFactory which provides the basic support for Dependency Injection.
+        - Lazy Loading: Initially only the BeanFactory is initialized, The beans will be loaded only when we explicitly call the getBean() method.(Lightweight container)
+        - Required Manual registration of processors: BeanFactoryPostProcessor, BeanPostProcessor 
+        - Methods: getBean(), containsBean(), isSingleton(), isPrototype() 
+        - BeanFactory only supports two scopes — Singleton and Prototype.
+        - XML Configuration: XmlBeanFactory is the implementation class for the BeanFactory interface.
         
+                <bean id="employee" class="com.baeldung.beanfactory.Employee">
+                    <constructor-arg name="name" value="Hello! My name is Java"/>
+                    <constructor-arg name="age" value="18"/>
+                </bean>
+                
+                 BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("beans.xml"));
+                 Employee emp = (Employee) factory.getBean("employee");
+                
+    - **ApplicationContext**
+        - It is the advanced Spring container and is built on top of the BeanFactory interface.
+        - Eager-initialization hence loads all beans at startup. 
+        - It provides: 
+            - It extends the MessageSource interface, therefore provides internationalization functionality.
+                
+                    public void testInternationalization() {
+                        MessageSource resources = new ClassPathXmlApplicationContext("classpathxmlapplicationcontext-internationalization.xml");
+                    
+                        String enHello = resources.getMessage("hello", null, "Default", Locale.ENGLISH);
+                        String enYou = resources.getMessage("you", null, Locale.ENGLISH);
+                        String enThanks = resources.getMessage("thanks", new Object[] { enYou }, Locale.ENGLISH);
+                     
+                        assertThat(enHello, equalTo("hello"));
+                        assertThat(enThanks, equalTo("thank you"));
+                    
+                        String chHello = resources.getMessage("hello", null, "Default", Locale.SIMPLIFIED_CHINESE);
+                        String chYou = resources.getMessage("you", null, Locale.SIMPLIFIED_CHINESE);
+                        String chThanks = resources.getMessage("thanks", new Object[] { chYou }, Locale.SIMPLIFIED_CHINESE);
+                     
+                        assertThat(chHello, equalTo("你好"));
+                        assertThat(chThanks, equalTo("谢谢你"));
+                    }
+                
+            - event publication functionality
+            - annotation-based dependency injection
+            - easy integration with Spring AOP features
+            - Automatic Registration of BeanFactoryPostProcessor and BeanPostProcessor
+        - supports almost all types of bean scope    
+        - The ClassPathXmlApplicationContext class is the implementation class of ApplicationContext interface.
+        - Shut down the container gracefully when the application is shut down,
+        
+    - @Configuration - Annotation Config
+    - @Component is in spring ?
+        - It takes part in Dependency Injection
+        - There is not difference in @Component @Service @Repository all are same but just streotypes to mark class as component
+    
+    - What is Component Scan?
+       - Spring boot - @SpringBootApplication
+            - no need to explicitly scan - scans all sub packages
+            - used in case of external package scan 
+        
+       - Spring 
+            - Where we create application context - provided there as component scan package.
+          
+       
+- What is IOC and Dependency Injection in Spring?
+    - IOC is mechanism by which the control of objects or portions of a program is transfered to a container or framework.
+    - It helps in decoupling the execution of a task from its implementation
+    - Inversion of Control can be achieved through various mechanisms such as: 
+        - Strategy design pattern 
+        - Service Locator pattern 
+        - Factory pattern
+        - Dependency Injection (DI).        
+            - Constructor 
+                
+                    @Configuration
+                    public class AppConfig {
+                    
+                        @Bean
+                        public Item item1() {
+                            return new ItemImpl1();
+                        }
+                    
+                        @Bean
+                        public Store store() {
+                            return new Store(item1());
+                        }
+                    }
+                    
+                   XML Based:
+                    <bean id="item1" class="org.baeldung.store.ItemImpl1" /> 
+                    <bean id="store" class="org.baeldung.store.Store"> 
+                        <constructor-arg type="ItemImpl1" index="0" name="item" ref="item1" /> 
+                    </bean>
+            - Setter - pass object in setter
+                    
+                    @Bean
+                    public Store store() {
+                        Store store = new Store();
+                        store.setItem(item1());
+                        return store;
+                    }
+                    
+                    <bean id="store" class="org.baeldung.store.Store">
+                        <property name="item" ref="item1" />
+                    </bean>
+                    
+            - Field - @Autowiring - byName, byType - it will throw exception in case of duplicate (@Qualifier) , constructor, default
+                   
+                   Example:
+                     @Bean(autowire = Autowire.BY_TYPE)
+                   
+                   byType:                
+                    public class Store {
+                        @Autowired
+                        private Item item; 
+                    }
+                   
+                   byName: 
+                    public class Store {
+                        
+                        @Autowired
+                        @Qualifier("item1")
+                        private Item item;
+                    }
+            
+            - Lazy Initialized Beans
+                - By default, the container creates and configures all singleton beans during initialization. To avoid this, you can use the lazy-init attribute with value true on the bean configuration:
+                    
+                        <bean id="item1" class="org.baeldung.store.ItemImpl1" lazy-init="true" />       
+                                
+    - Why we get NoQualifiedBeanPresent?
+        - If dependency bean is not picked by container then it shows
+         
+- Which Design pattern Spring follows?
+    - **Singleton**
+        - one instance of an object exists per application.
+        - useful when managing shared resources or providing cross-cutting services, such as logging.
+        - Singleton Beans - Spring restricts a singleton to one object per Spring IoC container
+        - an application can have more than one Spring container
+        - By default, Spring creates all beans as singletons.
+        - We can create separate instances of the bean by changing the bean scope from singleton to prototype using the 
+                
+              @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE) annotation.
+              @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) annotation.
+        
+    - **Factory**
+        - It provides a factory class with an abstract method for creating the desired object. 
+        - Spring treats a IOC bean container as a factory that produces beans.
+        - Each of the getBean methods is considered a factory method, which returns a bean matching the criteria supplied to the method, like the bean's type and name.
+            
+                 getBean(Class<T> requiredType);
+                 getBean(Class<T> requiredType, Object... args);
+                 getBean(String name);
+                    
+        - BeanFactory and the ApplicationContext interface are the (IOC containers) examples of Factory Design Pattern
+        
+    - **Proxy**
+        - the proxy pattern is a technique that allows one object — the proxy — to control access to another object — the subject or service
+        - Spring APO follows proxy pattern to proxy/wrap an existing class and get control of execution.
+        - We see this approach when using transactions:
+            
+                @Transactional
+                public Book create(String author) {
+                    System.out.println(repository.getClass().getName());
+                    return repository.create(author);
+                }
+        - Generally, Spring uses two types of proxies:
+           - CGLib Proxies – Used when proxying classes
+           - JDK Dynamic Proxies – Used when proxying interfaces
+           
+    - **Template**
+        - The template method pattern is a technique that defines the steps required for some action, implementing the boilerplate steps, and leaving the customizable steps as abstract.
+        - Following is the examples:
+                   
+                  Example:    
+                    public abstract DatabaseQuery {
+                    
+                        public void execute() {
+                            Connection connection = createConnection();
+                            executeQuery(connection);
+                            closeConnection(connection);
+                        } 
+                    
+                        protected Connection createConnection() {
+                            // Connect to database...
+                        }
+                    
+                        protected void closeConnection(Connection connection) {
+                            // Close connection...
+                        }
+                    
+                        protected abstract void executeQuery(Connection connection);
+                    }
+                                
+            - JdbcTemplate
+                    
+                    public class JdbcTemplate {
+                    
+                        public <T> T query(final String sql, final ResultSetExtractor<T> rse) throws DataAccessException {
+                            // Execute query...
+                        }
+                    
+                        // Other methods...
+                    }
+             
+                - Template provided a **callback method** is a method that allows the subject to signal to the client that some desired action has completed.
+                - Spring further reduces boilerplate code by creating more specific callback interfaces.
+                    
+                        @FunctionalInterface
+                        public interface RowMapper<T> {
+                            T mapRow(ResultSet rs, int rowNum) throws SQLException;
+                        }
+                        
+                        // Implementation on RowMapper
+                        public class BookRowMapper implements RowMapper<Book> {
+                        
+                            @Override
+                            public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        
+                                Book book = new Book();
+                                
+                                book.setId(rs.getLong("id"));
+                                book.setTitle(rs.getString("title"));
+                                book.setAuthor(rs.getString("author"));
+                                
+                                return book;
+                            }
+                        }
+                        
+            - JmsTemplate
+            - TransactionTemplate
+        
+- Scope of Bean in Spring
+    - Spring framework defines 6 types of scopes:
+        - default scope is singleton for spring IOC container level
+            
+                @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+                <bean id="personSingleton" class="org.baeldung.scopes.Person" scope="singleton"/>
+                
+        - prototype - one per call to container 
+                
+                @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+                
+        -  web-aware scopes
+            - request - always deals with HttpRequest valid in web context
+                
+                    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+                    or @RequestScope instead of above
+                
+            - session - available at the session
+                
+                    @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS
+                    @SessionScope
+                    
+            - application
+                    
+                    @Scope(value = WebApplicationContext.SCOPE_APPLICATION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+                    @ApplicationScope
+                    
+            - websocket - WebSocket-scoped beans when first accessed are stored in the WebSocket session attributes.
+            
+                    @Scope(scopeName = "websocket", proxyMode = ScopedProxyMode.TARGET_CLASS)
+                    
+- Spring MVC
+    - Flow & Components
+        - There are key parties involved - DispatcherServlet, HandlerMapping, Controller, ModelAndView, ViewResolver, View
+        - Dispatcher servlet interacts with ->  UrlHandlerMapper to get mapping and then go to -> Controller - > service,repo processing -> returns ModelAndView -> DispatcherServlet takes view -
+        - HandlerMapperInterceptor
+            - three life cycle operations - afterCompletion(), prehandle(), postHandle()
+        - DispacherServlet -> web.xml
+        - ViewResolver -> need to see -> servlet.xml -> we configure which type of view we need to render
+    - Configuration
+        - **@EnableWebMvc** annotation - This will set up the basic support we need for an MVC project, such as:
+            - registering controllers and mappings 
+            - type converters
+            - validation support 
+            - message converters and exception handling.
+       - **WebMvcConfigurer**: If we want to customize this configuration, we need to implement this interface.
+       
+                @EnableWebMvc
+                @Configuration
+                public class WebConfig implements WebMvcConfigurer {
+                
+                   @Override
+                   public void addViewControllers(ViewControllerRegistry registry) {
+                      registry.addViewController("/").setViewName("index");
+                   }
+                
+                   @Bean
+                   public ViewResolver viewResolver() {
+                      InternalResourceViewResolver bean = new InternalResourceViewResolver();
+                
+                      bean.setViewClass(JstlView.class);
+                      bean.setPrefix("/WEB-INF/view/");
+                      bean.setSuffix(".jsp");
+                
+                      return bean;
+                   }
+                }
+       - **ViewControllerRegistry** : we can register view controllers that create a direct mapping between the URL and the view name
+       
+       - **XML Config** 
+            
+                <context:component-scan base-package="com.baeldung.web.controller" />
+                <mvc:annotation-driven />    
+                
+                <bean id="viewResolver" 
+                      class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                        <property name="prefix" value="/WEB-INF/view/" />
+                        <property name="suffix" value=".jsp" />
+                    </bean>
+                
+                    <mvc:view-controller path="/" view-name="index" />
+                
+                </beans>   
+       - With SpringBoot no additional config is required if we add **spring-boot-starter-parent** dependency and entry point for spring boot application.
+       
+                @SpringBootApplication
+                public class Application {
+                    public static void main(String[] args) {
+                        SpringApplication.run(Application.class, args);
+                    }
+                }        
+       
 - Exception Handling in Spring 
     - Explain What approach we told initially - need exception handling in each class.
-    - Spring 4 provided Global level exception handler -> @ControllerAdvice, @ExceptionHandler
+            try{
+                //Logic
+            }catch(Exception ex){
+                //Handle
+            } finally{
+                //Finally  close resources.
+            }
+    - Before Spring 3.2 two main approaches to handling exceptions in a Spring MVC application were:
+    - **@ExceptionHandler** : 
+         - @ExceptionHandler annotated method is only active for that particular Controller, not globally for the entire application.    
+    
+    - **HandlerExceptionResolver** uniform exception handling mechanism
+       - ExceptionHandlerExceptionResolver, DefaultHandlerExceptionResolver, ResponseStatusExceptionResolver, SimpleMappingExceptionResolver 
+       - It's used to resolve standard Spring exceptions to their corresponding HTTP Status Codes, namely Client error 4xx and Server error 5xx status codes
+       - it's enabled by default in the DispatcherServlet.
+       - limitation is that it doesn't set anything to the body of the Response
+    
+    - **@ControllerAdvice**
+        - Since 3.2, we've had the @ControllerAdvice annotation
+            
+              @ControllerAdvice
+              public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+                 
+                   @ExceptionHandler(value = {InvalidOrderException.class})
+                   private ResponseEntity<Object> handle(InvalidOrderException exception, WebRequest webRequest) {
+                       return handleExceptionInternal(exception,
+                                 new GenericResponse<>(false,
+                                         ExceptionCodeEnum.INVALID_ORDER.getHttpStatus().name(),
+                                         new ErrorResponse(ExceptionCodeEnum.INVALID_ORDER.getMessage(),exception.getErrorDetails())
+                                 ),
+                                 new HttpHeaders(),
+                                 ExceptionCodeEnum.INVALID_ORDER.getHttpStatus(),
+                                 webRequest
+                       );
+                   }
+              }
+    
+        - The actual mechanism is extremely simple but also very flexible:
+            - It gives us full control over the body of the response as well as the status code.
+            - It provides mapping of several exceptions to the same method, to be handled together.
+            - It makes good use of the newer RESTful ResposeEntity response.
+    
+    - **ResponseStatusException**    
+        - Spring 5 introduces the ResponseStatusException class.
+        - We can create an instance of it providing an HttpStatus and optionally a reason and a cause:
+            
+                @GetMapping(value = "/{id}")
+                public Foo findById(@PathVariable("id") Long id, HttpServletResponse response) {
+                    try{
+                        //logic
+                     }
+                    catch (MyResourceNotFoundException exc) {
+                         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Foo Not Found", exc);
+                    }
+                }
+        - **Benefits**
+            - Excellent for prototyping: We can implement a basic solution quite fast.
+            - One type, multiple status codes: One exception type can lead to multiple different responses. This reduces tight coupling compared to the @ExceptionHandler.
+            - We won't have to create as many custom exception classes.
+            - We have more control over exception handling since the exceptions can be created programmatically.
+    
+    - **Handle the Access Denied in Spring Security**
+        - The XML configuration:
+            
+                <http>
+                    <intercept-url pattern="/admin/*" access="hasAnyRole('ROLE_ADMIN')"/>   
+                    ... 
+                    <access-denied-handler error-page="/my-error-page" />
+                </http>
+                
+        - Java configuration:
+            
+                @Override
+                protected void configure(HttpSecurity http) throws Exception {
+                    http.authorizeRequests()
+                        .antMatchers("/admin/*").hasAnyRole("ROLE_ADMIN")
+                        ...
+                        .and()
+                        .exceptionHandling().accessDeniedPage("/my-error-page");
+                }
         
+        - Custom AccessDeniedHandler:  
+        
+                @Component
+                public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+                
+                    @Override
+                    public void handle
+                      (HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex) 
+                      throws IOException, ServletException {
+                        response.sendRedirect("/my-error-page");
+                    }
+                }      
+                
+                @Autowired
+                private CustomAccessDeniedHandler accessDeniedHandler;
+                
+                @Override
+                protected void configure(HttpSecurity http) throws Exception {
+                    http.authorizeRequests()
+                        .antMatchers("/admin/*").hasAnyRole("ROLE_ADMIN")
+                        ...
+                        .and()
+                        .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+                }     
+                
+    - **Spring Boot Support**
+        - Spring boot provides **Whitelabel Error Page** in response and a JSON response for RESTful
+            
+                {
+                    "timestamp": "2019-01-17T16:12:45.977+0000",
+                    "status": 500,
+                    "error": "Internal Server Error",
+                    "message": "Error processing the request!",
+                    "path": "/my-endpoint-with-exceptions"
+                }
+                
+        - Spring Boot allows configuring these features with properties:
+            - server.error.whitelabel.enabled:
+            - server.error.include-stacktrace:
+
+- Spring Profiles
+    - allowing us to map our beans to different profiles — for example, dev, test, and prod.
+    - we can change properties at runtime to override properties at runtime with the help of commands
+    - **@Profile** annotation — we are mapping the bean to that particular profile
+        
+           @Component
+           @Profile("dev")
+           public class DevDatasourceConfig
+    
+    - profile names can also be prefixed with a NOT operator, e.g. !dev to exclude them from a profile.
+            
+           @Component
+           @Profile("!dev")
+           public class DevDatasourceConfig
+    
+    - **Set Profiles**
+        - Programmatically via WebApplicationInitializer Interface
+            
+                @Configuration
+                public class MyWebApplicationInitializer implements WebApplicationInitializer {
+                    @Override
+                    public void onStartup(ServletContext servletContext) throws ServletException {
+                        servletContext.setInitParameter("spring.profiles.active", "dev");
+                    }
+                }
+        - Programmatically via ConfigurableEnvironment
+                
+                @Autowired
+                private ConfigurableEnvironment env;
+                ...
+                env.setActiveProfiles("someProfile");
+        
+        - Context Parameter in web.xml
+        
+                <context-param>
+                    <param-name>spring.profiles.active</param-name>
+                    <param-value>dev</param-value>
+                </context-param>
+                
+        - JVM System Parameter
+                
+                -Dspring.profiles.active=dev
+                
+        - Environment Variable
+                
+                export spring_profiles_active=dev
+        
+        - Maven Profile
+                
+               <properties>
+                   <spring.profiles.active>dev</spring.profiles.active>
+               </properties>
+        
+        - application.properties               
+                      
+                spring.profiles.active=local
+                
+        - @ActiveProfile in Tests
+        
+    - **Get Profiles**
+        
+             @Value("${spring.profiles.active:}")
+             private String activeProfiles;
+                                                                                                              
 - Have you heard about SpringBoot what is it?
-    - Autoconfiguration
     - All hectic configuration
     - Microservice based apps we can easily build
     - Spring Vs Spring Boot
-        - Spring is used to develop Enterprise Apps , Spring boot used to develop quick apps with rapid Action development
+            - Spring is used to develop Enterprise Apps, Spring boot used to develop quick apps with rapid Action development
     - Springboot provides in memory db
     - Here we can create our own pom
-    - Dependency Injection is mannual in Spring
+    - Dependency Injection is manual in Spring
     - Drawback depends on scenario - uses unused dependencies - we can exclude
     - specially designed for microservices based application
-    
-- Can you please do integration of spring with JPA hibernate
-    - Springboot autoconfig
-    - Spring need to explicitly Configure
-    - SpringBoot has it's inbuilt DB server/ for development purpose          
+
+    - Enable Autoconfiguration @SpringBootApplication - We use this annotation to mark the main class of a Spring Boot application
+            
+            @SpringBootApplication
+            public class Application {
+                public static void main(String[] args) {
+                    SpringApplication.run(Application.class, args);
+                }
+            }
+            
+       - @SpringBootApplication encapsulates @Configuration, @EnableAutoConfiguration, and @ComponentScan annotations with their default attributes.
+            - **@Configuration** – which marks the class as a source of bean definitions
+            - **@EnableAutoConfiguration** – which tells the framework to add beans based on the dependencies on the classpath automatically
+            - **@ComponentScan** – which scans for other configurations and beans in the same package as the Application class or below     
+       
+       - @ConditionalOnClass and @ConditionalOnMissingClass
+            
+                @Configuration
+                @ConditionalOnClass(DataSource.class)
+                class MySQLAutoconfiguration {
+                    //...
+                }
+       
+       - @ConditionalOnBean and @ConditionalOnMissingBean - define conditions based on the presence or absence of a specific bean:
+                
+                @Bean
+                @ConditionalOnBean(name = "dataSource")
+                LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+                    // ...
+                }
+                
+       -  @ConditionalOnProperty
+                
+                @Bean
+                @ConditionalOnProperty(name = "usemysql", havingValue = "local")
+                DataSource dataSource() {
+                    // ...
+                }
+       
+       - @ConditionalOnResource
+                
+                @ConditionalOnResource(resources = "classpath:mysql.properties")
+                Properties additionalProperties() {
+                    // ...
+                }
+       
+    - Disable AUtoconfiguration - exclude the auto-configuration from being loaded
+        - Disable from annotation
+        
+                @Configuration
+                @SpringBootApplication(exclude={MySQLAutoconfiguration.class})
+                public class AutoconfigurationApplication {
+                    //...
+                }
+        
+        - Disable using application.properties
+        
+                spring.autoconfigure.exclude=com.baeldung.autoconfiguration.MySQLAutoconfiguration
+           
+        - Disable by excluding dependencies from pom.xml
+                
+                Example:
+                        <dependency>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-ehcache</artifactId>
+                            <version>${hibernate.ehcache.version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.jboss.logging</groupId>
+                                    <artifactId>jboss-logging</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+
+- Spring Security
+    - Which Security framework you have worked upon? JWT
+        - Introduction of JWT
+        - Issuing and validating
+        - Why we are using JWT? 
+            token - set of values - encrypted based on HMAC
+        - What it provides?
+            
+        - Add dependencies
+            spring-boot-starter-security
+        - Major components in Configuration
+            - Auth Controller
+            - Security Config 
+                - @EnableWebSecurity, 
+                - extend WebSecurityConfigurerAdapter
+                - configure -> AuthenticationManagerBuilder -> UserDetailsService, PasswordEncoder
+                - configure -> HttpSecurity
+            -  Configure Security filter
+                
+        - Authorization & Authentication flow
+            
+    - How you will maintain roles in your controller?
+            - Using spring security @PreAutorized
+                - This is provided by spring security which we can use it at method level or controller level
+                - To enable this we need to @EnableGlobalSpringSecurity
+                - This accepts SPEL expression - hasRoles - all should be appended by Role_
+            
+            - SecurityContext classes
+                - Extract SecurityContextHolder -> Authentication
+                
+            - UserDetailsServie
+                - Extract from UserDetailsService 
+                
+            - Using HttpServletRequest
+                by extracting isUserInRole(), Principle   
+
+- Spring JPA/Hibernate
+    - Can you please do integration of spring with JPA hibernate
+    - Dependencies
+        
+            spring-boot-starter
+            spring-boot-starter-data-jpa
+          
+    - **Springboot**
+        - **entityManagerFactory** - Spring Boot configures Hibernate as the default JPA provider, so it's no longer necessary to define the entityManagerFactory bean unless we want to customize it.
+        - **dataSource** 
+            - Spring Boot can also auto-configure the dataSource bean, depending on the database we're using
+                - Refer Spring section for DataSource configuration with program and xml both 
+            - To configure the data source using a properties file, we have to set properties prefixed with spring.datasource:
+            
+                    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+                    spring.datasource.username=mysqluser
+                    spring.datasource.password=mysqlpass
+                    spring.datasource.url=jdbc:mysql://localhost:3306/myDb?createDatabaseIfNotExist=true
+            
+            - SpringBoot has it's inbuilt DB server/ for development purpose
+                              
+    - **Spring**
+        - if we have a standard Spring project, then we need more explicit configuration, using either Java or XML
+        - Programetic Configuration
+                
+                @Configuration
+                @EnableTransactionManagement
+                public class PersistenceJPAConfig{
+                
+                   @Bean
+                   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+                      LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+                      JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+                      
+                      em.setDataSource(dataSource());
+                      em.setPackagesToScan(new String[] { "com.mm.model" });
+                      em.setJpaVendorAdapter(vendorAdapter);
+                      em.setJpaProperties(additionalProperties());
+                
+                      return em;
+                   }
+                   
+                   @Bean
+                   public DataSource dataSource(){
+                       DriverManagerDataSource dataSource = new DriverManagerDataSource();
+                       dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                       dataSource.setUrl("jdbc:mysql://localhost:3306/spring_jpa");
+                       dataSource.setUsername( "user" );
+                       dataSource.setPassword( "hydrosigma" );
+                       return dataSource;
+                   }
+                    
+                   @Bean
+                   public PlatformTransactionManager transactionManager() {
+                       JpaTransactionManager transactionManager = new JpaTransactionManager();
+                       transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+                   
+                       return transactionManager;
+                   }
+                   
+                   @Bean
+                   public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+                       return new PersistenceExceptionTranslationPostProcessor();
+                   }
+                   
+                   Properties additionalProperties() {
+                       Properties properties = new Properties();
+                       properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+                       properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+                          
+                       return properties;
+                   }
+                    
+                }
+        - Configuration With XML
+                
+                <bean id="myEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+                    <property name="dataSource" ref="dataSource" />
+                    <property name="packagesToScan" value="com.mm.persistence.model" />
+                    <property name="jpaVendorAdapter">
+                        <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+                    </property>
+                    <property name="jpaProperties">
+                        <props>
+                            <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+                            <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                        </props>
+                    </property>
+                </bean>
+                
+                <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+                    <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+                    <property name="url" value="jdbc:mysql://localhost:3306/spring_jpa" />
+                    <property name="username" value="tutorialuser" />
+                    <property name="password" value="tutorialmy5ql" />
+                </bean>
+                
+                <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+                    <property name="entityManagerFactory" ref="myEmf" />
+                </bean>
+                <tx:annotation-driven />
+                
+                <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+                     
     - We can exclude the artifacts that are unused
-    
-- Dev tools
+                                       
+- Transaction Management in Spring
+    - Two types of Transaction Management
+        - Programmatic - We know the exact scope of transaction
+               
+                try{
+                    tx.begin();   
+                    dologic();  
+                    tx.commit(); 
+                } cathc(Exc e){ 
+                    tx.rollback()
+                }
+                
+        - Declarative - This is annotation based provided by Spring
+            - @EnableTransactionManagement 
+            - @Transactional(isolation= Isolation.)
+                - If we annotate at class level then applied for all, mostly used at  
+                - Transaction has its own Isolation level and rollback strategy
+                - Transaction annotations are only used at public methods not at private methods
+                - What is transaction Isolation level?
+                - Dirty reads, phantom reads, non repeatable reads for DB
+                - What is transaction propagation
+                - Params 
+                    - isolation - 
+                        - @Transactional(isolation = Isolation.REPEATABLE_READ)
+                        - @Transactional(isolation = Isolation.READ_COMMITTED)
+                        - @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+                    - timeout -
+                        - @Transactional(timeout =10 )
+                    - propagation -    
+                        - @Transactional(propagation = Propagation.REQUIRED)
+                        - @Transactional(propagation = Propagation.MANDATORY)
+                        - @Transactional(propagation = Propagation.NEVER)
+                        - @Transactional(propagation = Propagation.SUPPORTS)
+                        - @Transactional(propagation = Propagation.NOT_SUPPORTED)
+                        - Spring will throw runtime exception if transaction is not able to link with others.      
+                    - rollbackFor
+                        - @Transactional(rollbackFor = RewardOrchestrationException.class)
+                    - noRollbackFor
+                - Where we should use @Transactional in application layer?   
+                    - At orchestration layer or service layer. Controller layer designed only to redirect rest requests to service.     
+                - What is real time advantage of using @Transactional at service layer?
+                    - here we communicate with multiple service and DAO layers.
+    - When IllegalStateException comes?
 
-- Profiles
-    - we can change properties at runtime to override properties at runtime with the help of commands
-
+- What are interceptors in a spring?
+    - HandlerIntercceptor is the only interceptor provided by spring
+    - It is a way to control request response flow
+    - HandlerIntercceptor has three lifecycle methods
+        Prehandle
+        Posthandle
+        AfterCompletion
+    - We must have to register interceptor in interceptor registory - inside SpringSecurityConfig -> addInterceptor() 
     
+    - Filter is similer to interceptor but different
+    
+- Spring AOP
+    APO is a framework that is extended by Spring
+    
+    Spring Global Exception Handling - with @ControllerAdvice is example 
+    
+    Aspect
+    Joint Points
+        Lifecycle @Before, @After
+        
 ### Web Services
 
+- Rest Mapping should be noun. 
 
 ### PL SQL
 

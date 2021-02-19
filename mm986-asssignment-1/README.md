@@ -654,3 +654,27 @@ JIRA,
 GIT, 
 SOAP, 
 API JAVA
+
+# AWS Session 1 (17 Feb - with Ripul)
+- VPC, Subnet- Public, Private
+- Route table
+- CIDR - 0.0 and 127.0. 0.0 are two such addresses. The first is called the default route, and the latter is the loopback address. 
+- Internet Gateway - without this none of the VPC can communicate with internet
+    This is attached to VPC
+
+    
+- Handson 
+    - Create VPC
+    - Create Subnet
+    - Create Internet Gateway
+    - Route tables
+        - if we don't have 0.0.0.0 routing then it is considered as private subnet
+        - VPC base route to allow inter subnet communication
+    - Elastic IP - once assigned then no one can change it (Static and fix) - Create and delete it
+    
+    - NAT Gateway
+    - VPC peering
+    - Transient Gateway
+        
+
+        
