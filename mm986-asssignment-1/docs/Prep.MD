@@ -1414,7 +1414,7 @@ Three types - Splitarators
                     // ...
                 }
        
-    - Disable AUtoconfiguration - exclude the auto-configuration from being loaded
+    - Disable Autoconfiguration - exclude the auto-configuration from being loaded
         - Disable from annotation
         
                 @Configuration
@@ -1586,6 +1586,35 @@ Three types - Splitarators
                                        
 - Transaction Management in Spring
     - Two types of Transaction Management
+         - Declarative - This is annotation based provided by Spring
+            - @EnableTransactionManagement 
+            - If we annotate at class level then applied for all, mostly used at  
+            - Transaction has its own Isolation level and rollback strategy
+            - Transaction annotations are only used at public methods not at private methods
+            - Dirty reads, phantom reads, non repeatable reads for DB
+            - Params 
+               - isolation - 
+                   - @Transactional(isolation = Isolation.REPEATABLE_READ)
+                   - @Transactional(isolation = Isolation.READ_COMMITTED)
+                   - @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+               - timeout -
+                   - @Transactional(timeout =10 )
+               - propagation -    
+                   - @Transactional(propagation = Propagation.REQUIRED)
+                   - @Transactional(propagation = Propagation.MANDATORY)
+                   - @Transactional(propagation = Propagation.NEVER)
+                   - @Transactional(propagation = Propagation.SUPPORTS)
+                   - @Transactional(propagation = Propagation.NOT_SUPPORTED)
+                   - Spring will throw runtime exception if transaction is not able to link with others.      
+               - rollbackFor
+                                - @Transactional(rollbackFor = RewardOrchestrationException.class)
+               - noRollbackFor
+            - Where we should use @Transactional in application layer?   
+                - At orchestration layer or service layer. Controller layer designed only to redirect rest requests to service.     
+            - What is real time advantage of using @Transactional at service layer?
+                - here we communicate with multiple service and DAO layers.
+            - When IllegalStateException comes?
+            
         - Programmatic - We know the exact scope of transaction
                
                 try{
@@ -1595,38 +1624,93 @@ Three types - Splitarators
                 } cathc(Exc e){ 
                     tx.rollback()
                 }
-                
-        - Declarative - This is annotation based provided by Spring
-            - @EnableTransactionManagement 
-            - @Transactional(isolation= Isolation.)
-                - If we annotate at class level then applied for all, mostly used at  
-                - Transaction has its own Isolation level and rollback strategy
-                - Transaction annotations are only used at public methods not at private methods
-                - What is transaction Isolation level?
-                - Dirty reads, phantom reads, non repeatable reads for DB
-                - What is transaction propagation
-                - Params 
-                    - isolation - 
-                        - @Transactional(isolation = Isolation.REPEATABLE_READ)
-                        - @Transactional(isolation = Isolation.READ_COMMITTED)
-                        - @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-                    - timeout -
-                        - @Transactional(timeout =10 )
-                    - propagation -    
-                        - @Transactional(propagation = Propagation.REQUIRED)
-                        - @Transactional(propagation = Propagation.MANDATORY)
-                        - @Transactional(propagation = Propagation.NEVER)
-                        - @Transactional(propagation = Propagation.SUPPORTS)
-                        - @Transactional(propagation = Propagation.NOT_SUPPORTED)
-                        - Spring will throw runtime exception if transaction is not able to link with others.      
-                    - rollbackFor
-                        - @Transactional(rollbackFor = RewardOrchestrationException.class)
-                    - noRollbackFor
-                - Where we should use @Transactional in application layer?   
-                    - At orchestration layer or service layer. Controller layer designed only to redirect rest requests to service.     
-                - What is real time advantage of using @Transactional at service layer?
-                    - here we communicate with multiple service and DAO layers.
-    - When IllegalStateException comes?
+            - Declarative transaction may not suitable in following scenario
+               - Let's suppose we're mixing two different types of I/O in a simple service:
+                    
+                        @Transactional
+                        public void initialPayment(PaymentRequest request) {
+                            savePaymentRequest(request); // DB
+                            callThePaymentProviderApi(request); // API
+                            updatePaymentState(request); // DB
+                            saveHistoryForAuditing(request); // DB
+                        }
+                        
+                        If the API call responds very slowly for a while, this method would hog the borrowed Connection while waiting for the response. That's why we may run out of database connections — because of a slow back-end service!
+                        Mixing the database I/O with other types of I/O in a transactional context is a bad smell. So, the first solution for these sorts of problems is to separate these types of I/O altogether.
+               
+               - This can be achieved in following ways:
+                  - **TransactionTemplate**
+                    - It provides callback-based APIs to manage transactions manually
+                            
+                            // test annotations
+                            class ManualTransactionIntegrationTest {
+                            
+                                @Autowired
+                                private PlatformTransactionManager transactionManager;
+                            
+                                private TransactionTemplate transactionTemplate;
+                            
+                                @BeforeEach
+                                void setUp() {
+                                    transactionTemplate = new TransactionTemplate(transactionManager);
+                                }
+                                
+                                @Test
+                                void givenAPayment_WhenNotDuplicate_ThenShouldCommit() {
+                                    Long id = transactionTemplate.execute(status -> {
+                                        Payment payment = new Payment();
+                                        payment.setAmount(1000L);
+                                        payment.setReferenceNumber("Ref-1");
+                                        payment.setState(Payment.State.SUCCESSFUL);
+                                
+                                        entityManager.persist(payment);
+                                
+                                        return payment.getId();
+                                    });
+                                
+                                    Payment payment = entityManager.find(Payment.class, id);
+                                    assertThat(payment).isNotNull();
+                                }
+                                
+                            }
+                    - Similar to the declarative approach, the template can guarantee atomicity for us. That is, if one of the operations inside a transaction fails to complete, it rolls back all of them
+                    - We can do following configurations for TransactionTemplate
+                            
+                            transactionTemplate = new TransactionTemplate(transactionManager);
+                            transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);
+                            transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                            transactionTemplate.setTimeout(1000);
+                            transactionTemplate.setReadOnly(true);
+                    - if we need multiple configurations, we should create multiple template instances.
+                    
+                  - **PlatformTransactionManager**
+                    - This is basic lower-level api for transaction management - both @Transactional and TransactionTemplate use this API to manage their transactions internally.
+                    - Transaction definitions are similar to TransactionTemplate configurations. However, we can use multiple definitions with just one PlatformTransactionManager.
+                            
+                          @Test
+                          void givenAPayment_WhenUsingTxManager_ThenShouldCommit() {
+                           
+                              // transaction definition
+                              DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+                              definition.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);
+                              definition.setTimeout(3);
+                          
+                              TransactionStatus status = transactionManager.getTransaction(definition);
+                              try {
+                                  Payment payment = new Payment();
+                                  payment.setReferenceNumber("Ref-1");
+                                  payment.setState(Payment.State.SUCCESSFUL);
+                          
+                                  entityManager.persist(payment);
+                                  transactionManager.commit(status);
+                              } catch (Exception ex) {
+                                  transactionManager.rollback(status);
+                              }
+                          
+                              assertThat(entityManager.createQuery("select p from Payment p").getResultList()).hasSize(1);
+                          }  
+                  
+       
 
 - What are interceptors in a spring?
     - HandlerIntercceptor is the only interceptor provided by spring
