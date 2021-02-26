@@ -2,13 +2,31 @@
 ## Java 8
 - Refer: https://www.journaldev.com/2389/java-8-features-with-examples
 ### forEach() method in Iterable interface
+- Iterator whose whole purpose is to iterate over and then we have business logic in a loop for each of the elements in the Collection
+- Java 8 has introduced forEach method in **java.lang.Iterable** interface so that while writing code we focus on business logic only. 
+- forEach method takes **java.util.function.Consumer** object as argument, so it helps in having our business logic at a separate location that we can reuse.
 - replaces while(iterator.hasNext()) logic which may cause mismatch during iteration.
-    
+        
+        //traversing using Iterator
+        Iterator<Integer> it = myList.iterator();
+        while(it.hasNext()){
+        	Integer i = it.next();
+        	System.out.println("Iterator Value::"+i);
+        }
+        		
+        //traversing through forEach method of Iterable
+        myList.forEach(element -> {
+        	System.out.println("forEach element Value::"+element);
+        });
+        		
 ### default and static methods in Interfaces
 - forEach() is example of this, but it may occur **Diamond Problem** 
 - Here implementation class will throw compile time exception as - A default method cannot override a method from java.lang.Object
 - Solution to this is we will have to provide implementation logic in the class implementing the interfaces.
 - Since any class implementing an interface already has Object as a superclass, if we have equals(), hashCode() default methods in the interface, it will become irrelevant. That’s why for better clarity, interfaces are not allowed to have Object default methods.
+- Examples:
+    - Iterable -> forEach()
+    - Comparable -> comparing(), thenComparing()
     
 ### Functional Interfaces and Lambda Expressions
 - java.util.function
@@ -22,7 +40,7 @@
         				System.out.println("My Runnable");
         			}}; 
         	
-        	This can be defined as in single line with the helpo of anonymous classes - 
+        	This can be defined as in single line with the help of anonymous classes - 
         	    Runnable r1 = () -> System.out.println("My Runnable");
   
     - **Function**      
@@ -80,7 +98,7 @@
 ### Java Stream API
 - To avoid external iteration over collections and object containers in Java.. Stream API introduce internal iteration 
 facility to operate on data structures in Java 8. 
-    Example:
+    **Example:**
         
         private static int sumIterator(List<Integer> list) {
         	Iterator<Integer> it = list.iterator();
@@ -119,11 +137,37 @@ facility to operate on data structures in Java 8.
         
     - **Streams with Splitrator** 
         - used for traversing and partitioning sequences, used for parallel processing as well. 
-        - tryAdvance() takes a Consumer that’s used to consume elements of the Spliterator one by one sequentially
-        - trySplit() split it into two parts. Then the caller process elements, and finally, the returned instance will process the others, allowing the two to be processed in parallel.
+        - **tryAdvance()** takes a Consumer that’s used to consume elements of the Spliterator one by one sequentially
+            
+                spliterator.tryAdvance(a -> a.setName(article.getName().concat("- published by @mm")))
+                            
+        - **trySplit()** split it into two parts. Then the caller process elements, and finally, the returned instance will process the others, allowing the two to be processed in parallel.
+                
+                public static List<Article> generateElements() {
+                    return Stream.generate(() -> new Article("Java"))
+                      .limit(35000)
+                      .collect(Collectors.toList());
+                }
+                
+                @Test
+                public void givenSpliterator_whenAppliedToAListOfArticle_thenSplittedInHalf() {
+                    Spliterator<Article> split1 = Executor.generateElements().spliterator(); 
+                    Spliterator<Article> split2 = split1.trySplit(); 
+                    
+                    assertThat(new Task(split1).call()).containsSequence(Executor.generateElements().size() / 2 + ""); 
+                    assertThat(new Task(split2).call()).containsSequence(Executor.generateElements().size() / 2 + ""); 
+                }
+                
         - estimatedSize() gives us an estimated number of elements
         - hasCharacteristics()
-        
+           - SIZED – if it's capable of returning an exact number of elements with the estimateSize() method
+           - SORTED – if it's iterating through a sorted source
+           - SUBSIZED – if we split the instance using a trySplit() method and obtain Spliterators that are SIZED as well
+           - CONCURRENT – if source can be safely modified concurrently
+           - DISTINCT – if for each pair of encountered elements x, y, !x.equals(y)
+           - IMMUTABLE – if elements held by source can't be structurally modified
+           - NONNULL – if source holds nulls or not
+           - ORDERED – if iterating over an ordered sequence    
 - Java Stream Intermediate and Terminal Operations
     - filter(), map() are the most commonly used intermediate operations
     - Terminal operations that returns a result or produce a side effect.
@@ -131,6 +175,7 @@ facility to operate on data structures in Java 8.
     - forEach(), toArray(), min(), max(), findFirst(), anyMatch(), allMatch() are terminal 
      
     - reduce()
+        - A reduction is a terminal operation that aggregates a stream into a type or a primitive.
         - reduction stream operations allow us to produce one single result from a sequence of elements
         - The Key Concepts: Identity, Accumulator, and Combiner
         - Examples
@@ -164,7 +209,7 @@ facility to operate on data structures in Java 8.
 - Java Stream Short Circuiting Operations
     - An intermediate operation is called short circuiting, if it may produce finite stream for an infinite stream.
       Eg. limit() and skip()
-    - A terminal operation is called short circuiting, if it may terminate in finite time for infinite stream.
+    - A terminal operation is called short circuiting, if it may terminate in finite stream for infinite stream.
       Eg.  anyMatch(), allMatch(), noneMatch(), findFirst() and findAny()
 
     
@@ -172,7 +217,7 @@ facility to operate on data structures in Java 8.
 - It has some sub-packages **java.time.format** that provides classes to print and parse dates and times and **java.time.zone** provides support for time-zones and their rules.
 - DateTimeFormatter
     
-### Collection API improvements**
+### Collection API improvements
 - Iterator default method **forEachRemaining(Consumer action)** to perform the given action for each remaining element until all elements have been processed or the action throws an exception.
 - Collection default method **removeIf(Predicate filter)** to remove all of the elements of this collection that satisfy the given predicate.
 - Collection **spliterator()** method returning Spliterator instance that can be used to traverse elements sequentially or parallel.
@@ -194,9 +239,7 @@ facility to operate on data structures in Java 8.
         - Single arg of type Collection (They can be copied from other collections)
     - UnsupportedOperationException - methods that operate on these collections throws this exception if the operation is not supported by specific collection.
     - Some unchecked exception like NullPointerException or ClassCastException are marked as optional.
-    - It is up to each collection to determine its own synchronization policy
-    - returns true if and only if this collection contains at least one element e such that
-      (o==null ? e==null : o.equals(e)) 
+    - It is up to each collection to determine its own synchronization polic
     - Implementations are free to implement optimizations whereby the equals invocation is avoided, for example, by first comparing the hash codes of the two elements. (The hashCode()} specification guarantees that two objects with unequal hash codes cannot be equal.
     - Methods: 
         - size()                
@@ -909,8 +952,7 @@ Three types - Splitarators
         
        - Spring 
             - Where we create application context - provided there as component scan package.
-          
-       
+                
 - What is IOC and Dependency Injection in Spring?
     - IOC is mechanism by which the control of objects or portions of a program is transfered to a container or framework.
     - It helps in decoupling the execution of a task from its implementation
@@ -1079,7 +1121,7 @@ Three types - Splitarators
             - JmsTemplate
             - TransactionTemplate
         
-- Scope of Bean in Spring
+- Spring Bean Scope 
     - Spring framework defines 6 types of scopes:
         - default scope is singleton for spring IOC container level
             
@@ -1173,6 +1215,7 @@ Three types - Splitarators
        
 - Exception Handling in Spring 
     - Explain What approach we told initially - need exception handling in each class.
+            
             try{
                 //Logic
             }catch(Exception ex){
@@ -1358,7 +1401,7 @@ Three types - Splitarators
              @Value("${spring.profiles.active:}")
              private String activeProfiles;
                                                                                                               
-- Have you heard about SpringBoot what is it?
+- SpringBoot what is it?
     - All hectic configuration
     - Microservice based apps we can easily build
     - Spring Vs Spring Boot
@@ -1383,36 +1426,37 @@ Three types - Splitarators
             - **@EnableAutoConfiguration** – which tells the framework to add beans based on the dependencies on the classpath automatically
             - **@ComponentScan** – which scans for other configurations and beans in the same package as the Application class or below     
        
-       - @ConditionalOnClass and @ConditionalOnMissingClass
+       - Conditional Configuration
+            - @ConditionalOnClass and @ConditionalOnMissingClass
             
-                @Configuration
-                @ConditionalOnClass(DataSource.class)
-                class MySQLAutoconfiguration {
-                    //...
-                }
+                    @Configuration
+                    @ConditionalOnClass(DataSource.class)
+                    class MySQLAutoconfiguration {
+                        //...
+                    }
        
-       - @ConditionalOnBean and @ConditionalOnMissingBean - define conditions based on the presence or absence of a specific bean:
+            - @ConditionalOnBean and @ConditionalOnMissingBean - define conditions based on the presence or absence of a specific bean:
                 
-                @Bean
-                @ConditionalOnBean(name = "dataSource")
-                LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-                    // ...
-                }
+                    @Bean
+                    @ConditionalOnBean(name = "dataSource")
+                    LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+                        // ...
+                    }
                 
-       -  @ConditionalOnProperty
+            -  @ConditionalOnProperty
                 
-                @Bean
-                @ConditionalOnProperty(name = "usemysql", havingValue = "local")
-                DataSource dataSource() {
-                    // ...
-                }
+                    @Bean
+                    @ConditionalOnProperty(name = "usemysql", havingValue = "local")
+                    DataSource dataSource() {
+                        // ...
+                    }
        
-       - @ConditionalOnResource
+            - @ConditionalOnResource
                 
-                @ConditionalOnResource(resources = "classpath:mysql.properties")
-                Properties additionalProperties() {
-                    // ...
-                }
+                    @ConditionalOnResource(resources = "classpath:mysql.properties")
+                    Properties additionalProperties() {
+                        // ...
+                    }
        
     - Disable Autoconfiguration - exclude the auto-configuration from being loaded
         - Disable from annotation
@@ -1445,43 +1489,129 @@ Three types - Splitarators
 - Spring Security
     - Which Security framework you have worked upon? JWT
         - Introduction of JWT
-        - Issuing and validating
+            - It is an open standard for securely transmitting information between parties as a JSON object.
+            - information can be verified and trusted because it is digitally signed.
+            - JWTs can be signed using a secret (with the HMAC algorithm) or a public/private key pair using RSA or ECDSA.
+        
         - Why we are using JWT? 
             token - set of values - encrypted based on HMAC
-        - What it provides?
             
+        - When to use?
+            - Authorization: This is the most common scenario for using JWT
+            - Information Exchange: JSON Web Tokens are a good way of securely transmitting information between parties.      
         - Add dependencies
             spring-boot-starter-security
+      
         - Major components in Configuration
-            - Auth Controller
-            - Security Config 
-                - @EnableWebSecurity, 
-                - extend WebSecurityConfigurerAdapter
-                - configure -> AuthenticationManagerBuilder -> UserDetailsService, PasswordEncoder
-                - configure -> HttpSecurity
-            -  Configure Security filter
+            - Configure UserDetail Service - Authentiocation
                 
-        - Authorization & Authentication flow
+                	@Override
+                	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+                		auth
+                				.userDetailsService(userDetailsService)
+                				.passwordEncoder(passwordEncoder());
+                	}
+            
+            - Configure HttpSecurity - Authorization
+                - Always go from most restrictive to least restrictive url's for authorization in HttpSecurity
+                
+                    public void configure(HttpSecurity http) throws Exception {
+                		http.csrf()
+                				.disable()
+                				.headers().frameOptions().deny()
+                				.cacheControl().disable()
+                				.httpStrictTransportSecurity().and().xssProtection().block(false);
+                	}
+                
+                - headers()     
+                    - What are frameOptions ?
+                        - X-Frame-Options header help in avoiding clickjacking attacks
+                        - Possible values for this header:
+                            - DENY – The recommended value for X-Frame-Options and it prevents any domain to frame the content.
+                            - SAMEORIGIN – This allows only the current site to frame the content.
+                            - ALLOW-FROM URI – This allows the specified URI to frame the content.
+                        - clickjacking attack - iframe
+                    
+                    - What is cacheControl?
+                    - What is httpStrictTransportSecurity?
+                    - What is xssProtection?
+                - sessionManagement()
+                - authorizeRequests()
+                    - Note that the matchers are considered in order
+                - portMapper()
+                - What is csrf?
+                    - Cross-Site Request Forgery attack is an attack that forces the end user to make an unwanted calls to the web application servers where the end user is already authenticated
+                    - Adds CSRF support. This is activated by default when using WebSecurityConfigurerAdapter's default constructor. You can disable it using
+                - What is cors?
+                       - We can enable cross-origin resource sharing (CORS) from either in individual methods, controllers or globally with @CrossOrigin annotation.
+                   
+                - logout()
+                        
+                        http
+                                     .authorizeRequests()
+                                         .antMatchers("/**").hasRole("USER")
+                                         .and()
+                                     .formLogin()
+                                         .and()
+                                     // sample logout customization
+                                     .logout()
+                                         .logout()
+                                            .deleteCookies("remove")
+                                            .invalidateHttpSession(false)
+                                            .logoutUrl("/custom-logout")
+                                            .logoutSuccessUrl("/logout-success");
+                - formLogin()
+                    - The most basic configuration defaults to automatically generating a login page at the URL "/login", redirecting to "/login?error" for authentication failure.  
+                - httpBasic()
+                - authenticationProvider()
+                - userDetailsService()
+                - addFilterAfter()
+                - addFilterBefore()
+                
+            - BCryptPasswordEncoder 
+                - On the top of SHA-256 Bcrypt is used specially for password encoding 
             
     - How you will maintain roles in your controller?
-            - Using spring security @PreAutorized
-                - This is provided by spring security which we can use it at method level or controller level
-                - To enable this we need to @EnableGlobalSpringSecurity
-                - This accepts SPEL expression - hasRoles - all should be appended by Role_
+        - Using spring security @PreAutorized
+        - This is provided by spring security which we can use it at method level or controller level
+        - To enable this we need to @EnableGlobalSpringSecurity
+        - This accepts SPEL expression - hasRoles - all should be appended by Role_
             
-            - SecurityContext classes
+        - **SecurityContext**
                 - Extract SecurityContextHolder -> Authentication
                 
-            - UserDetailsServie
+        - **UserDetailsServie**
                 - Extract from UserDetailsService 
                 
-            - Using HttpServletRequest
+        - **HttpServletRequest**
                 by extracting isUserInRole(), Principle   
 
 - Spring JPA/Hibernate
-    - Can you please do integration of spring with JPA hibernate
-    - Dependencies
+    - Can you please do integration of spring with JPA hibernate?
+    - What is Hibernate?
+        - ORM - implemented on the to of JPA. 
+        - Mappings - JPA Annotations, XML configuration
+        - HQL
+    - Why Hibernate?
+        - reduces boiler-plate code
+        - provide internal exception handling
+        - provides internal transaction management
+        - provides multiple levels of caching
         
+    - Important Interfaces in hibernate
+        - **SessionFactory** used to store session object for db connections.One SessionFactory per DB connection like mysql,oracle.
+        - **Session** Factory for transaction, it's used to get a physical connection with db. CRUD operation methods.
+        - **Transaction** single atomic unit of work
+    
+    - Important Annotations
+        - Entity
+        - Table
+        - Id
+        - EmbeddedId
+        - Column
+        
+    - Dependencies
+ 
             spring-boot-starter
             spring-boot-starter-data-jpa
           
@@ -1581,9 +1711,203 @@ Three types - Splitarators
                 <tx:annotation-driven />
                 
                 <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+    - Hibernate Mappings
+        - OneToOne
+            - **Example: User <--> Address**
+                - **User Entity**    
+                       
+                        @Entity
+                        @Table(name = "users")
+                        public class User {
+                            
+                            @Id
+                            @GeneratedValue(strategy = GenerationType.AUTO)
+                            @Column(name = "id")
+                            private Long id;
+                            //... 
+                        
+                            @OneToOne(cascade = CascadeType.ALL)
+                            @JoinColumn(name = "address_id", referencedColumnName = "id")
+                            private Address address;
+                        
+                            // ... getters and setters
+                        }               
+                - **@OneToOne** we place the  annotation on the related entity field
+                - **@JoinColumn** 
+                    - we need to place this annotation to configure the name of the column in the users table that maps to the primary key in the address table                     
+                    - note in the next entity that we won't use the @JoinColumn annotation there. This is because we only need it on the owning side of the foreign key relationship. 
+                    - Simply put, whoever owns the foreign key column gets the @JoinColumn annotation.
+            - **Address entity**
+                - We also need to place the @OneToOne annotation here too. That's because this is a bidirectional relationship. 
+                - The address side of the relationship is called the **non-owning** side. 
+                
+                        @Entity
+                        @Table(name = "address")
+                        public class Address {
+                        
+                            @Id
+                            @GeneratedValue(strategy = GenerationType.AUTO)
+                            @Column(name = "id")
+                            private Long id;
+                            //...
+                        
+                            @OneToOne(mappedBy = "address")
+                            private User user;
+                        
+                            //... getters and setters
+                        }
+        - OneToMany
+            - one-to-many mapping means that one row in a table is mapped to multiple rows in another table.
+            - **Example: Cart <--> Items**
+                - One cart can have many items, so here we have a one-to-many mapping.
+                - The way this works at the database level is we have a cart_id as a primary key in the cart table and also a cart_id as a foreign key in items.
+                - **Cart Entity**
+                        
+                       @Entity
+                       @Table(name="CART")
+                       public class Cart {
+                       
+                           //...
+                       
+                           @OneToMany(mappedBy="cart")
+                           private Set<Items> items;
+                       	
+                           // getters and setters
+                       }
+                - **Item Entity**
+                        
+                        @Entity
+                        @Table(name="ITEMS")
+                        public class Items {
+                            
+                            //...
+                            @ManyToOne
+                            @JoinColumn(name="cart_id", nullable=false)
+                            private Cart cart;
+                        
+                            public Items() {}
+                            
+                            // getters and setters
+                        }
+                               
+                - We can also add a reference to Cart in Items using @ManyToOne, making this a bidirectional relationship. Bidirectional means that we are able to access items from carts, and also carts from items.             
+                - The mappedBy property is what we use to tell Hibernate which variable we are using to represent the parent class in our child class.
+                - As stated in the JPA specification under section 2.9, it's a good practice to mark many-to-one side as the owning side.
+                - By including the mappedBy attribute in the Cart class, we mark it as the inverse side.
+                - At the same time, we also annotate the Items.cart field with @ManyToOne, making Items the owning side.
+        
+        - ManyToMany
+            - **Example: Employee <--> Project**
+                - both the Employee class and Project classes refer to one another, which means that the association between them is bidirectional.    
+                    @Entity
+                    @Table(name = "Employee")
+                    public class Employee { 
+                        // ...
                      
-    - We can exclude the artifacts that are unused
-                                       
+                        @ManyToMany(cascade = { CascadeType.ALL })
+                        @JoinTable(
+                            name = "Employee_Project", 
+                            joinColumns = { @JoinColumn(name = "employee_id") }, 
+                            inverseJoinColumns = { @JoinColumn(name = "project_id") }
+                        )
+                        Set<Project> projects = new HashSet<>();
+                       
+                        // standard constructor/getters/setters
+                    }
+                    
+                    @Entity
+                    @Table(name = "Project")
+                    public class Project {    
+                        // ...  
+                     
+                        @ManyToMany(mappedBy = "projects")
+                        private Set<Employee> employees = new HashSet<>();
+                        
+                        // standard constructors/getters/setters   
+                    }
+                - In our example, the owning side is Employee so the join table is specified on the owning side by using the @JoinTable annotatio
+        - Fetch Type
+            - **Eager Loading**
+                - In eager loading strategy, if we load the Table data, it will also load up all tables associated with it and will store it in a memory.
+                    
+                        @OneToMany(fetch = FetchType.EAGER)
+                        
+            - **Lazy Loading**
+                - Hibernate applies lazy loading approach on entities and associations by providing a proxy implementation of classes.
+                
+                        @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")            
+                - Initial load time much smaller
+                - Less memory consumption        
+                
+        - Cascade Type   
+            - **Cascade.ALL** propagates all operations — including Hibernate-specific ones — from a parent to a child entity.
+            - **CascadeType.PERSIST** propagates the persist operation from a parent to a child entity. 
+            - **CascadeType.MERGE** propagates the merge operation from a parent to a child entity    
+            - **CascadeType.REMOVE** propagates the remove operation from parent to child entity. Similar to JPA's CascadeType.REMOVE, we have CascadeType.DELETE, which is specific to Hibernate.
+            - **CascaseType.DETACH** the child entity will also get removed from the persistent context.
+            - **CascadeType.LOCK** re-attaches the entity and its associated child entity with the persistent context again.
+            - **CascadeType.REFRESH** the child entity also gets reloaded from the database whenever the parent entity is refreshed.
+            - **CascadeType.REPLICATE** a sync operation also propagates to child entities whenever performed on the parent entity. The replicate operation is used when we have more than one data source, and we want the data in sync
+            - **CascadeType.SAVE_UPDATE** propagates the same operation to the associated child entity.
+    - Hibernate Named Queries
+        - **Named Query** 
+            - @NamedQuery annotation is attached to exactly one entity class or mapped superclass.
+            - As the scope of named queries is the entire persistence unit, we should select the query name carefully to avoid a collision
+                
+                    @org.hibernate.annotations.NamedQuery(name = "DeptEmployee_findByEmployeeNumber", 
+                      query = "from DeptEmployee where employeeNumber = :employeeNo")
+                  
+            - @NamedQueries annotation to group
+                    
+                    @org.hibernate.annotations.NamedQueries({
+                        @org.hibernate.annotations.NamedQuery(name = "DeptEmployee_FindByEmployeeNumber", 
+                          query = "from DeptEmployee where employeeNumber = :employeeNo"),
+                        @org.hibernate.annotations.NamedQuery(name = "DeptEmployee_FindAllByDesgination", 
+                          query = "from DeptEmployee where designation = :designation"),
+                        @org.hibernate.annotations.NamedQuery(name = "DeptEmployee_UpdateEmployeeDepartment", 
+                          query = "Update DeptEmployee set department = :newDepartment where employeeNumber = :employeeNo"),
+                    ...
+                    })
+            - HQL query can be a DML-style operation. So, it doesn't need to be a select statement only.
+            - Query Features:
+               - timeout - query timeout
+               - fetchSize - fetch size limit
+               - cacheable – whether the query (results) is cacheable or not
+               - cacheMode – the cache mode used for this query; this can be one of GET, IGNORE, NORMAL, PUT, or REFRESH
+               - cacheRegion – if the query results are cacheable, name the query cache region to use
+               - comment – a comment added to the generated SQL query; targetted for DBAs
+               - flushMode – the flush mode for this query, one of ALWAYS, AUTO, COMMIT, MANUAL, or PERSISTENCE_CONTEXT
+            - Using the Named Query
+                    
+                    Query<DeptEmployee> query = session.createNamedQuery("DeptEmployee_FindByEmployeeNumber", 
+                      DeptEmployee.class);
+                    query.setParameter("employeeNo", "001");
+                    DeptEmployee result = query.getSingleResult();
+                               
+        - **Named Native Query**
+            - Same like HQL queries, we can also define native SQL as a named query with @NamedNativeQueries annotation
+                
+                @org.hibernate.annotations.NamedNativeQueries(
+                    @org.hibernate.annotations.NamedNativeQuery(name = "DeptEmployee_GetEmployeeByName", 
+                      query = "select * from deptemployee emp where name=:name",
+                      resultClass = DeptEmployee.class)
+                )
+            - Since this is a native query, we'll have to tell Hibernate what entity class to map the results to. Consequently, we've used the **resultClass** property for doing this.
+            - Another way to map the results is to use the **resultSetMapping** property. Here, we can specify the name of a pre-defined SQLResultSetMapping.
+            - Use:
+                
+                    NativeQuery query = session.getNamedNativeQuery("DeptEmployee_FindByEmployeeName");
+                    query.setParameter("name", "John Wayne");
+                    DeptEmployee result = (DeptEmployee) query.getSingleResult();
+                
+        - **Stored Procedures and Functions**
+            - We can use the @NamedNativeQuery annotation to define calls to stored procedures and functions as well
+                
+                    @org.hibernate.annotations.NamedNativeQuery(
+                      name = "DeptEmployee_UpdateEmployeeDesignation", 
+                      query = "call UPDATE_EMPLOYEE_DESIGNATION(:employeeNumber, :newDesignation)", 
+                      resultClass = DeptEmployee.class)
+                                          
 - Transaction Management in Spring
     - Two types of Transaction Management
          - Declarative - This is annotation based provided by Spring
@@ -1709,9 +2033,119 @@ Three types - Splitarators
                           
                               assertThat(entityManager.createQuery("select p from Payment p").getResultList()).hasSize(1);
                           }  
-                  
-       
 
+- Spring JMS   
+   - What is JMS
+   - Topics and queues
+   - Difference between topic and queue in JMS
+   - What its purpose
+   - sync and async messaging
+   - Producer and consumer
+   - jms handles which type of calls.
+   - How queue get active.
+   - How modules communicates.                         
+
+- Spring Async Services
+    - Spring provides asynchronous execution support in Spring – with the @Async annotation
+    - annotating a method of a bean with @Async will make it execute in a separate thread i.e. the caller will not wait for the completion of the called method.
+    - enabling asynchronous processing with Java configuration 
+        
+            @Configuration
+            @EnableAsync
+            public class SpringAsyncConfig { ... }
+            
+    - XML configuration – by using the task namespace:
+        
+            <task:executor id="myexecutor" pool-size="5"  />
+            <task:annotation-driven executor="myexecutor"/>
+            
+    - @Async has two limitations:
+        - it must be applied to public methods only – the method needs to be public so that it can be proxied.
+        - self-invocation – calling the async method from within the same class – won't work - And self-invocation doesn't work because it bypasses the proxy and calls the underlying method directly.
+    - @Async Methods    
+        - **Methods with void return type**
+            
+                @Async
+                public void asyncMethodWithVoidReturnType() {
+                    System.out.println("Execute method asynchronously. " + Thread.currentThread().getName());
+                }
+        - **Method with return type** – by wrapping the actual return in the Future:
+        
+                @Async
+                public Future<String> asyncMethodWithReturnType() {
+                    System.out.println("Execute method asynchronously - " 
+                      + Thread.currentThread().getName());
+                    try {
+                        Thread.sleep(5000);
+                        return new AsyncResult<String>("hello world !!!!");
+                    } catch (InterruptedException e) {
+                        //
+                    }
+                
+                    return null;
+                }
+                
+                // Calling Async method
+                public void testAsyncAnnotationForMethodsWithReturnType()
+                  throws InterruptedException, ExecutionException {
+                    System.out.println("Invoking an asynchronous method. " 
+                      + Thread.currentThread().getName());
+                    Future<String> future = asyncAnnotationExample.asyncMethodWithReturnType();
+                
+                    while (true) {
+                        if (future.isDone()) {
+                            System.out.println("Result from asynchronous process - " + future.get());
+                            break;
+                        }
+                        System.out.println("Continue doing something else. ");
+                        Thread.sleep(1000);
+                    }
+                }
+        - Spring also provides an AsyncResult class which implements Future.
+    
+    - **The Executor** 
+        - By default, Spring uses a SimpleAsyncTaskExecutor to actually run these methods asynchronously.
+        - We can cutomize this in two ways:
+            - Override the Executor at the Method Level
+                - The required executor needs to be declared in a configuration class:
+                  
+                      @Configuration
+                      @EnableAsync
+                      public class SpringAsyncConfig {
+                          
+                          @Bean(name = "threadPoolTaskExecutor")
+                          public Executor threadPoolTaskExecutor() {
+                              ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+                                executor.setCorePoolSize(10);
+                                executor.setMaxPoolSize(10);
+                                executor.setQueueCapacity(100);
+                                executor.setThreadNamePrefix("Test-Executor-");
+                                executor.initialize();
+                              return executor;
+                           
+                          }
+                      }
+                - Then the executor name should be provided as an attribute in @Async:
+                  
+                      @Async("threadPoolTaskExecutor")
+                      public void asyncMethodWithConfiguredExecutor() {
+                          System.out.println("Execute method with configured executor - " + Thread.currentThread().getName());
+                      }
+            - Override the Executor at the Application Level 
+                - The configuration class should implement the AsyncConfigurer interface – which will mean that it has the implement the getAsyncExecutor() method.
+                    
+                        @Configuration
+                        @EnableAsync
+                        public class SpringAsyncConfig implements AsyncConfigurer {
+                            
+                            @Override
+                            public Executor getAsyncExecutor() {
+                                return new ThreadPoolTaskExecutor();
+                            }
+                            
+                        }
+                - here that we will return the executor for the entire application – this now becomes the default executor to run methods annotated with @Async
+                                          
 - What are interceptors in a spring?
     - HandlerIntercceptor is the only interceptor provided by spring
     - It is a way to control request response flow
@@ -1724,22 +2158,75 @@ Three types - Splitarators
     - Filter is similer to interceptor but different
     
 - Spring AOP
-    APO is a framework that is extended by Spring
-    
-    Spring Global Exception Handling - with @ControllerAdvice is example 
-    
-    Aspect
-    Joint Points
+    - APO is a framework that is extended by Spring
+    - Spring Global Exception Handling - with @ControllerAdvice is example 
+    -  Implementation Example of Spring AOP
+        - Define Marker Interface - Custom Annotation for Aspect
+            
+                /** 
+                 * <code>LoggableMethod</code> is a Marker interface defined to enable method logging. <br>
+                 * @author Mahesh More
+                 */
+                public @interface LoggableMethod {
+                }     
+        
+        - Define aspect to wrap the business logic
+            
+                /** 
+                 * <code>MethodLogAspect</code> is an Aspect that provides logging service on START, SUCCESS and FAILURE of method <br>
+                 * @author Mahesh More
+                 */
+                @Aspect
+                @Component
+                public class MethodLogAspect {
+                    static final Logger log = LoggerFactory.getLogger(MethodLogAspect.class.getName());
+                
+                    /**
+                     * 
+                     *  Provides logging on START, SUCCESS and FAILURE of all LoggableMethod.
+                     * @param proceedingJoinPoint
+                     * @return Object
+                     * @throws Exception
+                     */
+                    @Around("@annotation(com.mm.logging.aspects.markers.LoggableMethod) && execution(public * *(..))")
+                    public Object methodLogHandler(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+                        Object value;
+                        String methodLocation = "";
+                        String methodClass = "";
+                        String methodName = "";
+                        try {
+                            Map<String, Object> methodParams = new HashMap<>();
+                            String[] methodArgs = null;
+                            if (proceedingJoinPoint != null && proceedingJoinPoint.getSignature() != null) {
+                                methodLocation = proceedingJoinPoint.getSignature().getDeclaringType().toString();
+                                methodName = proceedingJoinPoint.getSignature().getName();
+                                methodClass = proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName();
+                                CodeSignature codeSignature = (CodeSignature) proceedingJoinPoint.getSignature();
+                                methodArgs = codeSignature.getParameterNames();
+                                for (int i = 0; i < methodArgs.length; i++) {
+                                    methodParams.put(methodArgs[i], proceedingJoinPoint.getArgs()[i]);
+                                }
+                            }
+                            log.info("{}.{}() :: {} :: {} :: START :: PARAMS: {}", methodLocation, methodName, methodClass.toUpperCase(), methodName.toUpperCase(),
+                                    MsvcJSONUtil.toJSON(methodParams));
+                            value = proceedingJoinPoint.proceed();
+                            log.info("{}.{}() :: {} :: {} :: SUCCESS", methodLocation, methodName, methodClass.toUpperCase(), methodName.toUpperCase());
+                            log.debug("{}.{}() :: RETURN_VALUE: {}", methodLocation, methodName, MsvcJSONUtil.toJSON(value));
+                        } catch (Throwable ex) {
+                            log.error("{}.{}() :: {} :: {} :: EXCEPTION :: MESSAGE : {} :: STACK_TRACE : {}", methodLocation, methodName, methodClass.toUpperCase(),
+                                    methodName.toUpperCase(), ex.getMessage(), ex.getStackTrace());
+                            throw ex;
+                        }
+                        return value;
+                    }
+                }
+ 
+    - Joint Points
         Lifecycle @Before, @After
+
         
 ### Web Services
 
 - Rest Mapping should be noun. 
 
 ### PL SQL
-
-
-### JMS
-
-
-### Database Connection
