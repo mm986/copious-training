@@ -377,8 +377,6 @@ Only one null allowed.
     - an enhanced version of ArrayList in which all modifications (add, set, remove, etc) are implemented by making a fresh copy
     - thread-safe version of ArrayList
     - the Iterator of CopyOnWriteArrayList can't perform remove operation otherwise we get Run-time exception saying UnsupportedOperationException. Also Iterator of CopyOnWriteArrayList will never throw ConcurrentModificationException.
-    
-### Iterators, Spliterators and Enumerations
 
 ## Optional in Java
 - A container object which may or may not contain a non-null value. If a value is present, **isPresent()** will return **true** and **get()** will return the value.
@@ -393,192 +391,13 @@ Only one null allowed.
     - orElse()
     - orElseThrow()
     
-## Java Annotation
-- Java annotations are typically used for the following purposes:
-    - Compiler instructions
-    - Build-time instructions
-    - Runtime instructions
-- how to access Java annotations via reflection?
-- Accessing Java Annotations via Java Reflection
-    - Annotation Elements - default value, use name value if it is single.
-    - Annotations used to define annotations
-        - @Retention
-        - @Target this is related to annotation placement
-        - @Inherited
-        - @Documented
-    - Built-In Java annotations
-       - @Deprecated
-       - @Override
-       - @SuppressWarnings
-    - Custom annotations
     
-## Java Multithreading
-- Deadlock
-- Multithreading iterators
-- synchronized
-- Executor framework
-    - task executor
-    - executor service
-
-## Generics
-
-##SpringBoot Starter
-
-@SpringBootApplication
-- @EnableAutoConfiguration: enable Spring Boot’s auto-configuration mechanism
-    - exclude:  @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-    - We can also control the list of auto-configuration classes to exclude by using the spring.autoconfigure.exclude property.
-- @ComponentScan: enable @Component scan on the package where the application is located (see the best practices)
-- @Configuration: allow to register extra beans in the context or import additional configuration classes    
-   - basePackages
-   - basePackageClasses
-   - nameGenerator
-- What is On Condition Bean?
-   - @Conditional annotation
-   - https://reflectoring.io/spring-boot-conditionals/
-- https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/using-boot-using-springbootapplication-annotation.html
-
-## Spring Security
-- @EnableWebSecurity
-- extends WebSecurityConfigurerAdapter
-- Configure UserDetail Service - Authentiocation
-    
-    	@Override
-    	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-    		auth
-    				.userDetailsService(userDetailsService)
-    				.passwordEncoder(passwordEncoder());
-    	}
-
-- Configure HttpSecurity - Authorization
-    - Always go from most restrictive to least restrictive url's for authorization in HttpSecurity
-    
-        public void configure(HttpSecurity http) throws Exception {
-    		http.csrf()
-    				.disable()
-    				.headers().frameOptions().deny()
-    				.cacheControl().disable()
-    				.httpStrictTransportSecurity().and().xssProtection().block(false);
-    	}
-    
-    - headers()     
-        - What are frameOptions ?
-            - X-Frame-Options header help in avoiding clickjacking attacks
-            - Possible values for this header:
-                - DENY – The recommended value for X-Frame-Options and it prevents any domain to frame the content.
-                - SAMEORIGIN – This allows only the current site to frame the content.
-                - ALLOW-FROM URI – This allows the specified URI to frame the content.
-            - clickjacking attack - iframe
-        
-        - What is cacheControl?
-        - What is httpStrictTransportSecurity?
-        - What is xssProtection?
-    - sessionManagement()
-    - authorizeRequests()
-        - Note that the matchers are considered in order
-    - portMapper()
-    - What is csrf?
-        - Cross-Site Request Forgery attack is an attack that forces the end user to make an unwanted calls to the web application servers where the end user is already authenticated
-        - Adds CSRF support. This is activated by default when using WebSecurityConfigurerAdapter's default constructor. You can disable it using
-    - What is cors?
-           - We can enable cross-origin resource sharing (CORS) from either in individual methods, controllers or globally with @CrossOrigin annotation.
-       
-    - logout()
-            
-            http
-                         .authorizeRequests()
-                             .antMatchers("/**").hasRole("USER")
-                             .and()
-                         .formLogin()
-                             .and()
-                         // sample logout customization
-                         .logout()
-                             .logout()
-                                .deleteCookies("remove")
-                                .invalidateHttpSession(false)
-                                .logoutUrl("/custom-logout")
-                                .logoutSuccessUrl("/logout-success");
-    - formLogin()
-        - The most basic configuration defaults to automatically generating a login page at the URL "/login", redirecting to "/login?error" for authentication failure.  
-    - httpBasic()
-    - authenticationProvider()
-    - userDetailsService()
-    - addFilterAfter()
-    - addFilterBefore()
-    
-- BCryptPasswordEncoder 
-    - On the top of SHA-256 Bcrypt is used specially for password encoding 
-    
-## Spring Data JPA (Hibernate)
-- What is Hibernate?
-    - ORM - implemented on the to of JPA. 
-    - Mappings - JPA Annotations, XML configuration
-    - HQL
-- Why Hibernate?
-    - reduces boiler-plate code
-    - provide internal exception handling
-    - provides internal transaction management
-    - provides multiple levels of caching
-    
-- Important Interfaces in hibernate
-    - **SessionFactory** used to store session object for db connections.One SessionFactory per DB connection like mysql,oracle.
-    - **Session** Factory for transaction, it's used to get a physical connection with db. CRUD operation methods.
-    - **Transaction** single atomic unit of work
-
-- Important Annotations
-    - Entity
-    - Table
-    - Id
-    - EmbeddedId
-    - Column
-    - 
-## JMS
-
-## JAVA AOP
-
-## Maven/Pom.xml
-- How to add dependencies 
-- Exclude
-
-## SOAP - Simple Object Access Protocol
-
-
-## Questions
-- Why String is Immutable or final in Java?
-- What is the difference between poll() and remove() method of Queue interface?
-- How do you remove an entry from a Collection? and subsequently what is the difference between the remove() method of Collection and remove() method of Iterator, which one you will use while removing elements during iteration?
-- What is the difference between Synchronized Collection and Concurrent Collection?
-- What is the difference between Iterator and Enumeration?
-- What is transient keyword? When we use this?
-Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-questions-answers.html#ixzz6jjH6PNw2
-
-## Discussion With Guru 
-- Deadlock
-- Multithreaded list iterator
-- synchronized
-
- - Java8
-- Collections all with examples
-- Executor
-- Treeset and treemap
-- singleton ,factory patterns
--
-
-- OOPS example
-- Abstraction vs Interfaces scenarios
-- Immutability with implementation
-- Generics
-
-Java8 with examples Journal dev
-Consumers, Splitarators, Streams
-Three types - Splitarators
-
 # Interview discussion with Akhand (27 Jan 2021)
 
 ### Core Java
 - What is the difference between Abstract class, Abstraction, Interface?
     - These all deals with abstraction, It is a way to achieve abstraction in Java. We are hiding implementation details, and showing functionality. Focus on what instead of how.
-    There are levels of abstraction-
+    - There are levels of abstraction-
     - Abstract class Vs Interface 
         - **Type of methods**: Interface can have only abstract methods. Abstract class can have abstract and non-abstract methods.
         - **Final Variables**: Variables declared in a Java interface are by default final. An abstract class may contain non-final variables.
@@ -696,7 +515,6 @@ Three types - Splitarators
         - runtime  
             - overriding - dynamic binding - late binding - inheritance multiple classes
     
-
 - Collections        
      - Introdudction
      - Iterable root interface 
@@ -823,8 +641,7 @@ Three types - Splitarators
             - Deserialization will also create new instance  
        
        - Enumeration - these are checked at compile time - we can implement singleton design pattern.
-       
-       
+             
 - Deep Copy & Shallow Copy
    - Shallow copy copies the existing references of object - we can do with default clone()  method  
    - Deep copy we create new instance and then copy the values.
@@ -875,17 +692,17 @@ Three types - Splitarators
             ResultSet needs to iterate and add to collection manually
             We can create RowMapper and override **mapRows()** and will map with entity
             RowMapper used with JDBCTemplate         
+            
 - Generics    
 
 - Garbage Collections
-    -  
-    Three sections 
+    
 - Unit Testing    
     
 - Inner classes
 
 - Deadlock
-    
+ 
 ### Spring
 - What is Spring Application Container?
     - Web container responsible for managing the lifecycle of servlets.
@@ -1427,6 +1244,7 @@ Three types - Splitarators
             - **@ComponentScan** – which scans for other configurations and beans in the same package as the Application class or below     
        
        - Conditional Configuration
+            - https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/using-boot-using-springbootapplication-annotation.html
             - @ConditionalOnClass and @ConditionalOnMissingClass
             
                     @Configuration
@@ -2224,9 +2042,45 @@ Three types - Splitarators
     - Joint Points
         Lifecycle @Before, @After
 
-        
-### Web Services
+- Spring Annotations    
+    - Java annotations are typically used for the following purposes:
+        - Compiler instructions
+        - Build-time instructions
+        - Runtime instructions
+    - how to access Java annotations via reflection?
+    - Accessing Java Annotations via Java Reflection
+        - Annotation Elements - default value, use name value if it is single.
+        - Annotations used to define annotations
+            - @Retention
+            - @Target this is related to annotation placement
+            - @Inherited
+            - @Documented
+        - Built-In Java annotations
+           - @Deprecated
+           - @Override
+           - @SuppressWarnings
+        - Custom annotations    
 
-- Rest Mapping should be noun. 
+### Other
+- Properties class implementation to read System properties and provide it to rest api.
+- LocalDate operations
+- JUnit/Mockito
+- Swagger
+- MDC logs
+- Maven Multi module project      
+      
+### Web Services
+- **REST (JAX-RS)**
+- **SOAP (JAX-WS)**
 
 ### PL SQL
+
+## Questions
+- Why String is Immutable or final in Java?
+- What is the difference between poll() and remove() method of Queue interface?
+- How do you remove an entry from a Collection? and subsequently what is the difference between the remove() method of Collection and remove() method of Iterator, which one you will use while removing elements during iteration?
+- What is the difference between Synchronized Collection and Concurrent Collection?
+- What is the difference between Iterator and Enumeration?
+- What is transient keyword? When we use this?
+Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-questions-answers.html#ixzz6jjH6PNw2
+
