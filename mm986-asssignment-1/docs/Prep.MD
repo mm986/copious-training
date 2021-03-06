@@ -2417,7 +2417,7 @@ Only one null allowed.
 - What is transient keyword? When we use this?
 Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-questions-answers.html#ixzz6jjH6PNw2
 
-##Guru Interview
+## Guru Interview
 
 - 2 objects of same class - how to compare with fields
 
