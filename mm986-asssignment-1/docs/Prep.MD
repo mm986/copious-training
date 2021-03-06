@@ -212,7 +212,15 @@ facility to operate on data structures in Java 8.
     - A terminal operation is called short circuiting, if it may terminate in finite stream for infinite stream.
       Eg.  anyMatch(), allMatch(), noneMatch(), findFirst() and findAny()
 
-    
+- Java Stream skip() vs limit()
+    - skip()
+        - skip(n) method is an intermediate operation that discards the first n elements of a stream
+        - skip() is a stateful operation.
+    - limit()        
+        - intermediate operation that returns a stream not longer than the requested size.
+        - limit() is a short-circuiting operation.
+    - Combining skip() and limit()
+        - To get data in batches (paging machenism can be implemented by combinig both operations)    
 ### Java Time API
 - It has some sub-packages **java.time.format** that provides classes to print and parse dates and times and **java.time.zone** provides support for time-zones and their rules.
 - DateTimeFormatter
@@ -395,19 +403,95 @@ Only one null allowed.
 # Interview discussion with Akhand (27 Jan 2021)
 
 ### Core Java
-- What is the difference between Abstract class, Abstraction, Interface?
-    - These all deals with abstraction, It is a way to achieve abstraction in Java. We are hiding implementation details, and showing functionality. Focus on what instead of how.
-    - There are levels of abstraction-
-    - Abstract class Vs Interface 
-        - **Type of methods**: Interface can have only abstract methods. Abstract class can have abstract and non-abstract methods.
-        - **Final Variables**: Variables declared in a Java interface are by default final. An abstract class may contain non-final variables.
-        - **Type of variables**: Abstract class can have final, non-final, static and non-static variables. Interface has only static and final variables.
-        - **Inheritance vs Abstraction**: A Java interface can be implemented using keyword “implements” and abstract class can be extended using keyword “extends”.
-        - **Accessibility of Data Members**: Members of a Java interface are public by default. A Java abstract class can have class members like private, protected, etc.
-        - **When to use** Interfaces are used to achieve 100%  abstraction(loose coupling) while Abstract classes are used where we have to implement default functionality(code reusability)
-        - **Speed** Abstract classes are faster than interfaces.
-        - Can i create instance of abstract class? No -> What is the way if i want to create instance? adding main method inside 
-       
+- JVM & Architecture
+    - JVM stands for Java virtual machine
+    - JVM is the virtual machine on which java code executes.
+    - JVM is responsible for converting byte code into machine specific code.
+    
+    ![title](img/jvm.png)
+    
+    - What is JVM ClassLoader Subsystem? Types of ClassLoaders 
+        - Class loader loads, links, and initializes a class from a Java class file.
+        - Types:
+            ![title](img/jvm-class-loader.png)
+            - Bootstrap
+                - At the top of the hierarchy is the bootstrap class loader. 
+                - This class loader is responsible for loading only the classes that are from the core Java™ API like java.lang, java.util etc
+                - It loads all classes inn jre/lib/*.jar
+                
+            - Extensions
+                - The extensions class loader can load classes that are standard extensions packages(JAVA_HOME/jre/lib/ext) in the extensions directory.
+                
+            - System
+                - Load classes from the local file system, and will load files from the CLASSPATH. 
+                - It is the parent of any custom class loader or hierarchy of custom class loaders.
+                
+            - Custom class loaders
+        - ClassNotFoundException
+        - Another way to load classes during runtime :
+            
+                Class driver = Class.forName("com.mysql.jdbc.Driver");
+            
+        - Namespaces and the runtime package
+            - A namespace is a set of class names that are loaded by a specific class loader. 
+            - the delegation model prevents the possibility of replacing a trusted class with a class of the same name from an untrusted source.    
+
+    - Heap Area in JVM
+          ![title](img/jvm-heap.png)    
+         - Heap stores all the objects and arrays that are created by the java program.
+         - Heap is divided into two generations: 
+            - The Young Generation 
+                - We can set the size of Young Generation by using -Xmn option in VM args.
+                - Further divided into two spaces: Eden Space and Survivor Space
+                        
+            - The Tenured(Old) Generation.    
+                - Depending on the threshold limits by age, objects are moved from the Survivor spaces to the Tenured space.
+                - Major GC runs in the tenured area.   
+    
+    - Method Area(Non-Heap Area)
+         ![title](img/jvm-method.png)  
+        - Permanent Generation 
+            - This area stores class related data from class definitions, structures, methods, field, method (data and code) and constants. 
+            - Can be regulated using -XX:PermSize and -XX:MaxPermSize. 
+            - It can cause java.lang.OutOfMemoryError when it runs out space.
+        - Code Cache
+            - The JIT(Just in Time) compiler compiles the bytecode to native code. This native code is stored in the code cache area.
+            - We can increase the code cache size using –XX:ReservedCodeCacheSize.              
+
+    - Garbage Collector(GC) in Java
+       - It is a process of recycling heap memory by acquiring memory from unused objects  
+       - When an Object becomes Eligible for Garbage Collection?
+            - An object which is not reachable from any live threads or by any static references.
+            - Cyclic dependencies are not counted as reference
+       - JVM provides four options for us to select the apt Garbage Collector for our Application.
+            - Serial Garbage Collector
+                - It uses a single thread for Garbage Collection.As a result, this freezes all application threads when it runs.
+                - Add -XX:+UseSerialGC in JVM args to set this GC explicitly.
+                
+            - Parallel Garbage Collector
+                - It uses multiple threads to scan through the heap space
+                - It is best suited if applications that can handle such pauses, and try to optimize CPU overhead caused by the collector.
+                - Also known as Throughput collector.
+                - Add -XX:+UseParallelGC in JVM args to set this GC explicitly.
+                - Parallel GC is the default garbage collector in JDK 8.
+                
+            - CMS(Concurrent Mark Sweep) Garbage Collector
+                - It mark objects that are unused and then sweep the marked objects.
+                - CMS collector uses more CPU to ensure better application throughput as compare with Parallel GC.
+                - Add –XX:+USeParNewGC in JVM args to set this GC explicitly.
+                
+            - G1 Garbage Collector
+                - It is designed for applications running on multi-processor machines with large memory space. Basically it is mainly designed for an application having heap size greater than 4GB.
+                - G1 collector partitions the heap into a set of equal-sized heap regions, each a contiguous range of virtual memory 
+                - G1 Garbage Collector is the default garbage collection of Java 9.
+                - The biggest advantage of the G1 GC is its performance. It is faster than the other 3 GC types.
+                - Add -XX:+UseG1GC in JVM args to set this GC explicitly.
+    
+    - Java 8 : Metaspace
+        - With Java 8, Permanent Generation(PermGen) has been removed and is replaced with Metaspace.
+        - PermGen can cause java.lang.OutOfMemoryError when it runs out if space.
+        - A new flag is available (MaxMetaspaceSize), allowing you to limit the amount of native memory used for class metadata.                             
+        
 - Constructors in Java
     - **Def**: It is a special method used to initialize the objects at the time of instantiation.
     - **Return type**: void
@@ -423,6 +507,21 @@ Only one null allowed.
         - we are doing chanining because we want to initialize values
         - Is there any other way we can achieve chaining? Java provides **IIB** features {} during class load this is called before constructor.
         
+    - Copy Constructor vs. Clone
+        - The copy constructor has some advantages over the clone method:
+            - In copy constructor we don't need to implement the Cloneable interface and handle CloneNotSupportedException.
+            - The clone method returns a general Object reference. Therefore, we need to typecast it to the appropriate type.
+            - We can not assign a value to a final field in the clone method. However, we can do so in the copy constructor.
+        - Issues with Inheritance - we will face a casting issue -> ClassCastException        
+    
+    - Deep Copy & Shallow Copy
+       - Shallow copy copies the existing references of object - we can do with default clone()  method  
+       - Deep copy we create new instance and then copy the values.
+       - object cloning 
+          - The java.lang.Cloneable interface must be implemented by the class whose object clone we want to create. 
+          - If we don't implement Cloneable interface, clone() method generates CloneNotSupportedException. 
+          - The clone() method saves the extra processing task for creating the exact copy of an object.        
+             
 - What is Exception in Java? Exception Hierarchy in Java
     - **Defin** - Exception is nothing but handling the execution flow and handling error's so the flow should not terminate normally 
     - **Hierarchy** - subclasses of java.lang.Throwable class - split into Exception & Error
@@ -438,7 +537,7 @@ Only one null allowed.
     - **I18n** - Custom exception handling - how we can include Internationalization in that 
         - ResourceBundleMessageSource - picks property file contains exception messages
     
--  What is HashMap?
+- What is HashMap?
     - Implementation of Map - deals with (k,v) pairs 
     - default size 0-15
     - it can be used in non multithreaded environment
@@ -450,7 +549,7 @@ Only one null allowed.
     - Rehashing - when hash map reaches to loadFactor then rehashing happens.
     - Resizing of hash map will lead you to race condition 
     
--  What is Immutable class? How will you create?
+- What is Immutable class? How will you create?
     - will make class as final so no one can instantiate
     - create variables as final- initialzied during instantiation.
     - expose only getter methods.
@@ -475,9 +574,10 @@ Only one null allowed.
     - Compatible changes vs Incompatible changes in serializable class 
                   
                   private static final Long serialVersionId = 123456L;
-                  Advantage of this statement - If we make any compatible change in serializable class then we don't need to recompile and deploy - it will work
-                  If we don't provide this statement then we must have to recompile and redepoly class
-                  For any non compatible change we must have to recompile and redeploy the code.      
+       - Advantage of this statement - If we make any compatible change in serializable class then we don't need to recompile and deploy - it will work
+       - If we don't provide this statement then we must have to recompile and redepoly class
+       - For any non compatible change we must have to recompile and redeploy the code.   
+       - java.io.InvalidClassException              
     - Other ways to make object Serializable
         - use Externalizable -> writeExternal(), readExternal()
         - XML serialization
@@ -485,12 +585,14 @@ Only one null allowed.
                   
 - I have an ArrayList of Employee - has 5 vars - I want to sort list by name, age, salary
    - Comparable 
+        - The main purpose of the Comparable interface is to enable the natural sorting of elements grouped in collections or arrays.
         - A comparable object is capable of comparing itself with another object. 
         - The class itself must implements the java.lang.Comparable interface to compare its instances. 
         - provides me single sorting 
         - has drawback is we have to modify existing class by overriding compareTo() 
         - Collectios.sort(list)
         - here we compare with current instance
+        -TreeMap and TreeSet are two implementations from the Java Collections Framework are the real time implementation of Comparable Interface
         
    - Comparator
         - we need to create custom comparator 
@@ -502,7 +604,19 @@ Only one null allowed.
    - all above is Java 7 - java 8 provides with streams           
 
 - OOP's in Java                                                                                                                                                                                                                                                                                                                                                                                                        - What is OOP's concept?
-    - Abstraction
+    - Abstraction : What is the difference between Abstract class, Abstraction, Interface?
+        - These all deals with abstraction, It is a way to achieve abstraction in Java. We are hiding implementation details, and showing functionality. Focus on what instead of how.
+        - There are levels of abstraction-
+        - Abstract class Vs Interface 
+            - **Type of methods**: Interface can have only abstract methods. Abstract class can have abstract and non-abstract methods.
+            - **Final Variables**: Variables declared in a Java interface are by default final. An abstract class may contain non-final variables.
+            - **Type of variables**: Abstract class can have final, non-final, static and non-static variables. Interface has only static and final variables.
+            - **Inheritance vs Abstraction**: A Java interface can be implemented using keyword “implements” and abstract class can be extended using keyword “extends”.
+            - **Accessibility of Data Members**: Members of a Java interface are public by default. A Java abstract class can have class members like private, protected, etc.
+            - **When to use** Interfaces are used to achieve 100%  abstraction(loose coupling) while Abstract classes are used where we have to implement default functionality(code reusability)
+            - **Speed** Abstract classes are faster than interfaces.
+            - Can i create instance of abstract class? No -> What is the way if i want to create instance? adding main method inside
+             
     - Encapsulation - coupling method and variables as asingle unit
     - Inheritance
         - Is-A relationship - parent-child - heavily used in OOP 
@@ -590,6 +704,9 @@ Only one null allowed.
         - sleep resumes after specific time, wait needs 
 
 - String
+    - The String is immutable in Java because of the security, synchronization and concurrency, caching, and class loading. 
+    - The reason of making string final is to destroy the immutability and to not allow others to extend it.
+    - The String objects are cached in the String pool, and it makes the String immutable.
     - this is immutable, final class provided by Java, lang package
     - It is not an primitive type
     - It is thread safe
@@ -611,7 +728,7 @@ Only one null allowed.
         - StringBuffer thread Safe & StringBuilder is not thread safe
     - String also supports RegEx         
     - String is used as key in HashMap     
-
+    
 - What is boxing & unboxing?     
  
 - Singleton Design Patterns
@@ -642,10 +759,6 @@ Only one null allowed.
        
        - Enumeration - these are checked at compile time - we can implement singleton design pattern.
              
-- Deep Copy & Shallow Copy
-   - Shallow copy copies the existing references of object - we can do with default clone()  method  
-   - Deep copy we create new instance and then copy the values.
-            
 - JDBC - Core Java    
     - It is an API to provide common platfrom to connect with Relational database.
     - Driver classes - 
@@ -694,15 +807,94 @@ Only one null allowed.
             RowMapper used with JDBCTemplate         
             
 - Generics    
-
-- Garbage Collections
-    
 - Unit Testing    
-    
 - Inner classes
-
 - Deadlock
- 
+
+#### Core Java By The Baeldung
+- What Does the “unchecked cast” Warning Mean?
+    - The “unchecked cast” is a compile-time warning. Simply put, we'll see this warning when casting a raw type to a parameterized type without type checking.
+    
+             Map rawMap = new HashMap();
+             rawMap.put("date 1", LocalDate.of(2021, Month.FEBRUARY, 10));
+             Map<String, LocalDate> castFromRawMap = (Map<String, LocalDate>) rawMap;
+             
+    - we should avoid using raw types. This is because using raw types will make us lose all the safety and expressiveness benefits of generics.
+    - When we use the @SuppressWarning(“unchecked”) annotation, we should always put it on the smallest scope possible.
+
+- a.getClass() Vs A.class
+    - the class java.lang.Class is the entry point of all reflection operations. 
+    - two different ways to get an object of java.lang.Class:
+        - Calling the Object.getClass() method
+           - When we call the Object.getClass() method, we get the runtime type of the str object. 
+        - Using the .class syntax
+           - On the other hand, String.class evaluates the String class statically.
+                    
+                    # In case of Inheritance:
+                    
+                    public class Animal {
+                        protected int numberOfEyes;
+                    }
+                    
+                    public class Monkey extends Animal {
+                        // monkey stuff
+                    }
+                  
+                 -------------------------------------------
+                    
+                   Animal animal = new Monkey();
+                
+                   Class runtimeType = animal.getClass();
+                   Class staticType = Animal.class;
+                   
+                   # Here the output will be like :
+                   staticType: com.baeldung.getclassobject.Animal
+                   runtimeType: com.baeldung.getclassobject.Monkey
+
+- (String) vs toString()
+    - (String) 
+        - if we know that our variable is a String instance, we should use type casting. 
+        - This approach is generally more efficient and quicker because we don't need to perform additional function calls
+        - This operation is null-safe. 
+    - toString()
+        - When we pass any other object type, we need to call the toString() method explicitly. 
+        - It is important to remember that it returns a String value according to the implementation  
+        - Here we could get a NullPointerException when passing a non-instantiated variable to the method
+
+- Does a Method’s Signature Include the Return Type in Java?
+    - the method signature is comprised of the name and parameter types. 
+    - Therefore, all the other elements of the method's declaration, such as modifiers, return type, parameter names, exception list, and body are not part of the signature.
+
+- How to determine if an Object is of Primitive Type?
+    - The **java.lang.Class.isPrimitive()** method can determine if the specified object represents a primitive type. However,  it does not work on the wrappers for primitives.
+    - Apache Commons Lang has a **ClassUtils.isPrimitiveOrWrappe** method that can be used to determine if a class is a primitive or a wrapper of primitive.
+    - Guava provides a similar implementation via the **Primitives.isWrapperType** method.
+  
+- Why are Local Variables Thread-Safe in Java?
+    - JVM splits up its available memory into stack and heap memory. 
+    - Firstly, it stores all objects on the heap. 
+    - Secondly, it stores local primitives and local object references on the stack  
+    - **Every thread, including the main thread, has its own private stack.** Therefore, other threads do not share our local variables, which is what makes them thread-safe.    
+
+- Collection.stream().forEach() Vs Collection.forEach()
+    - Collection.stream().forEach()
+        - The processing order of Collection.stream().forEach() is undefined.
+        - We'll get a ConcurrentModification exception when we add or remove an element during the execution of the stream pipeline. 
+        - However, the exception will be thrown later.
+        
+    - Collection.forEach()
+        - Collection.forEach() uses the collection's iterator (if one is specified). 
+        - That means that the processing order of the items is defined.
+        - Since forEach() is fail-fast, we stop iterating and see an exception before the next element is processed
+        
+    - If we don't require a stream but only want to iterate over a collection, the first choice should be using forEach() directly on the collection.                                
+
+- Marker Interfaces in Java
+    - A marker interface is an interface that has no methods or constants inside it
+    - It provides run-time type information about objects, so the compiler and JVM have additional information about the object.
+    - Java has many built-in marker interfaces, such as Serializable, Cloneable, and Remote.
+    - Unlike annotations, interfaces allow us to take advantage of polymorphism. As a result, we can add additional restrictions to the marker interface.    
+
 ### Spring
 - What is Spring Application Container?
     - Web container responsible for managing the lifecycle of servlets.
@@ -1229,7 +1421,7 @@ Only one null allowed.
     - Drawback depends on scenario - uses unused dependencies - we can exclude
     - specially designed for microservices based application
 
-    - Enable Autoconfiguration @SpringBootApplication - We use this annotation to mark the main class of a Spring Boot application
+    - **Enable Autoconfiguration** @SpringBootApplication - We use this annotation to mark the main class of a Spring Boot application
             
             @SpringBootApplication
             public class Application {
@@ -1276,7 +1468,7 @@ Only one null allowed.
                         // ...
                     }
        
-    - Disable Autoconfiguration - exclude the auto-configuration from being loaded
+    - **Disable Autoconfiguration** - exclude the auto-configuration from being loaded
         - Disable from annotation
         
                 @Configuration
@@ -1303,7 +1495,12 @@ Only one null allowed.
                                 </exclusion>
                             </exclusions>
                         </dependency>
-
+        - How to disable default web server ?
+            - Yes, Spring provides flexibility to build your application loosely coupled and to disable the web server in quick config.
+            - We can use application.properties to configure the web application type
+            
+                    spring.main.web-application-type=none 
+                    
 - Spring Security
     - Which Security framework you have worked upon? JWT
         - Introduction of JWT
@@ -1403,7 +1600,12 @@ Only one null allowed.
                 
         - **HttpServletRequest**
                 by extracting isUserInRole(), Principle   
-
+    
+    - Why is char[] preferred over String for passwords?
+        - Strings are immutable. That means once you've created the String, if another process can dump memory, there's no way (aside from reflection) you can get rid of the data before garbage collection kicks in.
+        - With an array, you can explicitly wipe the data after you're done with it. You can overwrite the array with anything you like, and the password won't be present anywhere in the system, even before garbage collection.
+        - So yes, this is a security concern - but even using char[] only reduces the window of opportunity for an attacker, and it's only for this specific type of attack.
+        
 - Spring JPA/Hibernate
     - Can you please do integration of spring with JPA hibernate?
     - What is Hibernate?
@@ -2061,6 +2263,59 @@ Only one null allowed.
            - @SuppressWarnings
         - Custom annotations    
 
+    - **@PropertySource** 
+        - this annotation is a convenient mechanism for adding property sources to the environment.
+        
+                @Configuration
+                @PropertySource("classpath:foo.properties")
+                public class PropertiesWithJavaConfig {
+                    //...
+                }
+        - we can also use the @PropertySources annotation and specify an array of @PropertySource.
+            
+                @PropertySources({
+                    @PropertySource("classpath:foo.properties"),
+                    @PropertySource("classpath:bar.properties")
+                })
+                public class PropertiesWithJavaConfig {
+                    //...
+                }
+                        
+    - **@Value**    
+        - Used for injecting values into fields in Spring-managed beans.
+        - It can be applied at the field or constructor/method parameter level.
+        - we can only inject “string value” from the annotation to the field:
+                
+                @Value("string value")
+                private String stringValue;
+                
+        - we get Value from properties :
+                
+                @Value("${value.from.file}")
+                private String valueFromFile;
+        - We can also use SpEL expressions to get the value.
+                
+                @Value("#{systemProperties['unknown'] ?: 'some default'}")
+                private String spelSomeDefault;
+                
+        - @Value With Constructor Injection/In similar way we can use it for setter injection.
+        
+                @Component
+                @PropertySource("classpath:values.properties")
+                public class PriorityProvider {
+                
+                    private String priority;
+                
+                    @Autowired
+                    public PriorityProvider(@Value("${priority:normal}") String priority) {
+                        this.priority = priority;
+                    }
+                
+                    // standard getter
+                }               
+                                     
+- Spring Circular Dependency - CircularBeanException how to overcome?
+
 ### Other
 - Properties class implementation to read System properties and provide it to rest api.
 - LocalDate operations
@@ -2070,8 +2325,86 @@ Only one null allowed.
 - Maven Multi module project      
       
 ### Web Services
-- **REST (JAX-RS)**
 - **SOAP (JAX-WS)**
+    - Website Vs Web Services
+    - Consumer(Client) <-> Interface(Contract) <-> Implementation(Server)
+    - Web Services are interoperable and provides cross language support. Interface is standard way to share any contract with a Consumer.
+    - **WSDL** 
+        - SOAP is an XML based contract for sending messages over a network represented as WSDL(Web Service Description Language). 
+        - SOAP messages are independent of any operating system.
+        - WSDL(describes a web service) specifies the location of the service, and the methods of the service, using these major elements:
+            -  **definitions** : It is the root element of all WSDL documents which defines the name, the namespace of the service.
+            -  **types** :  Defines the (XML Schema) data types used by the web service              
+            -  **message** : provides an abstract definition of the data being transmitted.
+                - sayHelloRequest − firstName parameter
+                - sayHelloresponse − greeting return value
+            -  **portType** :	Describes the operations that can be performed and the messages involved.Following are different port types in WSDL:
+                - One-way	The operation can receive a message but will not return a response
+                - Request-response	The operation can receive a request and will return a response
+                - Solicit-response	The operation can send a request and will wait for a response
+                - Notification	The operation can send a message but will not wait for a response
+                
+            -  **binding** : Defines the protocol and data format for each port type
+            -  **Service & Port** :  
+                            
+                   <?xml version="1.0" encoding="UTF-8"?>
+                   <definitions 
+                     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                     xmlns:tns="http://topdown.server.jaxws.mm.com/"
+                     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                     xmlns="http://schemas.xmlsoap.org/wsdl/"
+                     targetNamespace="http://topdown.server.jaxws.mm.com/"
+                     qname="EmployeeServiceTopDown">
+                     
+                       <types>
+                           <xsd:schema targetNamespace="http://topdown.server.jaxws.mm.com/">
+                               <xsd:element name="countEmployeesResponse" type="xsd:int"/>
+                           </xsd:schema>
+                       </types>
+                   
+                       <message name="countEmployees"> 
+                       </message>
+                       <message name="countEmployeesResponse">
+                           <part name="parameters" element="tns:countEmployeesResponse"/>
+                       </message>
+                       
+                       <portType name="EmployeeServiceTopDown">
+                           <operation name="countEmployees">
+                               <input message="tns:countEmployees"/>
+                               <output message="tns:countEmployeesResponse"/>
+                           </operation>
+                       </portType>
+                       
+                       <binding name="EmployeeServiceTopDownSOAP" type="tns:EmployeeServiceTopDown">
+                           <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+                           <operation name="countEmployees">
+                               <soap:operation soapAction="http://topdown.server.jaxws.mm.com/EmployeeServiceTopDown/countEmployees"/>
+                               <input>
+                                   <soap:body use="literal"/>
+                               </input>
+                               <output>
+                                   <soap:body use="literal"/>
+                               </output>
+                           </operation>
+                       </binding>
+                       
+                       <service name="EmployeeServiceTopDown">
+                           <port name="EmployeeServiceTopDownSOAP" binding="tns:EmployeeServiceTopDownSOAP">
+                               <soap:address location="http://localhost:8080/employeeservicetopdown"/>
+                           </port>
+                       </service>
+                       
+                   </definitions>
+                   
+        - Two approaches to build WSDL document
+            - **top-down (contract-first) approach** : a WSDL document is created, and the necessary Java classes are generated from the WSDL. 
+            - **bottom-up (contract-last) approach** : the Java classes are written, and the WSDL is generated from the Java classes.     
+        
+        - ways to generate web service source files from a WSDL document
+            - wsimport tool which is part of JDK till JDK 8.
+            - For later JDK versions, we can use jaxws-maven-plugin by MojoHaus 
+           
+- **REST (JAX-RS)**
 
 ### PL SQL
 
@@ -2084,3 +2417,54 @@ Only one null allowed.
 - What is transient keyword? When we use this?
 Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-questions-answers.html#ixzz6jjH6PNw2
 
+##Guru Interview
+
+- 2 objects of same class - how to compare with fields
+
+            private <T> T copy(T entity) throws IllegalAccessException, InstantiationException {
+                Class<?> clazz = entity.getClass();
+                T newEntity = (T) entity.getClass().newInstance();
+            
+                while (clazz != null) {
+                    copyFields(entity, newEntity, clazz);
+                    clazz = clazz.getSuperclass();
+                }
+            
+                return newEntity;
+            }
+            
+            private <T> T copyFields(T entity, T newEntity, Class<?> clazz) throws IllegalAccessException {
+                List<Field> fields = new ArrayList<>();
+                for (Field field : clazz.getDeclaredFields()) {
+                    fields.add(field);
+                }
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    field.set(newEntity, field.get(entity));
+                }
+                return newEntity;
+            }
+            
+- Reflection is related to what? OOP's?
+- How Reflection breaks OOP's principle?
+    - Reflection breaks encapsulation principles by giving access to private fields and methods, but it's not the first or only way in which encapsulation can be circumvented; one could argue that serialization exposes all the internal data of a class, information which would normally be private.
+
+- Stack Vs Heap in JVM
+
+- ClassLoader & types
+- Static method can we override?
+    No, we cannot override static methods because method overriding is based on dynamic binding at runtime and the static methods are bonded using static binding at compile time. So, we cannot override static methods.
+    
+- Can we inject protoype beans in singletone ?
+    You cannot dependency-inject a prototype-scoped bean into your singleton bean, because that injection occurs only once, when the Spring container is instantiating the singleton bean and resolving and injecting its dependencies.
+
+- Spring Circular Dependency - CircularBeanException how to overcome?
+
+- Constructor Injection related question
+
+- Password where we should store? String
+    If we put String in string pool - dereference - someone can use it  
+    charArray - if we sysout then it will show object reference not value
+    
+- Where & Having clause? Why group by with having
+                   

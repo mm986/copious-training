@@ -670,11 +670,164 @@ API JAVA
     - Route tables
         - if we don't have 0.0.0.0 routing then it is considered as private subnet
         - VPC base route to allow inter subnet communication
+        
     - Elastic IP - once assigned then no one can change it (Static and fix) - Create and delete it
     
     - NAT Gateway
     - VPC peering
     - Transient Gateway
         
+# AWS Session 2 (19 Feb - with Ripul)
 
+- Create Separate Route tables 
+
+
+32 bit IPV4
+
+10.0.0.0/24  8 -> 256  ->  10.0.0.0 - 10.0.0.255
+----------------------------------------------------------
+10.0.0.0/25             7 ->  128 10.0.0.0 - 10.0.0.127    
+
+10.0.0.128/25           7 ->  128 10.0.0.128 - 10.0.0.256   
+
+----------------------------------------------------------
+
+10.0.0.0/26     10.0.0.0 - 10.0.0.63
+
+10.0.0.64/26    10.0.0.64 - 10.0.0.127
+
+10.0.0.128/26   10.0.0.64 - 10.0.0.127
+
+10.0.0.192/26   10.0.0.64 - 10.0.0.127
+
+
+10.0.0.0/16   65536
+
+10.0.0.0/17 
+
+10.0.0.32768/17
+
+# AWS Session 3 (23 Feb - with Ripul)
+
+ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.142.48.173
+ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.142.48.173
+
+- How to  do VPC Peering
+    - Create VPC1(my-vpc) 10.0.0.0/24 with two subnets as:
+        - Public - 10.0.0.0/25 
+        - Private - 10.0.0.128/25
+    - Create VPC2(cop-vpc) 192.168.0.0/24 with two subnets as:
+        - Public - 192.168.0.0/25
+        - Private - 192.168.0.128/25
+    
+    - Create Peering Connection between VPC1 & VPC2
+           
+    - Create 4 route tables and  associate to above 4 subnets
+        - VPC1-Public-RT
+           - 10.0.0.0/24	local 
+           - 0.0.0.0/0 Associate with Internet Gateway as a Public
+           - 192.168.0.0/24 Associate with peering Connection to VPC2
+            
+        - VPC1-Private-RT
+           - 10.0.0.0/24	local 
+            
+        - VPC2-Public-RT
+           - 192.168.0.0/24	local	
+           - 0.0.0.0/0  Associate with Internet Gateway as a Public
+           - 10.0.0.0/24 Associate with peering Connection to VPC1
+
+        - VPC2-Private-RT
+           - 192.168.0.0/24	local	
+           
+    - Create EC2 in public subnet of VPC1
+        - Create Security Group and enable All IGMP ports for VPC2
+         
+    - Create EC2 in public subnet of VPC2
+        - Create Security Group and enable All ICMP - IPv4 ports for VPC1
+    
+    - Connect both EC2 via putty and try to ping each other with their private IP address.
+         
+- NAT Gateway
+    - **Intro**
+    - Create 1 Windows EC2 in private subnet
+    - Create 1 Windows EC2 in public subnet of same VPC
+    - allow access to Remote IP's via Security group - RDP
+    - Remote connection to public EC2 -> Remote connection to private EC2 from public EC2
+    - Once we connect we can see no internet present in private EC2  
+    - Create NAT Gateway in public subnet
+    
+    One way communication
+    Create NAT  gat      
+    
+    Windows User Name : Administrator
+    Password: fFT&!6UXaCR2IUeJGM9HQ7w6eVVMZP@H
+
+- EC2
+Topics to be prepared for next call -
+    - Instance Types 
+        - Instance types comprise varying combinations of CPU, memory, storage, and networking capacity and give you the flexibility to choose the appropriate mix of resources for your applications.
+        - 8 family of instance type
+            - General Purpose Instances have been further classified into T2, M4 and M3 instance types.
+            - Compute Optimized Instances mainly include two families of instance types, namely C4 and C3
+            - GPU optimized instances include the G2 instances family which are ideal for gaming applications
+            - Memory Optimized Instances basically includes only the R3 Instances family which are specifically designed for memory-intensive applications
+            - Storage Optimized Instances include the I2 and a more recent D2 instances families    
+    - Launch Templates - 
+        - Launch Templates streamline and simplify the launch process for Auto Scaling, Spot Fleet, Spot, and On-Demand instances.
         
+	- Spot Requests
+	    - A Spot Instance is an unused EC2 instance that is available for less than the On-Demand price. 
+	    - Because Spot Instances enable you to request unused EC2 instances at steep discounts, you can lower your Amazon EC2 costs significantly
+	    
+	- Saving Plans
+	    - Savings Plans is a flexible pricing model that provides savings of up to 72% on your AWS compute usage. 
+	    - This pricing model offers lower prices on Amazon EC2 instances usage, regardless of instance family, size, OS, tenancy or AWS Region, and also applies to AWS Fargate and AWS Lambda usage.
+	    
+	- Reserved Instances
+	    - An Amazon Reserved Instance (RI) is a billing discount that allows you to save on your Amazon EC2 usage costs. When you purchase a Reserved Instance, you can set attributes such as instance type, platform, tenancy, Region, or Availability Zone (optional).
+	    - In terms of compute options and configurations, Reserved Instances and On Demand instances are the same. The only difference between the two is that a Reserved Instance is one you rent (“reserve”) for a fixed duration, and in return you receive a discount on the base price of an On Demand instance
+	    
+	- Dedicated Hosts
+	    - An Amazon EC2 Dedicated Host is a physical server with EC2 instance capacity fully dedicated to your use. Dedicated Hosts allow you to use your existing per-socket, per-core, or per-VM software licenses, including Windows Server, Microsoft SQL Server, SUSE, and Linux Enterprise Server.
+	    
+	- Capacity Reservations
+	    - On-Demand Capacity Reservations enable you to reserve capacity for your Amazon EC2 instances in a specific Availability Zone for any duration.
+	    - When you create a Capacity Reservation, you specify:
+            - The Availability Zone in which to reserve the capacity
+            - The number of instances for which to reserve capacity
+            - The instance attributes, including the instance type, tenancy, and platform/OS
+            
+	- Lifecycle Manager
+	    - With Amazon Data Lifecycle Manager, you can manage the lifecycle of your AWS resources. 
+	    - You create lifecycle policies, which are used to automate operations on the specified resources. Amazon DLM supports Amazon EBS volumes and snapshots.
+	   
+	- Placement Groups
+	    - The strategy of the placement group determines how the instances are organized within the group. 
+	    - A cluster placement group is a logical grouping of instances within a single Availability Zone that benefit from low network latency, high network throughput. 
+	    - A spread placement group places instances on distinct hardware.
+	    
+	- Network Interfaces
+	    - AWS Elastic Network Interface is simply a virtual interface that can be attached to an instance in a Virtual Private Cloud (VPC). 
+	    - Followings are the attributes of a network interface: A primary private IPv4 address. ... One or more secondary private IPv4 addresses.
+	    
+- Load Balencers
+    - Classic - Deprecated
+    - Application LB - works on URL tiltle - EC2 	    
+    - Network LB- works on port number
+    - Gateway LB- Go through this one
+    
+ Assignment -   
+   Application Load Balancer
+    1)Two EC2 Instance
+    2)Same Appln deployed on server
+    3)Those EC2 can only be accessed through Application Load Balancer.
+    
+   Network Load Balancer
+    1)One EC2 Instance
+    2)Three Replica of Application
+    3)Those Three Application can only be accessed through Network Load Balancer
+    
+   Gateway Load Balancer
+    1)POC on the GLB
+    
+   Make a spring boot rest service and deploy, Same VPC and AZ should be different 
