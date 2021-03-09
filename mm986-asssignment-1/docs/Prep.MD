@@ -1500,7 +1500,437 @@ Only one null allowed.
             - We can use application.properties to configure the web application type
             
                     spring.main.web-application-type=none 
+
+- - Spring Annotations    
+      - Java annotations are typically used for the following purposes:
+          - Compiler instructions
+          - Build-time instructions
+          - Runtime instructions
+      - how to access Java annotations via reflection?
+        - Accessing Java Annotations via Java Reflection
+          - Annotation Elements - default value, use name value if it is single.
+          - Annotations used to define annotations
+              - @Retention
+              - @Target this is related to annotation placement
+              - @Inherited
+              - @Documented
+          - Built-In Java annotations
+             - @Deprecated
+             - @Override
+             - @SuppressWarnings
+          - Custom annotations    
+      
+      - **@Component**
+          - @Component is an  stereotype annotation that allows Spring to automatically detect our custom beans.
+          - **Stereotype Annotations** - 
+            - They are all composed annotations with @Component as a meta-annotation for each of them.
+            - They are like @Component aliases with specialized uses and meaning outside of Spring auto-detection or dependency injection.
+            - **@Controller**
+            - **@Service** 
+                - we can place this annotation on interfaces, abstract classes, or concrete classes depending on the use case scenario we have.
+                - placing @Service on interfaces isn't enough for the auto-detection of Spring components we also need to place it on Service Implementation as well.
+                - We cannot Autowire abstract class annotated with @Service directly so autowire respective concreate class instead.
+                - it's quite a common practice to annotate the implementation classes instead of abstract classes or interfaces.
+                - Spring's component scanning doesn't pick up the classes unless they are annotated separately, even they're derived from another @Service annotated interface or abstract class.
+            - **@Repository**
+                - @Repository’s job is to catch persistence specific exceptions and rethrow them as one of Spring’s unified unchecked exception.
+                - For this Spring provides PersistenceExceptionTranslationPostProcessor, that requires to add in our application context:
+                        
+                        <bean class= "org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+            
+          - **@ComponentScan** annotation to actually gather them all into its ApplicationContext.
                     
+                    @SpringBootApplication
+                    @ComponentScan({"com.baeldung.component.inscope", "com.baeldung.component.scannedscope"})
+                    public class ComponentApplication {
+                        //public static void main(String[] args) {...}
+                    }  
+          - Auto-detection is sufficient most of the time, but when it's not, we can use @Bean.
+          
+          - **@Bean** 
+            - @Component is a class-level annotation, but @Bean is at the method level, so @Component is only an option when a class's source code is editable. @Bean can always be used, but it's more verbose.
+            - @Component is compatible with Spring's auto-detection, but @Bean requires manual class instantiation.
+            - @Bean decouples the instantiation of the bean from its class definition. This is why we can use it to make even 3rd party classes into Spring beans. It also means we can introduce logic to decide which of several possible instance options for a bean to use.
+          
+          - **@ComponentScan Vs @EnableAutoConfiguration**
+            - @ComponentScan scans for Spring components while @EnableAutoConfiguration is used for auto-configuring beans present in the classpath in Spring Boot applications.
+                                
+      - **@PropertySource** 
+          - this annotation is a convenient mechanism for adding property sources to the environment.
+          
+                  @Configuration
+                  @PropertySource("classpath:foo.properties")
+                  public class PropertiesWithJavaConfig {
+                      //...
+                  }
+          - we can also use the @PropertySources annotation and specify an array of @PropertySource.
+              
+                  @PropertySources({
+                      @PropertySource("classpath:foo.properties"),
+                      @PropertySource("classpath:bar.properties")
+                  })
+                  public class PropertiesWithJavaConfig {
+                      //...
+                  }
+                          
+      - **@Value**    
+          - Used for injecting values into fields in Spring-managed beans.
+          - It can be applied at the field or constructor/method parameter level.
+          - we can only inject “string value” from the annotation to the field:
+                  
+                  @Value("string value")
+                  private String stringValue;
+                  
+          - we get Value from properties :
+                  
+                  @Value("${value.from.file}")
+                  private String valueFromFile;
+          - We can also use SpEL expressions to get the value.
+                  
+                  @Value("#{systemProperties['unknown'] ?: 'some default'}")
+                  private String spelSomeDefault;
+                  
+          - @Value With Constructor Injection/In similar way we can use it for setter injection.
+          
+                  @Component
+                  @PropertySource("classpath:values.properties")
+                  public class PriorityProvider {
+                  
+                      private String priority;
+                  
+                      @Autowired
+                      public PriorityProvider(@Value("${priority:normal}") String priority) {
+                          this.priority = priority;
+                      }
+                  
+                      // standard getter
+                  }        
+      - **@Valid Vs @Validated**
+        - @Valid
+            - @Valid annotation for method level validation. Moreover, we also use it to mark a member attribute for validation.
+            - this annotation doesn't support group validation.
+            - The @Valid annotation ensures the validation of the whole object.
+                    
+                    # Definition
+                    
+                        public class UserAccount {
+                            @NotNull
+                            @Size(min = 4, max = 15)
+                            private String password;
+                        
+                            @NotBlank
+                            private String name;
+                        }
+                    # Use
+                        @RequestMapping(value = "/saveBasicInfo", method = RequestMethod.POST)
+                        public String saveBasicInfo(@Valid @ModelAttribute("useraccount") UserAccount useraccount, 
+                          BindingResult result, 
+                          ModelMap model) {
+                            if (result.hasErrors()) {
+                                return "error";
+                            }
+                            return "success";
+                        }
+                    
+        - @Validated                    
+            - The usage of @Validated is essential for group validation.
+            - we'll need to create two marker interfaces as a group (Here BasicInfo & AdvanceInfo are marker interfaces that defines groups)    
+                   
+                   # Definition
+                   
+                    public class UserAccount {
+                        
+                        @NotNull(groups = BasicInfo.class)
+                        @Size(min = 4, max = 15, groups = BasicInfo.class)
+                        private String password;
+                     
+                        @NotBlank(groups = BasicInfo.class)
+                        private String name;
+                     
+                        @Min(value = 18, message = "Age should not be less than 18", groups = AdvanceInfo.class)
+                        private int age;
+                     
+                        @NotBlank(groups = AdvanceInfo.class)
+                        private String phone;
+                    }
+                  
+                  # Use  
+                    @RequestMapping(value = "/saveBasicInfoStep1", method = RequestMethod.POST)
+                    public String saveBasicInfoStep1(@Validated(BasicInfo.class) @ModelAttribute("useraccount") UserAccount useraccount, 
+                      BindingResult result, ModelMap model) {
+                        if (result.hasErrors()) {
+                            return "error";
+                        }
+                        return "success";
+                    }
+                    
+      - **@DynamicPropertySource**
+        - Introduced in Spring Framework 5.2.5 to facilitate adding properties with dynamic values.
+        - Note- methods annotated with @DynamicPropertySource must be declared as static and must accept only one argument of type DynamicPropertyRegistry. 
+                
+                @SpringBootTest
+                @Testcontainers
+                public class ArticleLiveTest {
+                
+                    @Container
+                    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:11")
+                      .withDatabaseName("prop")
+                      .withUsername("postgres")
+                      .withPassword("pass")
+                      .withExposedPorts(5432);
+                
+                    @DynamicPropertySource
+                    static void registerPgProperties(DynamicPropertyRegistry registry) {
+                        registry.add("spring.datasource.url", () -> String.format("jdbc:postgresql://localhost:%d/prop", postgres.getFirstMappedPort()));
+                        registry.add("spring.datasource.username", () -> "postgres");
+                        registry.add("spring.datasource.password", () -> "pass");
+                    }
+                    
+                    // tests are same as before
+                }
+      
+      - **@RequestParam vs @PathVariable**
+      - **@Import**
+        - This annotation is useful to group multiple configuration classes in to single configuration
+                
+                # Defining Configuration Group
+                
+                    @Configuration
+                    @Import({ DogConfig.class, CatConfig.class })
+                    class MammalConfiguration {
+                    }
+                    
+                # Use: Now, we just need to remember the mammals:
+                
+                    @ExtendWith(SpringExtension.class)
+                    @ContextConfiguration(classes = { MammalConfiguration.class })
+                    class ConfigUnitTest {
+                    
+                        @Autowired
+                        ApplicationContext context;
+                        
+                        private void assertThatBeanExists(String beanName, Class<?> beanClass) {
+                            Assertions.assertTrue(context.containsBean(beanName));
+                            Assertions.assertNotNull(context.getBean(beanClass));
+                        }
+                    }
+      - **@ConfigurationProperties**
+        - This annotation supports to create POJOs containing fields that correspond with the matching configuration properties.
+                
+                # Properties
+                
+                    server.address.ip=192.168.0.1
+                    server.resources_path.imgs=/root/imgs
+                
+                # Configuration class
+                    
+                    @Configuration
+                    @ConfigurationProperties(prefix = "server")
+                    public class ServerConfig {
+                    
+                        private Address address;
+                        private Map<String, String> resourcesPath;
+                    
+                        // getters and setters
+                    }
+                    
+                    *And corresponding Address type:
+                    
+                    public class Address {
+                    
+                        private String ip;
+                    
+                        // getters and setters
+                    }   
+        - Here this annotation will automatically bind above properties to variables no need to use @Value annotation separately for each field.            
+      
+      - **@Qualifier**
+        - If more than one bean of the same type is available in the container, the framework will throw NoUniqueBeanDefinitionException, indicating that more than one bean is available for autowiring. Because Spring doesn't know which bean to inject
+        - By using this we can eliminate the issue of which bean needs to be injected.
+        
+                public class FooService {
+                     
+                    @Autowired
+                    @Qualifier("fooFormatter")
+                    private Formatter formatter;
+                } 
+        
+        - While Autowiring bean either we need to provide bean name, or spring will try to lookup bean with name similar to declared object name.         
+        - @Primary is an alternative that defines a preference when multiple beans of the same type are present. 
+                
+                @Configuration
+                public class Config {
+                 
+                    @Bean
+                    public Employee johnEmployee() {
+                        return new Employee("John");
+                    }
+                 
+                    @Bean
+                    @Primary
+                    public Employee tonyEmployee() {
+                        return new Employee("Tony");
+                    }
+                }
+        -  If both the @Qualifier and @Primary annotations are present, then the @Qualifier annotation will have precedence.
+      
+      - **@DependsOn**
+        - Spring guarantees that the defined beans will be initialized before attempting an initialization of the current bean.
+            
+                @Configuration
+                @ComponentScan("com.baeldung.dependson")
+                public class Config {
+                 
+                    @Bean
+                    @DependsOn({"fileReader","fileWriter"})
+                    public FileProcessor fileProcessor(){
+                        return new FileProcessor();
+                    }
+                    
+                    @Bean("fileReader")
+                    public FileReader fileReader() {
+                        return new FileReader();
+                    }
+                    
+                    @Bean("fileWriter")
+                    public FileWriter fileWriter() {
+                        return new FileWriter();
+                    }   
+                }
+        - In case of missing dependency, Spring throws a BeanCreationException with a base exception of NoSuchBeanDefinitionException.
+        - **Circular Dependency** - In this case, it throws BeanCreationException and highlights that the beans have a circular dependency:
+                
+                    Bean1 -> Bean4 -> Bean6 -> Bean1
+                    
+      - **@Lookup**
+        - A method annotated with @Lookup tells Spring to return an instance of the method's return type when we invoke it.
+        - Spring will override our annotated method and use our method's return type and parameters as arguments to BeanFactory#getBean.
+        - @Lookup is useful for:
+           - Injecting a prototype-scoped bean into a singleton bean (similar to Provider)
+                    
+                   # Prototype Bean
+                    @Component
+                    @Scope("prototype")
+                    public class SchoolNotification {
+                        // ... prototype-scoped state
+                    }
+                    
+                   # Injection in singleton bean that uses @Lookup:
+                    
+                    @Component
+                    public class StudentServices {
+                    
+                        // ... member variables, etc.
+                    
+                        @Lookup
+                        public SchoolNotification getNotification() {
+                            return null;
+                        }
+                    
+                        // ... getters and setters
+                    }
+                    
+           - Injecting dependencies procedurally    
+        - @Lookup is the Java equivalent of the XML element lookup-method.   
+        - @Lookup-annotated methods, like getNotification, must be concrete when the surrounding class, like Student, is component-scanned. This is because **component scanning skips abstract beans**.
+        - @Lookup-annotated methods won't work at all when the surrounding class is @Bean-managed.                                                                       
+      
+      - **@Controller Vs @RestController**
+        - @Controller is simply a specialization of the @Component class, which allows us to auto-detect implementation classes through the classpath scanning.
+        - Spring 4.0 introduced the @RestController annotation in order to simplify the creation of RESTful web services. 
+        - It's a convenient annotation that combines @Controller and @ResponseBody, which eliminates the need to annotate every request handling method of the controller class with the @ResponseBody annotation.
+        
+      - **@Lazy**
+        - By default, Spring creates all singleton beans eagerly at the startup/bootstrapping of the application context. 
+        - When we put @Lazy annotation over the @Configuration class, it indicates that all the methods with @Bean annotation should be loaded lazily.
+                
+                @Lazy
+                @Configuration
+                @ComponentScan(basePackages = "com.baeldung.lazy")
+                public class AppConfig {
+                
+                    @Bean
+                    public TestBean getTestBean(){
+                        return new TestBean();
+                    }
+                } 
+                
+        - With @Autowired -  in order to initialize a lazy bean, we reference it from another one. @Lazy is mandatory in both places.
+            
+                @Lazy
+                @Component
+                public class City {
+                    public City() {
+                        System.out.println("City bean initialized");
+                    }
+                }
+               
+               # And it's reference:
+                
+                public class Region {
+                
+                    @Lazy
+                    @Autowired
+                    private City city;
+                
+                    public Region() {
+                        System.out.println("Region bean initialized");
+                    }
+                
+                    public City getCityInstance() {
+                        return city;
+                    }
+                }
+      
+      - **@Scheduled**
+        - Method with @Scheduled annotation should follow following rules:
+           - a method should have the void return type
+           - a method should not accept any parameters
+        
+        - Configuration to enable support for scheduling tasks
+        
+              @Configuration
+              @EnableScheduling
+              public class SpringConfig {
+                  ...
+              }          
+              
+        - Schedule a Task at Fixed Delay - The fixedDelay property makes sure that there is a delay of n millisecond between the finish time of an execution of a task and the start time of the next execution of the task.
+            
+                @Scheduled(fixedDelay = 1000)
+        
+        - Schedule a Task at a Fixed Rate - The fixedRate property runs the scheduled task at every n millisecond.
+                
+                @Scheduled(fixedRate = 1000)
+                
+                * Use @Async annotation If we want to support parallel behavior in scheduled tasks.
+        
+        - Schedule a Task With Initial Delay
+                
+                @Scheduled(fixedDelay = 1000, initialDelay = 1000)
+                
+        - Schedule a Task Using Cron Expressions
+                
+                @Scheduled(cron = "0 15 10 15 * ?")
+                
+              # we can use the zone attribute to change this timezone:
+                
+                @Scheduled(cron = "0 15 10 15 * ?", zone = "Europe/Paris")
+                
+        - Configuring Scheduled Tasks Using XML
+            
+                <!-- Configure the scheduler -->
+                <task:scheduler id="myScheduler" pool-size="10" />
+                
+                <!-- Configure parameters -->
+                <task:scheduled-tasks scheduler="myScheduler">
+                    <task:scheduled ref="beanA" method="methodA" 
+                      fixed-delay="5000" initial-delay="1000" />
+                    <task:scheduled ref="beanB" method="methodB" 
+                      fixed-rate="5000" />
+                    <task:scheduled ref="beanC" method="methodC" 
+                      cron="*/5 * * * * MON-FRI" />
+                </task:scheduled-tasks>                               
 - Spring Security
     - Which Security framework you have worked upon? JWT
         - Introduction of JWT
@@ -2242,79 +2672,7 @@ Only one null allowed.
                 }
  
     - Joint Points
-        Lifecycle @Before, @After
-
-- Spring Annotations    
-    - Java annotations are typically used for the following purposes:
-        - Compiler instructions
-        - Build-time instructions
-        - Runtime instructions
-    - how to access Java annotations via reflection?
-    - Accessing Java Annotations via Java Reflection
-        - Annotation Elements - default value, use name value if it is single.
-        - Annotations used to define annotations
-            - @Retention
-            - @Target this is related to annotation placement
-            - @Inherited
-            - @Documented
-        - Built-In Java annotations
-           - @Deprecated
-           - @Override
-           - @SuppressWarnings
-        - Custom annotations    
-
-    - **@PropertySource** 
-        - this annotation is a convenient mechanism for adding property sources to the environment.
-        
-                @Configuration
-                @PropertySource("classpath:foo.properties")
-                public class PropertiesWithJavaConfig {
-                    //...
-                }
-        - we can also use the @PropertySources annotation and specify an array of @PropertySource.
-            
-                @PropertySources({
-                    @PropertySource("classpath:foo.properties"),
-                    @PropertySource("classpath:bar.properties")
-                })
-                public class PropertiesWithJavaConfig {
-                    //...
-                }
-                        
-    - **@Value**    
-        - Used for injecting values into fields in Spring-managed beans.
-        - It can be applied at the field or constructor/method parameter level.
-        - we can only inject “string value” from the annotation to the field:
-                
-                @Value("string value")
-                private String stringValue;
-                
-        - we get Value from properties :
-                
-                @Value("${value.from.file}")
-                private String valueFromFile;
-        - We can also use SpEL expressions to get the value.
-                
-                @Value("#{systemProperties['unknown'] ?: 'some default'}")
-                private String spelSomeDefault;
-                
-        - @Value With Constructor Injection/In similar way we can use it for setter injection.
-        
-                @Component
-                @PropertySource("classpath:values.properties")
-                public class PriorityProvider {
-                
-                    private String priority;
-                
-                    @Autowired
-                    public PriorityProvider(@Value("${priority:normal}") String priority) {
-                        this.priority = priority;
-                    }
-                
-                    // standard getter
-                }               
-                                     
-- Spring Circular Dependency - CircularBeanException how to overcome?
+        Lifecycle @Before, @After       
 
 ### Other
 - Properties class implementation to read System properties and provide it to rest api.
@@ -2406,8 +2764,44 @@ Only one null allowed.
            
 - **REST (JAX-RS)**
 
-### PL SQL
-
+### SQL
+- Relational Data Base (RDBMS)
+- DDL, DML, DCL, TCL
+- Key Constraints 
+    - NOT NULL.
+    - CHECK.
+    - DEFAULT.
+    - UNIQUE.
+    - PRIMARY KEY.
+    - FOREIGN KEY.
+- Joins 
+    - Inner
+    - Right
+    - Left
+    - Full
+    - Self-Join
+    - Cross-Join
+- Normalization 
+    - 1NF
+    - 2NF
+    - 3NF
+    - BCNF
+- Views
+- Index(types of indexes)
+- Cursor, Stoared Procedure, Trigger, Function
+- Relationships in DB Tables (1TO1, 1TOM, MTO1, MTOM)
+- Query, Subquery(types of subquery)
+- DELETE Vs TRUNCATE- 
+- What is Auto Increment?
+- Cluster Vs Non-Cluster Index?
+- CLAUSE 
+    - WHERE
+    - HAVING
+- Set Operations 
+    - UNION operator is used to combine the results of two tables, and it eliminates duplicate rows from the tables.
+    - MINUS operator is used to return rows from the first query but not from the second query. Matching records of first and second query and other rows from the first query will be displayed as a result set. 
+    - INTERSECT operator is used to return rows returned by both the queries.
+    
 ## Questions
 - Why String is Immutable or final in Java?
 - What is the difference between poll() and remove() method of Queue interface?
