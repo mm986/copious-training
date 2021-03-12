@@ -1948,27 +1948,100 @@ Only one null allowed.
             spring-boot-starter-security
       
         - Major components in Configuration
-            - Configure UserDetail Service - Authentiocation
+            - **Authentication**
+               - **Configure UserDetail Service**
+                    
+                        @Override
+                        public void configure(AuthenticationManagerBuilder auth) throws Exception {
+                            auth
+                                    .userDetailsService(userDetailsService)
+                                    .passwordEncoder(passwordEncoder());
+                        }
+               - **Configure In Memory Authentication**
+                        
+                        @Override
+                        protected void configure(AuthenticationManagerBuilder auth) 
+                           throws Exception {
+                             auth
+                                .inMemoryAuthentication()
+                                .withUser("user1")
+                                .password(passwordEncoder.encode("user1Pass"))
+                                .roles("USER");
+                        }
+               - **AuthenticationFailureHandler**
+                    - Spring Security provides a component that handles authentication failures for us by default.
+                    - we can create our own component and provide the custom behavior we want by implementing the AuthenticationFailureHandler interface:
+                            
+                            public class CustomAuthenticationFailureHandler 
+                              implements AuthenticationFailureHandler {
+                             
+                                private ObjectMapper objectMapper = new ObjectMapper();
+                            
+                                @Override
+                                public void onAuthenticationFailure(HttpServletRequest request,HttpServletResponse response, AuthenticationException exception) 
+                                  throws IOException, ServletException {
+                             
+                                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("timestamp", Calendar.getInstance().getTime());
+                                    data.put("exception",exception.getMessage());
+                            
+                                    response.getOutputStream().println(objectMapper.writeValueAsString(data));
+                                }
+                            }
+                                          
+            - **Authorization HttpSecurity**
+                - **Configuration to Authorize Requests**
+                    - Always go from most restrictive to least restrictive url's for authorization in HttpSecurity
                 
-                	@Override
-                	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-                		auth
-                				.userDetailsService(userDetailsService)
-                				.passwordEncoder(passwordEncoder());
-                	}
-            
-            - Configure HttpSecurity - Authorization
-                - Always go from most restrictive to least restrictive url's for authorization in HttpSecurity
+                            public void configure(HttpSecurity http) throws Exception {
+                                http.csrf()
+                                        .disable()
+                                        .authorizeRequests()
+                                        .antMatchers("/admin/**").hasRole("ADMIN")
+                                        .antMatchers("/anonymous*").anonymous()
+                                        .antMatchers("/login*").permitAll()
+                                        .anyRequest().authenticated()
+                                       .and()		
+                                        .headers().frameOptions().deny()
+                                        .cacheControl().disable()
+                                        .httpStrictTransportSecurity()
+                                        .and()
+                                        .xssProtection().block(false);
+                            }
                 
-                    public void configure(HttpSecurity http) throws Exception {
-                		http.csrf()
-                				.disable()
-                				.headers().frameOptions().deny()
-                				.cacheControl().disable()
-                				.httpStrictTransportSecurity().and().xssProtection().block(false);
-                	}
-                
-                - headers()     
+                - **Configuration for Form Login**
+                    - loginPage() – the custom login page
+                    - loginProcessingUrl() – the URL to submit the username and password to
+                    - defaultSuccessUrl() – the landing page after a successful login
+                    - failureUrl() – the landing page after an unsuccessful login
+                                     
+                             @Override
+                             protected void configure(final HttpSecurity http) throws Exception {
+                                 http
+                                   // ...
+                                   .and()
+                                   .formLogin()
+                                   .loginPage("/login.html")
+                                   .loginProcessingUrl("/perform_login")
+                                   .defaultSuccessUrl("/homepage.html", true)
+                                   .failureUrl("/login.html?error=true")
+                                   .failureHandler(authenticationFailureHandler());
+                             }      
+                                      
+                - **Headers**     
+                            
+                            public void configure(HttpSecurity http) throws Exception {
+                                 http.csrf()
+                                        .disable()
+                                        .and()		
+                                         .headers().frameOptions().deny()
+                                         .cacheControl().disable()
+                                         .httpStrictTransportSecurity()
+                                         .and()
+                                         .xssProtection().block(false);
+                             }                            
+                    
                     - What are frameOptions ?
                         - X-Frame-Options header help in avoiding clickjacking attacks
                         - Possible values for this header:
@@ -1979,43 +2052,127 @@ Only one null allowed.
                     
                     - What is cacheControl?
                     - What is httpStrictTransportSecurity?
-                    - What is xssProtection?
+                    - What is xssProtection?    
+                
+                - **Custom Logout Handler**
+                    - We can add logout handler by HttpSecurity -> .addLogoutHandler(logoutHandler) method
+                    - Following is the way we can create CustomLogoutHandler and perform required operations inside
+                        
+                            @Service
+                            public class CustomLogoutHandler implements LogoutHandler {
+                            
+                                private final UserCache userCache;
+                            
+                                public CustomLogoutHandler(UserCache userCache) {
+                                    this.userCache = userCache;
+                                }
+                            
+                                @Override
+                                public void logout(HttpServletRequest request, HttpServletResponse response, 
+                                  Authentication authentication) {
+                                    String userName = UserUtils.getAuthenticatedUserName();
+                                    userCache.evictUser(userName);
+                                }
+                            } 
+                        
+                - **Logout Options** - logoutUrl, logoutSuccessUrl, invalidateHttpSession, deleteCookies    
+                                   
+                        http
+                            .logout()
+                            .deleteCookies("remove")
+                            .invalidateHttpSession(false)
+                            .logoutUrl("/custom-logout")
+                            .logoutSuccessUrl("/logout-success");
+                    
+                    - custom application logic that needs to run when the user successfully logs out can be implemented with custom logout success handler. 
+                    - we need to implement onLogoutSuccess() method of LogoutSuccessHandler
+            
+            - **Authentication Provider**
+                - an Authentication request is processed by an AuthenticationProvider and a fully authenticated object with full credentials is returned.
+                - We can provide our custom authentication provider by implementing authenticate() method of AuthenticationProvider interface.    
+                            
+                        @Component
+                        public class CustomAuthenticationProvider implements AuthenticationProvider {
+                            
+                            @Override
+                            public Authentication authenticate(Authentication authentication) 
+                            throws AuthenticationException {
+                             
+                             String name = authentication.getName();
+                             String password = authentication.getCredentials().toString();
+                                    
+                             if (shouldAuthenticateAgainstThirdPartySystem()) {
+                                // use the credentials and authenticate against the third-party system
+                                        return new UsernamePasswordAuthenticationToken(name, password, new ArrayList<>());
+                                    } else {
+                                        return null;
+                                    }
+                            
+                                @Override
+                                public boolean supports(Class<?> authentication) {
+                                    return authentication.equals(UsernamePasswordAuthenticationToken.class);
+                                }
+                            }
+                            
+                          # Registering Custom Auth Provider. 
+                            
+                            @Override
+                            protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+                                auth.authenticationProvider(authProvider);
+                            }
+                          
+                          # XML Based config
+                            
+                            <authentication-manager>
+                                <authentication-provider
+                                  ref="customAuthenticationProvider" />
+                            </authentication-manager>     
+                                
                 - sessionManagement()
-                - authorizeRequests()
-                    - Note that the matchers are considered in order
                 - portMapper()
                 - What is csrf?
-                    - Cross-Site Request Forgery attack is an attack that forces the end user to make an unwanted calls to the web application servers where the end user is already authenticated
-                    - Adds CSRF support. This is activated by default when using WebSecurityConfigurerAdapter's default constructor. You can disable it using
+                     - Cross-Site Request Forgery attack is an attack that forces the end user to make an unwanted calls to the web application servers where the end user is already authenticated
+                     - Adds CSRF support. This is activated by default when using WebSecurityConfigurerAdapter's default constructor. You can disable it using
                 - What is cors?
-                       - We can enable cross-origin resource sharing (CORS) from either in individual methods, controllers or globally with @CrossOrigin annotation.
-                   
-                - logout()
-                        
-                        http
-                                     .authorizeRequests()
-                                         .antMatchers("/**").hasRole("USER")
-                                         .and()
-                                     .formLogin()
-                                         .and()
-                                     // sample logout customization
-                                     .logout()
-                                         .logout()
-                                            .deleteCookies("remove")
-                                            .invalidateHttpSession(false)
-                                            .logoutUrl("/custom-logout")
-                                            .logoutSuccessUrl("/logout-success");
-                - formLogin()
-                    - The most basic configuration defaults to automatically generating a login page at the URL "/login", redirecting to "/login?error" for authentication failure.  
+                        - We can enable cross-origin resource sharing (CORS) from either in individual methods, controllers or globally with @CrossOrigin annotation.
+
                 - httpBasic()
-                - authenticationProvider()
-                - userDetailsService()
+               
                 - addFilterAfter()
                 - addFilterBefore()
                 
-            - BCryptPasswordEncoder 
-                - On the top of SHA-256 Bcrypt is used specially for password encoding 
-            
+            - **XML Configuration**
+                  
+                  <http use-expressions="true">
+                      <intercept-url pattern="/login*" access="isAnonymous()" />
+                      <intercept-url pattern="/**" access="isAuthenticated()"/>
+                  
+                      <form-login login-page='/login.html' default-target-url="/homepage.html" authentication-failure-url="/login.html?error=true" />
+                      <logout logout-success-url="/login.html" />
+                  </http>
+                  
+                  <authentication-manager>
+                      <authentication-provider>
+                          <user-service>
+                              <user name="user1" password="user1Pass" authorities="ROLE_USER" />
+                          </user-service>
+                          <password-encoder ref="encoder" />
+                      </authentication-provider>
+                  </authentication-manager>
+                  
+                  <beans:bean id="encoder" 
+                    class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+                  </beans:bean>
+                  
+                  # Loading XML Beans
+                  @Configuration
+                  @ImportResource({ "classpath:webSecurityConfig.xml" })
+                  public class SecSecurityConfig {
+                     public SecSecurityConfig() {
+                        super();
+                     }
+                  }
+                  
     - How you will maintain roles in your controller?
         - Using spring security @PreAutorized
         - This is provided by spring security which we can use it at method level or controller level
@@ -2035,7 +2192,24 @@ Only one null allowed.
         - Strings are immutable. That means once you've created the String, if another process can dump memory, there's no way (aside from reflection) you can get rid of the data before garbage collection kicks in.
         - With an array, you can explicitly wipe the data after you're done with it. You can overwrite the array with anything you like, and the password won't be present anywhere in the system, even before garbage collection.
         - So yes, this is a security concern - but even using char[] only reduces the window of opportunity for an attacker, and it's only for this specific type of attack.
-        
+    
+    - How to Manually Authenticate User?
+        - Spring Security hold the principal information of each authenticated user in a ThreadLocal – represented as an Authentication object.
+        - let's manually trigger authentication and then set the resulting Authentication object into the current SecurityContext used by the framework to hold the currently logged-in user:
+            
+                public void login(HttpServletRequest req, String user, String pass) { 
+                    
+                    UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user, pass);
+                    
+                    Authentication auth = authManager.authenticate(authReq);
+                    
+                    SecurityContext sc = SecurityContextHolder.getContext();
+                    sc.setAuthentication(auth);
+                    
+                    HttpSession session = req.getSession(true);
+                    session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+                }
+                
 - Spring JPA/Hibernate
     - Can you please do integration of spring with JPA hibernate?
     - What is Hibernate?
