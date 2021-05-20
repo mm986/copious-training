@@ -830,4 +830,26 @@ Topics to be prepared for next call -
    Gateway Load Balancer
     1)POC on the GLB
     
-   Make a spring boot rest service and deploy, Same VPC and AZ should be different 
+   Make a spring boot rest service and deploy, Same VPC and AZ should be different
+   
+- Deployment on EC2 :
+    - Command to connect SSH to EC2 -
+        
+            ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.17.139.138
+            ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.133.81.204
+
+    - Command to install jre on EC2
+    
+    - Command to copy Jar file to EC2
+ 
+            scp -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem myproject-0.0.1-SNAPSHOT.jar  ec2-user@3.142.48.173:~/
+
+    - Command to start 
+        
+            java -jar myproject-0.0.1-SNAPSHOT.jar
+            http://3.142.48.173:8080/
+            java -jar myproject-0.0.1-SNAPSHOT.jar --server.port=9090 &    
+    
+- API Gateway
+    
+        

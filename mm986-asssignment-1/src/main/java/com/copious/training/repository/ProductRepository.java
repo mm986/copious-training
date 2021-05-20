@@ -4,6 +4,7 @@ import com.copious.training.entity.Item;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -19,8 +20,7 @@ import java.util.Collection;
 @Cacheable("OrderCartCache")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Repository
-public interface ProductRepository extends CrudRepository<Item, String> {
+public interface ProductRepository extends JpaRepository<Item, String> {
 
-    @Query(name = "Select * from item i where i.sku = :sku", nativeQuery = true)
-    Collection<Item> getItemsBySku(@Param("sku") String sku) throws Exception;
+    Item getItemBySku(@Param("sku") String sku) throws Exception;
 }

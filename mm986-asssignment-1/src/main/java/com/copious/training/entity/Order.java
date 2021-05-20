@@ -1,5 +1,7 @@
 package com.copious.training.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -32,6 +34,7 @@ public class Order {
     private ShippingDetails shippingDetails;
 
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     private Set<Item> lineItems;
 
     public Order() {

@@ -25,5 +25,6 @@
         <module>mm986-common-libs</module>
         <module>mm986-soap</module>
         <module>mm986-jms-util</module>
+        <module>mm986-jpa-hibernate</module>
     </modules>
 </project>

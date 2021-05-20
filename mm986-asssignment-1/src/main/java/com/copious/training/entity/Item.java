@@ -1,8 +1,11 @@
 package com.copious.training.entity;
 
 import com.copious.training.constants.ProductCategoryEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -12,7 +15,9 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "ITEM")
-public class Item {
+@NamedNativeQuery(name = "Item.getItemBySku", query = "Select * from Item i where i.sku = :sku", resultClass = Item.class)
+//@NamedQuery(name = "Item.getItemBySku", query = "FROM Item WHERE sku = :sku")
+public class Item implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String sku;
@@ -37,6 +42,7 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private Order order;
 
     public Item() {

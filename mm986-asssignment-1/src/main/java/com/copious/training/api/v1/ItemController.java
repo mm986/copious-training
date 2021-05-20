@@ -48,10 +48,39 @@ public class ItemController {
             @ApiParam(value = "Category of the Item.", example = "HEALTH_AND_WELLNESS", name = "sku")
             @RequestParam(value = "sku", required = true) String sku
     ) {
+
         return new ResponseEntity<>(
                 new GenericResponse<>(true,
-                        HttpStatus.OK.name(),
+                        HttpStatus.CREATED.name(),
                         productService.getItemsByCategory(sku)
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    /**
+     * API to get Items by ID
+     *
+     * @return Sku's
+     * @throws IOException
+     */
+    @ApiOperation(value = "Gets items by category.", notes = "Gets items by category.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Items loaded successfully", response = Item.class, responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Bad Request", response = Response.class),
+            @ApiResponse(code = 404, message = "Resource not found", response = Response.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+    })
+    @GetMapping(value = {"/by/id"})
+    public ResponseEntity<GenericResponse<Item>> getItemByID(
+            @ApiParam(value = "ID of the Item.", example = "AB111", name = "sku")
+            @RequestParam(value = "sku", required = true) String sku
+    ) {
+
+        return new ResponseEntity<>(
+                new GenericResponse<>(true,
+                        HttpStatus.CREATED.name(),
+                        productService.getItemById(sku)
                 ),
                 HttpStatus.OK
         );

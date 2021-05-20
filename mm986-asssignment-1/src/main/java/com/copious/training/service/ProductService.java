@@ -69,6 +69,7 @@ public class ProductService {
         List<Sku> products = new LinkedList<>();
 
 
+
         products.addAll(productMock
                 .getMockProducts()
                 .stream()
@@ -76,6 +77,7 @@ public class ProductService {
                         .thenComparing(Sku::getName)
                         .thenComparing(Sku::getTotalPrice))
                 .collect(Collectors.toList())
+
         );
         products.get(0);
         return products;
@@ -153,7 +155,17 @@ public class ProductService {
 
     public List<Item> getItemsByCategory(String sku) {
         try {
-            return (List<Item>) productRepository.getItemsBySku(sku);
+            return (List<Item>) productRepository.getItemBySku(sku);
+        } catch (Exception e) {
+            log.error("{}{}", e.getMessage(), e.getStackTrace());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Item getItemById(String sku) {
+        try {
+            return productRepository.getItemBySku(sku);
         } catch (Exception e) {
             log.error("{}{}", e.getMessage(), e.getStackTrace());
             e.printStackTrace();

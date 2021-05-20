@@ -18,13 +18,21 @@
         myList.forEach(element -> {
         	System.out.println("forEach element Value::"+element);
         });
-        		
+- For loop Vs Enhanced for loop.
+        
 ### default and static methods in Interfaces
 - forEach() is example of this, but it may occur **Diamond Problem** 
-- Here implementation class will throw compile time exception as - A default method cannot override a method from java.lang.Object
-- Solution to this is we will have to provide implementation logic in the class implementing the interfaces.
+    - Here implementation class will throw compile time exception as - A default method cannot override a method from java.lang.Object
+    - Solution to this is we will have to provide implementation logic in the class implementing the interfaces.
 - Since any class implementing an interface already has Object as a superclass, if we have equals(), hashCode() default methods in the interface, it will become irrelevant. That’s why for better clarity, interfaces are not allowed to have Object default methods.
-- Examples:
+- **Default Methods**
+    - Java 8 interface default methods will help us in avoiding utility classes, such as all the Collections class method can be provided in the interfaces itself.
+    - One of the major reason for introducing default methods in interfaces is to enhance the Collections API in Java 8 to support lambda expressions.
+    - Java interface default methods are also referred to as Defender Methods or Virtual extension methods
+- **Static Methods**
+    - Java interface static method is visible to interface methods only
+    - We can’t define interface static method for Object class methods, we will get compiler error as “This static method cannot hide the instance method from Object”.
+- **Examples**
     - Iterable -> forEach()
     - Comparable -> comparing(), thenComparing()
     
@@ -42,7 +50,7 @@
         	
         	This can be defined as in single line with the help of anonymous classes - 
         	    Runnable r1 = () -> System.out.println("My Runnable");
-  
+        
     - **Function**      
         - Represents a function that accepts one argument and produces a result.
         - Methods
@@ -59,6 +67,8 @@
                 Function<Integer, Integer> times2 = e -> e * 2;
                 Function<Integer, Integer> squared = e -> e * e;  
                 
+                Integer result = times2.apply(10)
+                  
                 times2.compose(squared).apply(4);  
                 // Returns 32
                 
@@ -72,6 +82,7 @@
         - Methods
             - void accept(T t)
             - default Consumer<T> andThen(Consumer<? super T> after)
+            
     - **Supplier**
         - Represents a supplier of results.
         - Methods
@@ -83,6 +94,8 @@
                 - default Predicate and(Predicate other)
                 - default Predicate negate()
                 - default Predicate or(Predicate other)
+                - test()
+                
             - Example:
                 
                        // Creating predicate 
@@ -96,9 +109,9 @@
                  - https://www.geeksforgeeks.org/java-8-predicate-with-examples/
         			
 ### Java Stream API
-- To avoid external iteration over collections and object containers in Java.. Stream API introduce internal iteration 
-facility to operate on data structures in Java 8. 
-    **Example:**
+- To avoid external iteration over collections and object containers in Java.. Stream API introduce internal iteration facility to operate on data structures in Java 8. 
+        
+        **Example:**
         
         private static int sumIterator(List<Integer> list) {
         	Iterator<Integer> it = list.iterator();
@@ -115,7 +128,11 @@ facility to operate on data structures in Java 8.
         Following is the optimized way to write above logic using streams
        
         private static int sumStream(List<Integer> list) {
-        	return list.stream().filter(i -> i > 10).mapToInt(i -> i).sum();
+            1 7 40 97 2
+        	return list.stream()
+        	    .filter(i -> i > 10)
+        	    .mapToInt(i -> i)
+        	    .sum();
         }
          
 - It provides several features such as sequential and parallel execution, filtering based on the given criteria, mapping etc.
@@ -134,7 +151,7 @@ facility to operate on data structures in Java 8.
     - **Streams with Optional Class (Object container)**
         - Java Optional is a container object which may or may not contain a non-null value.
         - Methods - reduce(), min(), max(), findFirst(), findAny()
-        
+            
     - **Streams with Splitrator** 
         - used for traversing and partitioning sequences, used for parallel processing as well. 
         - **tryAdvance()** takes a Consumer that’s used to consume elements of the Spliterator one by one sequentially
@@ -148,7 +165,20 @@ facility to operate on data structures in Java 8.
                       .limit(35000)
                       .collect(Collectors.toList());
                 }
-                
+               
+               1, 2, 3 , 4,....1000 
+               Spliterator<> sp1 = list.splitarator(); 
+               
+               sp2= sp1.trySplit();
+               
+               sp1 -> 1...500
+               sp2 -> 501.. 1000
+               
+               sp3 = sp2.trySplit()
+               
+               sp2 -> 501 ..750 
+               sp3 -> 751... 1000
+
                 @Test
                 public void givenSpliterator_whenAppliedToAListOfArticle_thenSplittedInHalf() {
                     Spliterator<Article> split1 = Executor.generateElements().spliterator(); 
@@ -167,7 +197,8 @@ facility to operate on data structures in Java 8.
            - DISTINCT – if for each pair of encountered elements x, y, !x.equals(y)
            - IMMUTABLE – if elements held by source can't be structurally modified
            - NONNULL – if source holds nulls or not
-           - ORDERED – if iterating over an ordered sequence    
+           - ORDERED – if iterating over an ordered sequence
+               
 - Java Stream Intermediate and Terminal Operations
     - filter(), map() are the most commonly used intermediate operations
     - Terminal operations that returns a result or produce a side effect.
@@ -221,6 +252,7 @@ facility to operate on data structures in Java 8.
         - limit() is a short-circuiting operation.
     - Combining skip() and limit()
         - To get data in batches (paging machenism can be implemented by combinig both operations)    
+        
 ### Java Time API
 - It has some sub-packages **java.time.format** that provides classes to print and parse dates and times and **java.time.zone** provides support for time-zones and their rules.
 - DateTimeFormatter
@@ -263,19 +295,30 @@ Follows insertion order. Allows multiple null elements.
 **Implementation Classes -** 
 - **ArrayList**
     - Maintains Insertion Order
-    - Allows Index based access to element
+    - Allows Index based access to element. It implements Random Access interface so retrival is faster.
     - Dynamically resizes by 50%
     - Non Synchronised
+    - Why it is costly to have insertion and deletion in middle of ArrayList? shifting
+    - 3 constructors (default, with initial capacity, collection from other)    
+    
 - **LinkedList**
     - Maintains Insertion Order
     - Implements List and Dequeue (FIFO approach to remove element)
     - Does not allow Index based access to element (Random access) - need to use ListIterator to iterate over elements.
-    - Non Synchronised  
+    - Non Synchronised
+    - When insertion and deletion operations are frequent then we can use LinkedList
+      
 - **Vector**
     - Synchronised
     - Dynamically resizes by doubling.
     - Maintains Insertion Order
     - Extends Stack - LIFO
+    
+    Collection - 1 2 3 4
+    create enum 1 2 3 4 - read only copy for iteration
+    Add element to collection 1 2 3 4 5
+    
+
 - **ArrayList vs LinkedList** 
     - https://beginnersbook.com/2013/12/difference-between-arraylist-and-linkedlist-in-java/
     - searching
@@ -292,14 +335,26 @@ Only one null allowed.
     
 **Implementation Classes -**    
 - **HashSet**
-    - Implements HashTable
+    - Implements HashMap
     - Stores only unique elements
     - Unordered collection. 
-
+    
+    1 2 3 4
+    
+    add(5)
+    
+    put(5, PRESENT);
+    
+    HashMap
+    1, PRESENT
+    2, PRESENT
+    3, PRESENT
+    4, PRESENT
+    
 - **LinkedHashSet**
     - Uses Doubly Linked List
     - Maintains Insertion Order
-    
+    - What is internal working? how it Uses Doubly Linked List?
 - **TreeSet**
     - Implements SortedSet
     - uses Tree at back end 
@@ -309,9 +364,9 @@ Only one null allowed.
 - **Comparison**
     - https://www.geeksforgeeks.org/difference-and-similarities-between-hashset-linkedhashset-and-treeset-in-java/
     - **When to use**
-        - If you don’t want to maintain insertion order but want store unique objects	
+        - If you don’t want to maintain insertion order but want store unique objects -> HashSet
         - If you want to maintain insertion order of elements then you can use LinkedHashSet	
-        - If you want to sort the elements according to some Comparator then use TreeSet
+        - If you want to sort the elements according to some Comparator then use TreeSet]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 ### Queue
 
 **Sub Interfaces -**
@@ -321,12 +376,17 @@ Only one null allowed.
 **Implementation Classes -**   
 - **PriorityQueue**
     - Elements are stored and served as per the priority of the element irrespective of their insertion order.
+    - How it sets the priority of specific element in Queue?
+    - PriorityQueue doesn’t permit null.
     
 - **ArrayDeQue**
     - This is an only implementation of DeQue.
     - In addition, it's a resizable array with no capacity restrictions.
 
 ### Map
+
+- Why Map is not part of collection Hierarchy ?
+- Hetrogeneous objects are not allowed in TreeSet  and TreeMap
 
 **Sub Interfaces -**
 - **SortedMap**
@@ -349,26 +409,33 @@ Only one null allowed.
 
 ### Questions
 - Why map doesn't extend the Collection interface?
-    Both are different in structural manner. Key-pair Vs Object. Add(obj) Vs Put(k,v)
+   - Both are different in structural manner. Key-pair Vs Object. Add(obj) Vs Put(k,v)
 
 - What is difference between fail-fast and fail-safe Iterators?
      - **fail-fast** It throws ConcurrentModificationException - In case of modification of non sync collections by multiple threads.
      - **fail-safe** It operates on a clone of Collection so doesn't throw an Exception.
      - Here basically iterators iterate over thread safe collections like Vectors, ConcurrentHashMap's etc. are fail-safe others are fail-fast which throws ConcurrentModificationException
+
+- Every collection implemnts clonable and serializable 
      
 - Map Vs IMap 
-
+    
+    - IMap - This class is used when the user requires the objects to be compared via reference. It belongs to java.util package.
+    - Use case where qwe use IMap
+    
 - What is the usage of BlockingQueue
 
 - What is difference between Synchronous collection and concurrent collection?
 
-### Synchronized Vs Concurrent Collections
+### Synchronized Collections
 - **synchronizedCollection()**
 - **synchronizedList()**
 - **synchronizedMap()**
 - **synchronizedSortedMap()**
 - **synchronizedSet()**
 - **synchronizedSortedSet()**
+
+### Concurrent Collections
 - **ConcurrentHashMap**
     - Constructor args    
         - Concurrency-Level - It is the number of threads concurrently updating the map. The implementation performs internal sizing to try to accommodate this many threads.
@@ -381,10 +448,13 @@ Only one null allowed.
         - remove()
         - clear() 
         - get()
+        
 - **CopyOnWriteArrayList**
     - an enhanced version of ArrayList in which all modifications (add, set, remove, etc) are implemented by making a fresh copy
     - thread-safe version of ArrayList
-    - the Iterator of CopyOnWriteArrayList can't perform remove operation otherwise we get Run-time exception saying UnsupportedOperationException. Also Iterator of CopyOnWriteArrayList will never throw ConcurrentModificationException.
+    - **Iterator** - When we create an iterator for the CopyOnWriteArrayList, we get an immutable snapshot of the data in the list at the time iterator() was called.
+        - The Iterator of CopyOnWriteArrayList can't perform remove operation otherwise we get Run-time exception saying UnsupportedOperationException. 
+        - Also Iterator of CopyOnWriteArrayList will never throw ConcurrentModificationException.
 
 ## Optional in Java
 - A container object which may or may not contain a non-null value. If a value is present, **isPresent()** will return **true** and **get()** will return the value.
@@ -406,10 +476,8 @@ Only one null allowed.
 - JVM & Architecture
     - JVM stands for Java virtual machine
     - JVM is the virtual machine on which java code executes.
-    - JVM is responsible for converting byte code into machine specific code.
-    
-    ![title](img/jvm.png)
-    
+    - JVM is responsible for converting byte code into machine specific code.   
+    ![title](img/jvm.png)   
     - What is JVM ClassLoader Subsystem? Types of ClassLoaders 
         - Class loader loads, links, and initializes a class from a Java class file.
         - Types:
@@ -560,7 +628,7 @@ Only one null allowed.
         - variables doesn't take part in serialization & deserialization
         - we can't mark it as final
         - deserialization set's default value for that var's
-      
+        
     - volatile 
         - used in multithreaded env. 
         - When we have 2 threads r/w simultaneously. 
@@ -574,6 +642,7 @@ Only one null allowed.
     - Compatible changes vs Incompatible changes in serializable class 
                   
                   private static final Long serialVersionId = 123456L;
+                  
        - Advantage of this statement - If we make any compatible change in serializable class then we don't need to recompile and deploy - it will work
        - If we don't provide this statement then we must have to recompile and redepoly class
        - For any non compatible change we must have to recompile and redeploy the code.   
@@ -592,7 +661,7 @@ Only one null allowed.
         - has drawback is we have to modify existing class by overriding compareTo() 
         - Collectios.sort(list)
         - here we compare with current instance
-        -TreeMap and TreeSet are two implementations from the Java Collections Framework are the real time implementation of Comparable Interface
+        - TreeMap and TreeSet are two implementations from the Java Collections Framework are the real time implementation of Comparable Interface
         
    - Comparator
         - we need to create custom comparator 
@@ -608,6 +677,7 @@ Only one null allowed.
         - These all deals with abstraction, It is a way to achieve abstraction in Java. We are hiding implementation details, and showing functionality. Focus on what instead of how.
         - There are levels of abstraction-
         - Abstract class Vs Interface 
+            ![title](img/Interface-Vs-Abstract-Class.png)
             - **Type of methods**: Interface can have only abstract methods. Abstract class can have abstract and non-abstract methods.
             - **Final Variables**: Variables declared in a Java interface are by default final. An abstract class may contain non-final variables.
             - **Type of variables**: Abstract class can have final, non-final, static and non-static variables. Interface has only static and final variables.
@@ -616,19 +686,28 @@ Only one null allowed.
             - **When to use** Interfaces are used to achieve 100%  abstraction(loose coupling) while Abstract classes are used where we have to implement default functionality(code reusability)
             - **Speed** Abstract classes are faster than interfaces.
             - Can i create instance of abstract class? No -> What is the way if i want to create instance? adding main method inside
-             
+            - **Object To Object Inheritance**
+                - In Abstract classes object of class created at runtime we can not create it explicitly from code. Extending abstract classs and provide implementation of abstract methods called object to object inheritance.
+                - In Interface neither we nor runtime env can create the object - so this is not Object to Object inheritance      
     - Encapsulation - coupling method and variables as asingle unit
     - Inheritance
         - Is-A relationship - parent-child - heavily used in OOP 
         - Code reusability, provides overriding
         - levels of inheritance - single, multilevel, hybrid, 
         - There will be compile time error in this issue - diamond problem - resolved using implementing multiple inheritance
+        - Child methods that are overriding parent should have higher or equal access specifier, we can not reduce the access level.
+        - What is multiple inheritance and does java support it?
+            - Here child class inherits properties from multiple parent classes which is not allowed in Java, Here this is achieved with the help of Interfaces.
+            - So to overcome Dimond problem in Multiple Inheritance we use interfaces for multiple inheritance.
+            - Since Java 8 there are static and default methods allowed in interfces which may cause this problem again.       
     - Polymorphism
         - compile time
             - overloading - static binding - early binding - single class only     
         - runtime  
             - overriding - dynamic binding - late binding - inheritance multiple classes
-    
+        - Can we override private or static method in Java?
+            - No we can't since private is not accessible or visible in other class whereas static is linked to class. We can create static method in child to override parent static method - it should be same that is called hiding
+
 - Collections        
      - Introdudction
      - Iterable root interface 
@@ -730,6 +809,22 @@ Only one null allowed.
     - String is used as key in HashMap     
     
 - What is boxing & unboxing?     
+  - The automatic conversion of primitive data types into its wrapper class objects is known as **autoboxing**
+    
+         int a = 15; // Primitive data type
+             Integer I = a; // Autoboxing will occur internally.
+ 
+  - The automatic conversion of wrapper class objects into its primitive data types is known as unboxing.
+    
+        Integer a = new Integer(15); // Wrapper class object
+              int I = a;// Unboxing will occur internally.
+              
+  - Wrapper Classes
+    - A wrapper class in Java converts a primitive data type into class object.
+    - Java is an object-oriented language that only supports pass by value. 
+    - Therefore, wrapper class objects allow us to change the original passed value. 
+    - These wrapper classes help with multithreading and synchronization because, in Java, multithreading only works with objects. 
+    - Moreover, most collections (like Vector, LinkedList, etc.) work with objects.
  
 - Singleton Design Patterns
     - When we need single instance of class in JVM then we implement this
@@ -746,7 +841,7 @@ Only one null allowed.
                     } 
             - add synchronized keyword for thread safety
                 - synchronized It is keyword provided by Java. It should be executed single thread at a time. Thread lock is there (helps to avoid race condition)
-                
+                 
        - Eager Initialization 
             - create private static member variable of a class and initialize it with new Object()
        
@@ -791,21 +886,97 @@ Only one null allowed.
     - It provides batch processing
     - How we do TransactionManagement - programetic transaction managenment commit(), rollback()
     - ACID 
-        - Atomic
-        - Consistency - Table level lock used to achieve this 
+        - Atomic 
+            - Either all or none.
+        - Consistency 
+            - Before transaction start and after transaction ends sum of the money should be same.
+            - Table level lock used to achieve this 
         - Isolation 
+            -  Inconsistency happens in case of parallel transactions. So we convert this to serial transactions in order to achieve isolation.
+            -  Conflict Serializability & View Serializability 
+        
         - Durability - we can't change once committed.
-
+ 
 - How will you map your Query result's in spring? RowMappers in JDBC
     - this is with help of RowMapper
     - RowMapper is an Interface which allows us to map the rows to user defined entities. (fetches the records from DB and contains Query())
-    - It iterates ResultSet and adds it to collecction
+    - It iterates ResultSet and adds it to collection
     - What is the advantage over ResultSet?
         - Select * from Students
             ResultSet needs to iterate and add to collection manually
             We can create RowMapper and override **mapRows()** and will map with entity
             RowMapper used with JDBCTemplate         
+
+- Servlets
+    - Server side technology allows to serve the web requests (HTTP/HTTPS) from the client.    
+    - Part of javax.servlet and javax.servlet.http packages provides support to define the servlets
+    - Any servlet program should implement javax.servlet.Servlet interface which provides lifecylcle methods for servlet.
+    - **Servlet Lifecycle**
+    ![title](img/servlet-lifecycle.png)
+        - init() 
+            - The init method must complete successfully before the servlet can receive any requests. 
+            - The servlet container cannot place the servlet into service if the init method either throws a ServletException or does not return within a time period defined by the Web server.
+                
+                public void init() throws ServletException {
+                    // Initialization code like set up database etc....
+                }
+                
+        - service() 
+            - This method is only called after the servlet's init() method has completed successfully.
+            - The Container calls the service() method to handle requests coming from the client, interprets the HTTP request type (GET, POST, PUT, DELETE, etc.) and calls doGet, doPost, doPut, doDelete, etc. methods as appropriate.
+                    
+                    public void service(ServletRequest request, ServletResponse response) 
+                      throws ServletException, IOException {
+                        // ...
+                    }
+        - destroy()
+            - Called by the Servlet Container to take the Servlet out of service.
+            - This method is only called once all threads within the servlet's service method have exited or after a timeout period has passed. After the container calls this method, it will not call the service method again on the Servlet.
             
+                    public void destroy() {
+                        // 
+                    }
+    - **Get Vs Post**
+    ![title](img/get-vs-post.png)     
+        - **Idempotent:** Idempotency means that multiple identical requests will have the same outcome. So it does not matter if a request is sent once or multiple times.
+        - **Safe:** An HTTP method is safe if it doesn't alter the state of the server. In other words, a method is safe if it leads to a read-only operation. Several common HTTP methods are safe: GET , HEAD , or OPTIONS .
+    
+    - **Session Management**
+        - Session is a conversional state between client and server and it can consists of multiple request and response between client and server.
+        - Since HTTP and Web Server both are stateless, the only way to maintain a session is when some unique information about the session (session id) is passed between server and client in every request and response
+        - Contains
+            - User Auth - This is not very effective method because it wont work if the same user is logged in from different browsers.
+            - Html Hidden fields - Also it’s not secure because we can get the hidden field value from the HTML source and use it to hack the session.
+            - Cookies 
+                - We can maintain a session with cookies but if the client disables the cookies, then it won’t work.
+                - JSESSIONID Cookie - This cookie is used to identify the HttpSession object in further requests from client.  
+            - URL Rewiring
+            - Session management API (HttpSession)
+            
+    - **Servlet Context**      
+       - Easy to maintain if any information is shared to all the servlet, it is better to make it available for all the servlet.
+       - This is the way to provide sevlet context detials in web.xml file of servlet
+                <context-param>  
+                    <param-name>dname</param-name>  
+                    <param-value>sun.jdbc.odbc.JdbcOdbcDriver</param-value>  
+                </context-param>  
+            
+    - **Servlet Config**   
+        - Following is the way we cconfigure servlet in web.xml
+                        
+                <servlet>  
+                    <servlet-name>sonoojaiswal</servlet-name>  
+                    <servlet-class>DemoServlet</servlet-class>  
+                </servlet>  
+                   
+                <servlet-mapping>  
+                    <servlet-name>sonoojaiswal</servlet-name>  
+                    <url-pattern>/context</url-pattern>  
+                </servlet-mapping>
+    
+    - **Request Dispatcher**
+        - This forwards request to other resources or another servlet in same application            
+                  
 - Generics    
 - Unit Testing    
 - Inner classes
@@ -908,7 +1079,7 @@ Only one null allowed.
         - Methods: getBean(), containsBean(), isSingleton(), isPrototype() 
         - BeanFactory only supports two scopes — Singleton and Prototype.
         - XML Configuration: XmlBeanFactory is the implementation class for the BeanFactory interface.
-        
+                
                 <bean id="employee" class="com.baeldung.beanfactory.Employee">
                     <constructor-arg name="name" value="Hello! My name is Java"/>
                     <constructor-arg name="age" value="18"/>
@@ -949,19 +1120,6 @@ Only one null allowed.
         - The ClassPathXmlApplicationContext class is the implementation class of ApplicationContext interface.
         - Shut down the container gracefully when the application is shut down,
         
-    - @Configuration - Annotation Config
-    - @Component is in spring ?
-        - It takes part in Dependency Injection
-        - There is not difference in @Component @Service @Repository all are same but just streotypes to mark class as component
-    
-    - What is Component Scan?
-       - Spring boot - @SpringBootApplication
-            - no need to explicitly scan - scans all sub packages
-            - used in case of external package scan 
-        
-       - Spring 
-            - Where we create application context - provided there as component scan package.
-                
 - What is IOC and Dependency Injection in Spring?
     - IOC is mechanism by which the control of objects or portions of a program is transfered to a container or framework.
     - It helps in decoupling the execution of a task from its implementation
@@ -991,6 +1149,7 @@ Only one null allowed.
                     <bean id="store" class="org.baeldung.store.Store"> 
                         <constructor-arg type="ItemImpl1" index="0" name="item" ref="item1" /> 
                     </bean>
+                    
             - Setter - pass object in setter
                     
                     @Bean
@@ -1064,6 +1223,7 @@ Only one null allowed.
                     System.out.println(repository.getClass().getName());
                     return repository.create(author);
                 }
+                
         - Generally, Spring uses two types of proxies:
            - CGLib Proxies – Used when proxying classes
            - JDK Dynamic Proxies – Used when proxying interfaces
@@ -1184,8 +1344,9 @@ Only one null allowed.
                    @Override
                    public void addViewControllers(ViewControllerRegistry registry) {
                       registry.addViewController("/").setViewName("index");
+                      registry.addViewController("/get/students").setViewName("list");
                    }
-                
+                    
                    @Bean
                    public ViewResolver viewResolver() {
                       InternalResourceViewResolver bean = new InternalResourceViewResolver();
@@ -1232,6 +1393,7 @@ Only one null allowed.
             } finally{
                 //Finally  close resources.
             }
+            
     - Before Spring 3.2 two main approaches to handling exceptions in a Spring MVC application were:
     - **@ExceptionHandler** : 
          - @ExceptionHandler annotated method is only active for that particular Controller, not globally for the entire application.    
@@ -1411,16 +1573,27 @@ Only one null allowed.
              private String activeProfiles;
                                                                                                               
 - SpringBoot what is it?
-    - All hectic configuration
-    - Microservice based apps we can easily build
-    - Spring Vs Spring Boot
-            - Spring is used to develop Enterprise Apps, Spring boot used to develop quick apps with rapid Action development
-    - Springboot provides in memory db
-    - Here we can create our own pom
-    - Dependency Injection is manual in Spring
-    - Drawback depends on scenario - uses unused dependencies - we can exclude
-    - specially designed for microservices based application
-
+    - **Theory** 
+        - All hectic configuration
+        - Microservice based apps we can easily build
+        - Spring Vs Spring Boot
+                - Spring is used to develop Enterprise Apps, Spring boot used to develop quick apps with rapid Action development
+        - Springboot provides in memory db
+        - Here we can create our own pom
+        - Dependency Injection is manual in Spring
+        - Drawback depends on scenario - uses unused dependencies - we can exclude
+        - specially designed for microservices based application
+    
+    - **Spring Boot Starters**
+        - spring-boot-starter-web-services -> SOAP Web Services
+        - spring-boot-starter-web -> Web & Restful applications
+        - spring-boot-starter-test -> Unit & Integration testing
+        - spring-boot-starter-jdbc  -> Traditional JDBC
+        - spring-boot-starter-data-jpa -> Spring Data JPA with Hibernate
+        - spring-boot-starter-security -> Authentication & Authorization using Spring Security
+        - spring-boot-starter-cache -> Enabling Spring Frameworks caching supports
+        - spring-boot-starter-actuator -> The advanced features like monitoring and tracing your application out of the box.
+        
     - **Enable Autoconfiguration** @SpringBootApplication - We use this annotation to mark the main class of a Spring Boot application
             
             @SpringBootApplication
@@ -1433,8 +1606,16 @@ Only one null allowed.
        - @SpringBootApplication encapsulates @Configuration, @EnableAutoConfiguration, and @ComponentScan annotations with their default attributes.
             - **@Configuration** – which marks the class as a source of bean definitions
             - **@EnableAutoConfiguration** – which tells the framework to add beans based on the dependencies on the classpath automatically
-            - **@ComponentScan** – which scans for other configurations and beans in the same package as the Application class or below     
-       
+            - **@ComponentScan** 
+                – which scans for other configurations and beans in the same package as the Application class or below     
+                - If We explicitly specify ComponentScan package in spring-boot then it will not scan for default package.         
+                        
+                         @ComponentScan(basePackages = "com.baeldung.componentscan.springapp.animals")
+                         
+                         @ComponentScan(excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = Rose.class))
+                           
+                         @ComponentScan(excludeFilters = @ComponentScan.Filter(type=FilterType.REGEX, pattern="com\\.baeldung\\.componentscan\\.springapp\\.flowers\\..*"))   
+                               
        - Conditional Configuration
             - https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/using-boot-using-springbootapplication-annotation.html
             - @ConditionalOnClass and @ConditionalOnMissingClass
@@ -1743,7 +1924,11 @@ Only one null allowed.
                         // getters and setters
                     }   
         - Here this annotation will automatically bind above properties to variables no need to use @Value annotation separately for each field.            
-      
+        - @EnableConfigurationProperties 
+            - annotation is strictly connected to @ConfiguratonProperties. 
+            - Every project automatically includes @EnableConfigurationProperties. 
+            - Therefore, @ConfiguratonProperties support is implicitly turned on in every Spring Boot application.
+            
       - **@Qualifier**
         - If more than one bean of the same type is available in the container, the framework will throw NoUniqueBeanDefinitionException, indicating that more than one bean is available for autowiring. Because Spring doesn't know which bean to inject
         - By using this we can eliminate the issue of which bean needs to be injected.
@@ -1881,7 +2066,21 @@ Only one null allowed.
                         return city;
                     }
                 }
-      
+        - To Overcome Circular Dependency 
+            - to break the cycle is saying Spring to initialize one of the beans lazily. 
+            - That is: instead of fully initializing the bean, it will create a proxy to inject it into the other bean.
+            
+                    @Component
+                    public class CircularDependencyA {
+                    
+                        private CircularDependencyB circB;
+                    
+                        @Autowired
+                        public CircularDependencyA(@Lazy CircularDependencyB circB) {
+                            this.circB = circB;
+                        }
+                    }
+            
       - **@Scheduled**
         - Method with @Scheduled annotation should follow following rules:
            - a method should have the void return type
@@ -1931,6 +2130,7 @@ Only one null allowed.
                     <task:scheduled ref="beanC" method="methodC" 
                       cron="*/5 * * * * MON-FRI" />
                 </task:scheduled-tasks>                               
+                
 - Spring Security
     - Which Security framework you have worked upon? JWT
         - Introduction of JWT
@@ -2659,16 +2859,41 @@ Only one null allowed.
                           }  
 
 - Spring JMS   
-   - What is JMS
-   - Topics and queues
-   - Difference between topic and queue in JMS
-   - What its purpose
-   - sync and async messaging
-   - Producer and consumer
+   - **What is JMS**
+      - JMS means Java Messaging Service. It is the new standard for inter client communication. It allows the J2EE application component to create, send, read and receive the messages.
+      - There are two types of messaging models that JMS provides –
+        - Point to point queuing
+        - Second one is publish and subscribe
+      - JMS administered object is a pre-configured JMS object that is created by an administrator for the use of JMS clients and placed in JNDI namespace.
+        
+   - **Topics Vs Queues**
+        - Queue technique is used for one to one messaging, and it supports point to point messaging. While topic is typically used for one to many messaging and it supports public subscribe model of messaging.
+   
+   - **Sync Vs Async Messaging**
+    - **Synchronous:** In this type of messaging, client waits for the server to respond to a message. Ex: Telephone call, two way radio communication.
+    - **Asynchronous:** In this type of messaging, client does not wait for a message from the server, but automatically an event is created to trigger a message from a server. Ex: email, text messaging, blog posting.
+   
+   - **Components**
+    - Session
+    - Connection
+    - Message
+    - Message Producer
+    - Message Consumer
+    - Connection factory and destination
+   
    - jms handles which type of calls.
    - How queue get active.
    - How modules communicates.                         
-
+   - durable and non-durable subscription?
+     - Durable subscription gives a subscriber the freedom of receiving all messages from a topic
+     - Non-Durable subscription does not make any guarantees about messages sent by others when a client get disconnected by others.
+   - The different types of messages available in JMS API are 
+    - Message
+    - TextMessage
+    - BytesMessage
+    - ObjectMessage
+    - MapMessage.
+     
 - Spring Async Services
     - Spring provides asynchronous execution support in Spring – with the @Async annotation
     - annotating a method of a bean with @Async will make it execute in a separate thread i.e. the caller will not wait for the completion of the called method.
@@ -2774,13 +2999,14 @@ Only one null allowed.
     - HandlerIntercceptor is the only interceptor provided by spring
     - It is a way to control request response flow
     - HandlerIntercceptor has three lifecycle methods
-        Prehandle
-        Posthandle
-        AfterCompletion
+       - Prehandle
+       - Posthandle
+       - AfterCompletion
     - We must have to register interceptor in interceptor registory - inside SpringSecurityConfig -> addInterceptor() 
     
     - Filter is similer to interceptor but different
-    
+    - https://www.baeldung.com/spring-mvc-handlerinterceptor
+
 - Spring AOP
     - APO is a framework that is extended by Spring
     - Spring Global Exception Handling - with @ControllerAdvice is example 
@@ -2848,14 +3074,45 @@ Only one null allowed.
     - Joint Points
         Lifecycle @Before, @After       
 
-### Other
-- Properties class implementation to read System properties and provide it to rest api.
-- LocalDate operations
-- JUnit/Mockito
-- Swagger
-- MDC logs
-- Maven Multi module project      
-      
+- Spring Actuator
+    - Monitoring our app, gathering metrics, understanding traffic, or the state of our database become trivial with this dependency.
+    - Provides production-grade tools
+    - used to expose operational information about the running application — health, metrics, info, dump, env, etc. It uses HTTP endpoints or JMX beans to enable us to interact with it.
+    - Dependency 
+        
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+            </dependency>
+    -  by default, all Actuator endpoints are now placed under the /actuator path.
+        - /auditevents lists security audit-related events such as user login/logout. Also, we can filter by principal or type among other fields.
+        - /beans returns all available beans in our BeanFactory. Unlike /auditevents, it doesn't support filtering.
+        - /conditions, formerly known as /autoconfig, builds a report of conditions around autoconfiguration.
+        - /configprops allows us to fetch all @ConfigurationProperties beans.
+        - /env returns the current environment properties. Additionally, we can retrieve single properties.
+        - /flyway provides details about our Flyway database migrations.
+        - /health summarizes the health status of our application.
+        - /heapdump builds and returns a heap dump from the JVM used by our application.
+        - /info returns general information. It might be custom data, build information or details about the latest commit.
+        - /liquibase behaves like /flyway but for Liquibase.
+        - /logfile returns ordinary application logs.
+        - /loggers enables us to query and modify the logging level of our application.
+        - /metrics details metrics of our application. This might include generic metrics as well as custom ones.
+        - /prometheus returns metrics like the previous one, but formatted to work with a Prometheus server.
+        - /scheduledtasks provides details about every scheduled task within our application.
+        - /sessions lists HTTP sessions given we are using Spring Session.
+        - /shutdown performs a graceful shutdown of the application.
+        - /threaddump dumps the thread information of the underlying JVM.     
+
+- Spring Boot DevTools
+    - Allow Auto Restart on code change
+    
+         ![title](img/auto-reload.png) 
+    
+    - Using Ctrl+Shift+A (or ⌘+Shift+A on Mac) type Registry -> Allow Compiler Automake
+    
+         ![title](img/auto-make.png)                          
+         
 ### Web Services
 - **SOAP (JAX-WS)**
     - Website Vs Web Services
@@ -2978,13 +3235,73 @@ Only one null allowed.
     
 ## Questions
 - Why String is Immutable or final in Java?
+
 - What is the difference between poll() and remove() method of Queue interface?
+
 - How do you remove an entry from a Collection? and subsequently what is the difference between the remove() method of Collection and remove() method of Iterator, which one you will use while removing elements during iteration?
 - What is the difference between Synchronized Collection and Concurrent Collection?
 - What is the difference between Iterator and Enumeration?
 - What is transient keyword? When we use this?
+
+- Can we iterate in reverse direction? Can we jump from one to another elements?
+    - **Collections.reverse()** - A simple approach of iterating a list in the reverse order may consist in simply revert a list using Collections.reverse() and then performing a natural iteration over the elements
+    - **ListIterator** is used to traverse in reverse direction.
+        
+            ## ListIterator interface
+            
+            List<String> list = new ArrayList<String>();
+            list.add("First");
+            list.add("Second");
+            list.add("Third");
+            
+            ListIterator<String> listIterator = list.listIterator(list.size());
+            
+            while(listIterator.hasPrevious()){
+              System.out.println(listIterator.previous());
+            }
+      
 Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-questions-answers.html#ixzz6jjH6PNw2
 
+- What is flatten Map in Stream?
+- How to traverse HashMap in java 8?
+    - keySet(), valueSet(), or entrySet().
+        
+            public void iterateUsingEntrySet(Map<String, Integer> map) {
+                for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                    System.out.println(entry.getKey() + ":" + entry.getValue());
+                }
+            }
+            
+            public void iterateUsingIteratorAndEntry(Map<String, Integer> map) {
+                Iterator<Map.Entry<String, Integer>> iterator = map.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<String, Integer> entry = iterator.next();
+                    System.out.println(entry.getKey() + ":" + entry.getValue());
+                }
+            }
+    
+    - With Lambdas
+        
+            public void iterateUsingLambda(Map<String, Integer> map) {
+                map.forEach((k, v) -> System.out.println((k + ":" + v)));
+            }
+            
+    - Stream API
+            
+            public void iterateUsingStreamAPI(Map<String, Integer> map) {
+                map.entrySet().stream()
+                  // ...
+                  .forEach(e -> System.out.println(e.getKey() + ":" + e.getValue()));
+            }
+                            
+## Other
+- Properties class implementation to read System properties and provide it to rest api.
+- LocalDate operations
+- JUnit/Mockito
+- Swagger
+- MDC logs
+- Maven Multi module project      
+ 
 ## Guru Interview
 
 - 2 objects of same class - how to compare with fields
@@ -3013,13 +3330,16 @@ Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-quest
                 return newEntity;
             }
             
-- Reflection is related to what? OOP's?
+- How Reflection is related to OOP's?
+    -reflection allows inspection of classes, interfaces, fields and methods at runtime without knowing the names of the interfaces, fields, methods at compile time.
+
 - How Reflection breaks OOP's principle?
     - Reflection breaks encapsulation principles by giving access to private fields and methods, but it's not the first or only way in which encapsulation can be circumvented; one could argue that serialization exposes all the internal data of a class, information which would normally be private.
-
+    
 - Stack Vs Heap in JVM
 
 - ClassLoader & types
+
 - Static method can we override?
     No, we cannot override static methods because method overriding is based on dynamic binding at runtime and the static methods are bonded using static binding at compile time. So, we cannot override static methods.
     
@@ -3035,4 +3355,7 @@ Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-quest
     charArray - if we sysout then it will show object reference not value
     
 - Where & Having clause? Why group by with having
+
+
+
                    

@@ -24,6 +24,7 @@ public class HomeImprovementProduct implements Product {
      */
     @Override
     public List<Sku> getProducts(List<Sku> products) {
+
         return products
                 .stream()
                 .filter(sku -> ProductCategoryEnum.HOME_IMPROVEMENT.equals(sku.getCategory()))
