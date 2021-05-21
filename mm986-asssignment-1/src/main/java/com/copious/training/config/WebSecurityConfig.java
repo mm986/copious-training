@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter;
 
 @Configuration
 @EnableWebSecurity
@@ -38,7 +40,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth
+				.userDetailsService(userDetailsService)
+				.passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -49,11 +53,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.csrf()
-				.disable()
-				.headers().frameOptions().deny()
-				.cacheControl().disable()
-				.httpStrictTransportSecurity().and().xssProtection().block(false);
+		http
+				.csrf().disable()
+				.headers()
+					.frameOptions().deny()
+					.cacheControl().disable()
+					.httpStrictTransportSecurity()
+				.and()
+				.xssProtection()
+					.block(false);
 	}
 
 	@Override

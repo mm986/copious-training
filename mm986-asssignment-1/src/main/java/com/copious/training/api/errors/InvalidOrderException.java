@@ -28,10 +28,15 @@ public class InvalidOrderException extends RuntimeException {
         this.errorDetails = message;
     }
 
-    public ExceptionCodeEnum getCode() {
+    public ExceptionCodeEnum getExceptionCodeEnum() {
         return exceptionCodeEnum;
     }
 
+    /**
+     * Intended to get ErrorDetails.
+     *
+     * @return ErrorDetails String
+     */
     public String getErrorDetails() {
         return errorDetails;
     }

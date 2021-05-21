@@ -5,7 +5,7 @@ package com.copious.training.constants;
  * <p>
  * Enumeration  to store all General ECom Product Categories.
  */
-public enum ProductCategory {
+public enum ProductCategoryEnum {
     APPAREL_AND_ACCESSORIES,
     STYLE_AND_FASHION,
     HOME_AND_GARDEN,

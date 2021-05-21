@@ -1,6 +1,6 @@
 package com.copious.training.designpattern.factory.varients;
 
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.copious.training.domain.Sku;
 import org.springframework.stereotype.Component;
 
@@ -24,9 +24,10 @@ public class HomeImprovementProduct implements Product {
      */
     @Override
     public List<Sku> getProducts(List<Sku> products) {
+
         return products
                 .stream()
-                .filter(sku -> ProductCategory.HOME_IMPROVEMENT.equals(sku.getCategory()))
+                .filter(sku -> ProductCategoryEnum.HOME_IMPROVEMENT.equals(sku.getCategory()))
                 .collect(Collectors.toList());
     }
 }

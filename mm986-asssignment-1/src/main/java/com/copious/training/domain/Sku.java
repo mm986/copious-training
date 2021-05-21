@@ -1,6 +1,6 @@
 package com.copious.training.domain;
 
-import com.copious.training.constants.ProductCategory;
+import com.copious.training.constants.ProductCategoryEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
@@ -20,7 +20,7 @@ public interface Sku {
 
     String getName();
 
-    ProductCategory getCategory();
+    ProductCategoryEnum getCategory();
 
     String getOther();
 

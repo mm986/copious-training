@@ -1,8 +1,8 @@
 package com.copious.training.config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.AuthorizationScopeBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -23,6 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 @Configuration
 @EnableSwagger2
+@Profile("local")
 public class SwaggerConfig {
 
     @Bean
@@ -68,4 +69,5 @@ public class SwaggerConfig {
                 .version("2.0")
                 .build();
     }
+
 }

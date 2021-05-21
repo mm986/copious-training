@@ -1,0 +1,27 @@
+
+---
+spring:
+    profiles: local
+
+server:
+    port: 8081
+
+logging:
+    level:
+        com.copious.training: DEBUG
+        org.apache.catalina: DEBUG
+---
+spring:
+    profiles: dev
+
+logging:
+    level:
+        com.copious.training: INFO
+
+---
+spring:
+    profiles: qa
+
+logging:
+    level:
+        com.copious.training: ERROR

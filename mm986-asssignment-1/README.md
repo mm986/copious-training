@@ -171,9 +171,16 @@ Tomorrow To Discuss-
 - Swagger config for sending authorization token.
 - How to use properties in pom.xml
 - What is a difference between provided and compile scope of dependency?
-- OnePerRequestDFilter for security filter
-    Example- Logging, Validation, Alarm for rest call
-- Usage and importance of Order annotation for filters 
+    - Compile dependencies are available in all classpaths of a project.
+    - Indicates you expect the JDK or a container to provide the dependency at runtime.(basically not packaged inside application jar or war, expected at runtime)
+
+- What is OnePerRequestFilter for security filter?
+    - Example- Logging, Validation, Alarm for rest call
+    - some of the security/access filter actions should only be performed once for a request.
+    
+- Usage and importance of Order annotation for filters?
+    - @Order Annotations (as well as the Ordered interface) implies a specific order, in which the beans will be loaded or prioritized by Spring.
+    
 - Filter is a lifecycle class
 - HTTP Headers (All standard)
 - JWT Token generation logic
@@ -220,3 +227,629 @@ Discussions pending (TODO) -
 - Atomic Variables in Lambdas
 - JSON Schema to POJO (Maven configurations)
 - Exception Handling Implementation.
+
+
+## Friday 11th Dec Discussion - Internal Discussion
+
+JWT Auth code walk through & Flow -
+    Token Generation Flow -
+        For first time during user login
+        1. login API
+        2. UserDetailsService - Hardcoded user/pass
+        3. Token Generation Logic
+         
+   Token Validation Flow -
+        When user will hit any API -
+        1. Check for WebSecurity config
+        2. Validate in the filter
+        3. Then execute actual business Login 
+
+
+## Thursday 17th Dec Discussion (With Akhand)
+- transient 
+- Order of calling constructor - Final var with no arg constructor
+- WebRequest R&D
+- String Formatting
+- ResponseEntityExceptionHandler methods
+- All controller should return ResponseEntity<GenericResponse>
+
+
+## Saturday 19th Dec Discussion (Guru Code Walk-through)
+### Session 1
+Spring Security -Web Security Configuration
+
+- WebSecurity vs HttpSecurity
+- Cors - To allow api access from Cross Origins / We can restrict calls from specific origin  
+- Csrf - To detect and filter any alteration in request in between
+- Xss - Enable/Disable
+- Framing Options - Enable/Disable
+- Cache Control - Enable/Disable
+- Session Creation Policy - Stateless
+- OncePerRequestFilter - why we are using this?
+- OPTIONS method - pre flight check - Angular
+
+- Master data loading during start-up (New Use case). There is solution that is provided by spring-boot - via Static Data Config
+     ImplementApplicationRunner Interface - tasks to do on start-up.
+ 
+- Scope of Bean in spring? Singleton default - One instance per spring container, Prototype, session
+- Use of @Component? Register bean
+
+### Session 2
+- LocalDate operations.
+- Using Joda-Time utility
+- Executor framework - Completable Future.
+    
+## Tuesday 22th Dec Discussion (Utkarsh & Meghdoot code walkthrough) 
+- Use of Enum
+- BaseComponentScan
+- Loading external property file - PropertySource annotation
+- Jacoco plugin for code coverage
+
+## Wednesday 23rd Dec (Session with Akhand)
+- Mock vs Inject Mock
+- @RunWith annotation
+- Interface and implementation for Service classes.
+- @InjectMock annotation
+- when & thenReturn methods of Mockito
+- Any matcher classes.
+- IMap - Identical Map
+- Concurrent hashMap
+- AWS - CloudFront Invalidate cache
+- Static Imports
+- verify and assert methods of Mockito
+- Optional Interface in Java.
+- Multimodule Project 
+- Use of powermock - Advancement in Mockito## Wednesday 23rd Dec (Session with Akhand)
+- Use of Dependency Management in Parent Pom.xml
+
+## Tuesday 5th Jan (Session with Akhand)
+- Spring boot profiling
+- Identity HashMap Vs Hash Map - HashMap uses equals method, Identity HashMap implements == method
+- What is fail fast & Fail safe (In case of concurrent modification exception - when u try to alter structure of collection then it fails because it is not synchronized)
+- Which collection is fail safe? Vector, ConcurrentHashMap, CopyOnWriteArrayList
+- How we will synchronize hash map? Collections.synchronize() 
+
+## Wednesday 6th Jan (Session with Akhand) - JSON Schema
+- JPA validators
+- json-schema.org - Currently they are on 7th version
+- JSON to POJO converter profile configuration in maven
+- JSON Schema Definitions
+
+## Code Review Comments
+1. <java.version> in pom is not being used its just a variable
+    Yes this property is a Spring Boot Specification, and we can use it to override default version of parent.
+      
+2. what is the use of this org.jetbrains, spring-boot-maven-plugin dependency?
+    org.jetbrains I'm using for Nullable annotation to mark class variable as not required to construct an immutable object. 
+    
+    spring-boot-maven-plugin used to package executable jar or war archives, run Spring Boot applications
+    
+3. try (InputStream mockProduct = new ClassPathResource("mock/products.json").getInputStream())  does not have catch block
+    Here it's a demonstration of Try with resources. Is this valid way to use try with resources?
+    
+4. @ControllerAdvice does not require @Component annotation. remove it.
+    Done Removed.
+    
+5. @CrossOrigin can also be added in main class so that it will apply for all controllers.
+    
+6. import org.springframework.web.bind.annotation.*; avoid * imports
+
+## Wednesday 7th Jan (Session with Akhand)
+- JSON Schema - Properties, Definitions, Nested Objects and references, Arrays. 
+- What is BCryptEncoder is implementation of PasswordEncoder. It uses salt mechanism converts into hash. 
+  PKD password encoder to encodes strings in banking systems.
+  SCrypt
+- Testing Controller with MockMvc - Get, Post
+
+## Wednesday 8th Jan (Session with Akhand)
+Ways to connect to DB
+- Hibernate (JPA) based database connection - 
+    - Drawbacks - difficulties while connecting to multiple data sources, Difficulties while migrating one db to other.
+    - Hibernate dialect - Conversion to native SQL.
+
+- Repository Config based JPA
+    - @Configuration 
+    - @EnableTransactionManagement
+    - @EnableJpaRepositories
+    - JNDI - specific to env so this property always comes from property file.
+    - Setting Entity Manager Factory - Provide Persistence Unit - Provide JPA properties
+        
+- Multiple DataSource Connection.
+    
+- Connection Pooling
+- Spring Package scan for repositories
+- @NoRepositoryBean Annotation - why it is in CrudRepository.
+- Lazy Loading
+- WebServer Vs Application server
+
+## Saturday 9th Jan (Session with Akhand)
+- Add Context Param to Web.xml - spring.active.profile
+- Swagger Profiles for local only 
+
+- Add user and role to tomcat-user.properties
+- Add JNDI properties in application.properties
+- Setup JNDI props in context.xml - what is the drawback to setup all data source details here? - it will not provide connection pooling
+- Setup JNDI props in server.xml
+
+- MySql max connecction property - 1024 we can change with Query
+- Query to get active connections
+
+- CURL commands
+- Change maven packaging with war.
+
+MySql setup question
+context.xml question
+how we mention scan for repo and entity
+
+## Tuesday 12th Jan (Session with Akhand) DB & Hibernate
+- Connection with Multiple DBs with JNDI
+- How to map Entities and Repos to multiple datasource 
+    - Package based segregation primary, secondary for Entities and Repos
+    - Create two separate classes for Primary & Secondary DB
+- Where we use @Qualifier annotation - Why?
+- First level 
+    - session specific cache 
+    - We can't change this.
+- Lazy Loading 
+    - fetchType = lazy 
+    - (First level Vs Lazy Loading) 
+    - (Mappings fetch property - LAZY, EAGAR)
+- Second Level 
+    - hibernate-ehcache.
+        hibernate.cache.use_second_level_cache=true
+        hibernate.cache.region.factory_class=org.hibernate.cache.ehcache.EhCacheRegionFactory
+    - Frequently checks table updation timestamp
+    - Where to store all data - disk-stoarage path
+    - https://www.baeldung.com/hibernate-second-level-cache
+    
+## JMS Session with Ashish
+- Bridging between Topics and Queues
+- Blocking Queues - thread safe, Blocks thread in case if Queue is empty or full it blocks thread before proceed. 
+- Backout queue - In case of exception while processing messages from Queue
+
+## R&D 14th Jan
+
+- Spring Static Data initialization in MYSQL 
+https://docs.spring.io/spring-boot/docs/1.2.0.M1/reference/html/howto-database-initialization.html 
+
+## Tuesday 16th Jan (Session with Akhand) Spring Transactions
+- Meaning of Transaction
+- Two types of Transaction Management
+    - Programmatic - We know the exact scope of transaction
+           
+            try{
+                tx.begin();   
+                dologic();  
+                tx.commit(); 
+            } cathc(Exc e){ 
+                tx.rollback()
+            }
+            
+    - Declarative - This is annotation based provided by Spring
+        - @EnableTransactionManagement 
+        - @Transactional(isolation= Isolation.)
+            - If we annotate at class level then applied for all, mostly used at  
+            - Transaction has its own Isolation level and rollback strategy
+            - Transaction annotations are only used at public methods not at private methods
+            - What is transaction Isolation level?
+            - Dirty reads, phantom reads, non repeatable reads for DB
+            - What is transaction propagation
+            - Params 
+                - isolation - 
+                    - @Transactional(isolation = Isolation.REPEATABLE_READ)
+                    - @Transactional(isolation = Isolation.READ_COMMITTED)
+                    - @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+                - timeout -
+                    - @Transactional(timeout =10 )
+                - propagation -    
+                    - @Transactional(propagation = Propagation.REQUIRED)
+                    - @Transactional(propagation = Propagation.MANDATORY)
+                    - @Transactional(propagation = Propagation.NEVER)
+                    - @Transactional(propagation = Propagation.SUPPORTS)
+                    - @Transactional(propagation = Propagation.NOT_SUPPORTED)
+                    - Spring will throw runtime exception if transaction is not able to link with others.      
+                - rollbackFor
+                    - @Transactional(rollbackFor = RewardOrchestrationException.class)
+                - noRollbackFor
+            - Where we should use @Transactional in application layer?   
+                - At orchestration layer or service layer. Controller layer designed only to redirect rest requests to service.     
+            - What is real time advantage of using @Transactional at service layer?
+                - here we communicate with multiple service and DAO layers.
+- When IllegalStateException comes?
+- Async service
+- CURL scripts
+- Coding standards
+- Dynatrace
+
+## Friday 22nd Jan (Session with Akhand) Coding Standards
+### IntelliJ Coding Standards
+- toString()
+- serializeVersionUID
+    - Serializable - are hibernate entities serializable ?
+    - Marker Interfaces
+    - why we use this id - unique identification purpose
+
+- Live Templates
+    - This is kind of autocomplete for coding 
+        - eg. SOP -> System.out.println()
+        - eg. linf -> logger
+
+- Maven Build Keyboard Shortcuts
+
+### Java Coding Standards
+- Consistency
+- Formatting
+- SOLID Principals 
+    - Immutable classes
+- Utility Classes
+    - class  must be public final
+    - private no arg constructor
+    - public static methods
+    
+- Switch case over if else
+- this
+- Exception and errors
+
+
+## Saturday 23rd Jan (Session with Akhand) Curl
+- Curl command
+- How we can create script for thousands of curl command
+    - Request processing table
+    - SQL file
+        
+        DECLARE
+          V_SERVER_NAME VARCHAR2(50) := '#########';
+        
+          V_SYSDATE                DATE := TRUNC(SYSDATE);
+          V_EXERCISE_MODULE    VARCHAR2(50) := '##########';
+          V_HEALTHY_FOOD_MODULE    VARCHAR2(50) := '##########';
+          V_VITALITY_PRODUCT_HOUSE VARCHAR2(50) := '########';
+       
+          F_FILE_DIR      VARCHAR2(50) := '/######/######/######'; -- Location: 
+          F_FILE_HANDLE_W UTL_FILE.FILE_TYPE;
+          F_FILE_NAME_W   VARCHAR2(100);
+          V_SYSDATE_CR    VARCHAR2(10) := TO_CHAR(V_SYSDATE, 'YYYY-MM-DD');
+          V_COUNT         NUMBER := 0;
+        
+          F_BASE_FILE_NAME_W VARCHAR2(100) := 'IRP_' || V_VITALITY_PRODUCT_HOUSE || '_' || V_HEALTHY_FOOD_MODULE || '_Eligiblity_PROD_' ||
+                                              V_SYSDATE_CR || '_';
+       
+          V_FILE_NUMBER            NUMBER := 1;
+          V_NUMBER_PER_FILE        NUMBER := 5000;
+          V_NUMBER_IN_CURRENT_FILE NUMBER := 0;
+          V_SERVER_NUMBER          NUMBER := 1;
+          V_MAX_SERVERS            NUMBER := 12;
+          V_SERVER_URL             VARCHAR2(800);
+        
+          -- TODO: update dates + goals
+          V_BASE_SERVER_URL VARCHAR2(800) := ':####/integrated-rewards-platform-service/process/eligibility?overrideSystemDate=2019-12-01" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"eligibilityFlowStateDto\": [ { \"eligibilityStatePeriodDtos\": [{ \"effectiveFrom\": \"2019-12-01\", \"effectiveTo\": \"9999-12-31\", \"metaData\": { }, \"state\": \"ELIGIBLE\" } ], \"goalIdentifier\": \"' ||
+                                             V_HEALTHY_FOOD_MODULE ||
+                                             '\", \"productHouseIdentifier\": \"' ||
+                                             V_VITALITY_PRODUCT_HOUSE ||
+                                             '\" }], \"entityNumber\": ';
+        
+          V_MIN_ENTITY   NUMBER := 0;
+          V_MAX_ENTITY   NUMBER := 0;
+          V_COUNT_TO_RUN NUMBER;
+          V_RUN          NUMBER := 0;
+          V_ROWS_PER_RUN NUMBER := 10000;
+          
+          cursor v_cursor is 
+            SELECT E.ENTITY_NO FROM (SELECT distinct GE.ENTITY_NO, GE.EFF_FROM, PH.IDENTIFIER
+            FROM VIT_RSA.RP_GOAL_ELG         GE,
+                 VIT_RSA.RP_GOAL             G,
+                 VIT_RSA.RP_ELIGIBILITY_STAT ES, -- TODO: ELigiblity table + add overall clause + add eligible state
+                 RP_GOAL_ELIGIBI_PH          GEP,
+                 RP_PRODUCT_HOUSE            PH
+           WHERE G.GOAL_ID = GE.GOAL_ID
+             AND GE.ELG_STATE_ID = ES.ELIGIBILITY_STATE_ID
+             AND ES.IDENTIFIER = 'ELIGIBLE'
+             AND GE.ELG_LEVEL = 'OVERALL'
+             AND G.IDENTIFIER = V_EXERCISE_MODULE
+             AND V_SYSDATE BETWEEN TRUNC(GE.EFF_FROM) AND TRUNC(GE.EFF_TO)
+             AND V_SYSDATE BETWEEN TRUNC(GEP.EFF_FROM) AND TRUNC(GEP.EFF_TO)
+             AND ES.ELIGIBILITY_STATE_ID = GEP.ELIGIBILITY_STATE_ID
+             AND GEP.GOAL_ID = GE.GOAL_ID
+             AND GEP.ENTITY_NO = GE.ENTITY_NO
+             AND GEP.PRODUCT_HOUSE_ID = PH.PRODUCT_HOUSE_ID
+             AND PH.IDENTIFIER = V_VITALITY_PRODUCT_HOUSE
+             AND NOT EXISTS
+           (SELECT *
+                    FROM VIT_RSA.RP_GOAL_ELG         GEE,
+                         VIT_RSA.RP_GOAL             GG,
+                         VIT_RSA.RP_ELIGIBILITY_STAT ESS -- TODO: ELigiblity table + add overall clause + add eligible state
+                   WHERE GEE.GOAL_ID = GG.GOAL_ID
+                     AND GG.IDENTIFIER = V_HEALTHY_FOOD_MODULE
+                     AND V_SYSDATE BETWEEN GEE.EFF_FROM AND GEE.EFF_TO
+                     AND GEE.ENTITY_NO = GE.ENTITY_NO)
+           ORDER BY GE.EFF_FROM DESC) E;
+       
+        BEGIN
+          F_FILE_NAME_W   := F_BASE_FILE_NAME_W || V_FILE_NUMBER || '.sh';
+          F_FILE_HANDLE_W := UTL_FILE.FOPEN(F_FILE_DIR, F_FILE_NAME_W, 'W');
+          V_SERVER_URL := 'curl -X POST "http://' || V_SERVER_NAME || '0' ||
+                          V_SERVER_NUMBER || V_BASE_SERVER_URL;
+                          
+          FOR R IN v_cursor LOOP
+            IF (V_NUMBER_IN_CURRENT_FILE >= V_NUMBER_PER_FILE) THEN
+              V_NUMBER_IN_CURRENT_FILE := 0;
+              UTL_FILE.FCLOSE(F_FILE_HANDLE_W);
+            
+              V_FILE_NUMBER   := V_FILE_NUMBER + 1;
+              V_SERVER_NUMBER := V_SERVER_NUMBER + 1;
+              IF (V_SERVER_NUMBER > V_MAX_SERVERS) THEN
+                V_SERVER_NUMBER := 1;
+              END IF;
+              IF (V_SERVER_NUMBER >= 10) THEN
+                V_SERVER_URL := 'curl -X POST "http://' || V_SERVER_NAME ||
+                                V_SERVER_NUMBER || V_BASE_SERVER_URL;
+              ELSE
+                V_SERVER_URL := 'curl -X POST "http://' || V_SERVER_NAME || '0' ||
+                                V_SERVER_NUMBER || V_BASE_SERVER_URL;
+              END IF;
+            
+              F_FILE_NAME_W   := F_BASE_FILE_NAME_W || V_FILE_NUMBER || '.sh';
+              F_FILE_HANDLE_W := UTL_FILE.FOPEN(F_FILE_DIR, F_FILE_NAME_W, 'W');
+              DBMS_OUTPUT.PUT_LINE(F_FILE_NAME_W); -- output
+            END IF;
+            UTL_FILE.PUT_LINE(F_FILE_HANDLE_W,
+                              V_SERVER_URL || R.ENTITY_NO ||
+                              ', \"productHouseIdentifier\": \"' ||
+                              V_VITALITY_PRODUCT_HOUSE || '\"}"'); -- TODO productHouseIdentifier: Vitality
+          
+            V_NUMBER_IN_CURRENT_FILE := V_NUMBER_IN_CURRENT_FILE + 1;
+          
+            V_COUNT := V_COUNT + 1;
+          END LOOP;
+          UTL_FILE.FCLOSE(F_FILE_HANDLE_W);
+          DBMS_OUTPUT.PUT_LINE('Done: ' || V_COUNT);
+        EXCEPTION
+          WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Error:' || SQLERRM);
+            UTL_FILE.FCLOSE(F_FILE_HANDLE_W);
+          WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Error:' || SQLERRM);
+            UTL_FILE.FCLOSE(F_FILE_HANDLE_W);
+        END;
+         
+- **Async Services**
+    - Standard timeout of rest call is 30 sec.
+    - Basically we need to create new executor thread and
+    - @EnableAsync
+    - Async Service 
+        -we should use Async method as public
+        - we cannot use it via same class
+    - java.util.concurrent.Future used to get the state of AsyncProcess.
+        
+        while (true) {
+        if (future.isDone()) {
+        System.out.println("Result " + future.get());
+        break;
+        }
+    - Db Query to check 
+
+        SHOW VARIABLES LIKE "max_connections";
+        show status where variable_name = 'threads_connected';
+        show processlist;
+        SET GLOBAL max_connections = 500;
+    - Three ways to disable springboot auto-config
+        - Disable via exclude over main class @SpringBootApplication
+        - Disable with application.properties
+        - Disable from pom.xml
+        
+
+## Session with Guru(27th Jan 2021)
+- 3 ways of DB connection
+- mappings -lazy loading
+- caching - first, second
+
+Collection
+Spring boot
+Security configuration - spring Security
+Integration JMS,
+DB connection
+Swager,
+Json,
+JIRA,
+GIT, 
+SOAP, 
+API JAVA
+
+# AWS Session 1 (17 Feb - with Ripul)
+- VPC, Subnet- Public, Private
+- Route table
+- CIDR - 0.0 and 127.0. 0.0 are two such addresses. The first is called the default route, and the latter is the loopback address. 
+- Internet Gateway - without this none of the VPC can communicate with internet
+    This is attached to VPC
+
+    
+- Handson 
+    - Create VPC
+    - Create Subnet
+    - Create Internet Gateway
+    - Route tables
+        - if we don't have 0.0.0.0 routing then it is considered as private subnet
+        - VPC base route to allow inter subnet communication
+        
+    - Elastic IP - once assigned then no one can change it (Static and fix) - Create and delete it
+    
+    - NAT Gateway
+    - VPC peering
+    - Transient Gateway
+        
+# AWS Session 2 (19 Feb - with Ripul)
+
+- Create Separate Route tables 
+
+
+32 bit IPV4
+
+10.0.0.0/24  8 -> 256  ->  10.0.0.0 - 10.0.0.255
+----------------------------------------------------------
+10.0.0.0/25             7 ->  128 10.0.0.0 - 10.0.0.127    
+
+10.0.0.128/25           7 ->  128 10.0.0.128 - 10.0.0.256   
+
+----------------------------------------------------------
+
+10.0.0.0/26     10.0.0.0 - 10.0.0.63
+
+10.0.0.64/26    10.0.0.64 - 10.0.0.127
+
+10.0.0.128/26   10.0.0.64 - 10.0.0.127
+
+10.0.0.192/26   10.0.0.64 - 10.0.0.127
+
+
+10.0.0.0/16   65536
+
+10.0.0.0/17 
+
+10.0.0.32768/17
+
+# AWS Session 3 (23 Feb - with Ripul)
+
+ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.142.48.173
+ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.142.48.173
+
+- How to  do VPC Peering
+    - Create VPC1(my-vpc) 10.0.0.0/24 with two subnets as:
+        - Public - 10.0.0.0/25 
+        - Private - 10.0.0.128/25
+    - Create VPC2(cop-vpc) 192.168.0.0/24 with two subnets as:
+        - Public - 192.168.0.0/25
+        - Private - 192.168.0.128/25
+    
+    - Create Peering Connection between VPC1 & VPC2
+           
+    - Create 4 route tables and  associate to above 4 subnets
+        - VPC1-Public-RT
+           - 10.0.0.0/24	local 
+           - 0.0.0.0/0 Associate with Internet Gateway as a Public
+           - 192.168.0.0/24 Associate with peering Connection to VPC2
+            
+        - VPC1-Private-RT
+           - 10.0.0.0/24	local 
+            
+        - VPC2-Public-RT
+           - 192.168.0.0/24	local	
+           - 0.0.0.0/0  Associate with Internet Gateway as a Public
+           - 10.0.0.0/24 Associate with peering Connection to VPC1
+
+        - VPC2-Private-RT
+           - 192.168.0.0/24	local	
+           
+    - Create EC2 in public subnet of VPC1
+        - Create Security Group and enable All IGMP ports for VPC2
+         
+    - Create EC2 in public subnet of VPC2
+        - Create Security Group and enable All ICMP - IPv4 ports for VPC1
+    
+    - Connect both EC2 via putty and try to ping each other with their private IP address.
+         
+- NAT Gateway
+    - **Intro**
+    - Create 1 Windows EC2 in private subnet
+    - Create 1 Windows EC2 in public subnet of same VPC
+    - allow access to Remote IP's via Security group - RDP
+    - Remote connection to public EC2 -> Remote connection to private EC2 from public EC2
+    - Once we connect we can see no internet present in private EC2  
+    - Create NAT Gateway in public subnet
+    
+    One way communication
+    Create NAT  gat      
+    
+    Windows User Name : Administrator
+    Password: fFT&!6UXaCR2IUeJGM9HQ7w6eVVMZP@H
+
+- EC2
+Topics to be prepared for next call -
+    - Instance Types 
+        - Instance types comprise varying combinations of CPU, memory, storage, and networking capacity and give you the flexibility to choose the appropriate mix of resources for your applications.
+        - 8 family of instance type
+            - General Purpose Instances have been further classified into T2, M4 and M3 instance types.
+            - Compute Optimized Instances mainly include two families of instance types, namely C4 and C3
+            - GPU optimized instances include the G2 instances family which are ideal for gaming applications
+            - Memory Optimized Instances basically includes only the R3 Instances family which are specifically designed for memory-intensive applications
+            - Storage Optimized Instances include the I2 and a more recent D2 instances families    
+    - Launch Templates - 
+        - Launch Templates streamline and simplify the launch process for Auto Scaling, Spot Fleet, Spot, and On-Demand instances.
+        
+	- Spot Requests
+	    - A Spot Instance is an unused EC2 instance that is available for less than the On-Demand price. 
+	    - Because Spot Instances enable you to request unused EC2 instances at steep discounts, you can lower your Amazon EC2 costs significantly
+	    
+	- Saving Plans
+	    - Savings Plans is a flexible pricing model that provides savings of up to 72% on your AWS compute usage. 
+	    - This pricing model offers lower prices on Amazon EC2 instances usage, regardless of instance family, size, OS, tenancy or AWS Region, and also applies to AWS Fargate and AWS Lambda usage.
+	    
+	- Reserved Instances
+	    - An Amazon Reserved Instance (RI) is a billing discount that allows you to save on your Amazon EC2 usage costs. When you purchase a Reserved Instance, you can set attributes such as instance type, platform, tenancy, Region, or Availability Zone (optional).
+	    - In terms of compute options and configurations, Reserved Instances and On Demand instances are the same. The only difference between the two is that a Reserved Instance is one you rent (“reserve”) for a fixed duration, and in return you receive a discount on the base price of an On Demand instance
+	    
+	- Dedicated Hosts
+	    - An Amazon EC2 Dedicated Host is a physical server with EC2 instance capacity fully dedicated to your use. Dedicated Hosts allow you to use your existing per-socket, per-core, or per-VM software licenses, including Windows Server, Microsoft SQL Server, SUSE, and Linux Enterprise Server.
+	    
+	- Capacity Reservations
+	    - On-Demand Capacity Reservations enable you to reserve capacity for your Amazon EC2 instances in a specific Availability Zone for any duration.
+	    - When you create a Capacity Reservation, you specify:
+            - The Availability Zone in which to reserve the capacity
+            - The number of instances for which to reserve capacity
+            - The instance attributes, including the instance type, tenancy, and platform/OS
+            
+	- Lifecycle Manager
+	    - With Amazon Data Lifecycle Manager, you can manage the lifecycle of your AWS resources. 
+	    - You create lifecycle policies, which are used to automate operations on the specified resources. Amazon DLM supports Amazon EBS volumes and snapshots.
+	   
+	- Placement Groups
+	    - The strategy of the placement group determines how the instances are organized within the group. 
+	    - A cluster placement group is a logical grouping of instances within a single Availability Zone that benefit from low network latency, high network throughput. 
+	    - A spread placement group places instances on distinct hardware.
+	    
+	- Network Interfaces
+	    - AWS Elastic Network Interface is simply a virtual interface that can be attached to an instance in a Virtual Private Cloud (VPC). 
+	    - Followings are the attributes of a network interface: A primary private IPv4 address. ... One or more secondary private IPv4 addresses.
+	    
+- Load Balencers
+    - Classic - Deprecated
+    - Application LB - works on URL tiltle - EC2 	    
+    - Network LB- works on port number
+    - Gateway LB- Go through this one
+    
+ Assignment -   
+   Application Load Balancer
+    1)Two EC2 Instance
+    2)Same Appln deployed on server
+    3)Those EC2 can only be accessed through Application Load Balancer.
+    
+   Network Load Balancer
+    1)One EC2 Instance
+    2)Three Replica of Application
+    3)Those Three Application can only be accessed through Network Load Balancer
+    
+   Gateway Load Balancer
+    1)POC on the GLB
+    
+   Make a spring boot rest service and deploy, Same VPC and AZ should be different
+   
+- Deployment on EC2 :
+    - Command to connect SSH to EC2 -
+        
+            ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.17.139.138
+            ssh -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem ec2-user@3.133.81.204
+
+    - Command to install jre on EC2
+    
+    - Command to copy Jar file to EC2
+ 
+            scp -i /Users/the_machine/Documents/Copious/Training/AWS/copKeyPair.pem myproject-0.0.1-SNAPSHOT.jar  ec2-user@3.142.48.173:~/
+
+    - Command to start 
+        
+            java -jar myproject-0.0.1-SNAPSHOT.jar
+            http://3.142.48.173:8080/
+            java -jar myproject-0.0.1-SNAPSHOT.jar --server.port=9090 &    
+    
+- API Gateway
+    
+        

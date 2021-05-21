@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.copious.training</groupId>
+        <artifactId>mm986-parent</artifactId>
+        <version>1</version>
+    </parent>
+    <groupId>com.copious.training</groupId>
+    <artifactId>mm986-soap</artifactId>
+    <version>1</version>
+    <name>mm986-soap</name>
+    <description>Spring Boot project for SOAP Api implementation.</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <jsonschema2pojo.version>0.4.34</jsonschema2pojo.version>
+        <commons-lang3-version>3.9</commons-lang3-version>
+        <jackson-annotations-version>2.12.1</jackson-annotations-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaDirectory>${project.basedir}/src/main/resources/</schemaDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+                    <clearOutputDir>false</clearOutputDir>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

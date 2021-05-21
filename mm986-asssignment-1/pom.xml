@@ -3,16 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.copious.training</groupId>
+        <artifactId>mm986-parent</artifactId>
+        <version>1</version>
     </parent>
     <groupId>com.copious.training</groupId>
-    <artifactId>mm986-asssignment-1</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>asssignment</artifactId>
+    <version>1</version>
     <name>mm986-asssignment-1</name>
     <description>Spring Boot project for Assignment 1</description>
+    <packaging>war</packaging>
 
     <properties>
         <java.version>1.8</java.version>
@@ -20,6 +20,18 @@
         <springfox-swagger-version>2.9.2</springfox-swagger-version>
         <jwt-version>0.9.1</jwt-version>
         <spring-seccurity-version>2.4.0</spring-seccurity-version>
+        <lombok-version>1.18.8</lombok-version>
+        <mockito-version>1.10.19</mockito-version>
+        <junit-version>4.13.1</junit-version>
+        <haltOnFailure>true</haltOnFailure>
+        <jacoco-version>0.8.6</jacoco-version>
+        <joda-time-version>2.10.9</joda-time-version>
+        <jsonschema2pojo.version>0.4.34</jsonschema2pojo.version>
+        <commons-lang3-version>3.9</commons-lang3-version>
+        <ehcache.version>2.10.4</ehcache.version>
+        <hibernate.ehcache.version>5.4.27.Final</hibernate.ehcache.version>
+        <maven.test.skip>true</maven.test.skip>
+        <start-class>com.copious.training.SoapApiApp</start-class>
     </properties>
 
     <dependencies>
@@ -64,5 +76,205 @@
             <artifactId>jjwt</artifactId>
             <version>${jwt-version}</version>
         </dependency>
+        <!-- Annotations -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Lombok Dependency -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Testing Dependencies -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time-version}</version>
+        </dependency>
+        <!-- Dependencies for JsonScemaToPojo Plugin -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <!-- Mysql Jpa dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Eh Cache -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <version>${hibernate.ehcache.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>${ehcache.version}</version>
+        </dependency>
+        <!-- Common Libs -->
+        <dependency>
+            <groupId>com.copious.training</groupId>
+            <artifactId>mm986-common-libs</artifactId>
+            <version>1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <!--                    <version>${jacoco.maven.plugin.version}</version>-->
+                <version>0.8.6</version>
+                <configuration>
+                    <!--TODO: Do not turn this off. Use: "mvn clean install -DhaltOnFailure=false" to continue builds locally that fail test coverage -->
+                    <haltOnFailure>${haltOnFailure}</haltOnFailure>
+                    <rules>
+                        <rule>
+                            <element>CLASS</element>
+                            <excludes>
+                                <exclude>com.copious.training.model.*</exclude>
+                                <exclude>com.copious.training.domain.*</exclude>
+                                <exclude>com.copious.training.entity.*</exclude>
+                                <exclude>com.copious.training.config.*</exclude>
+                                <exclude>com.copious.training.constants.*</exclude>
+                                <exclude>com.copious.training.dao.*</exclude>
+                                <exclude>com.copious.training.repository.*</exclude>
+                                <exclude>com.copious.training.designpattern.*</exclude>
+                                <exclude>com.copious.training.api.*</exclude>
+                                <exclude>com.copious.training.service.PropertyService</exclude>
+                                <exclude>com.copious.training.utils.*</exclude>
+                            </excludes>
+                            <limits>
+                                <limit>
+                                    <counter>INSTRUCTION</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.3</minimum>
+                                </limit>
+                                <limit>
+                                    <counter>LINE</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.3</minimum>
+                                </limit>
+                                <limit>
+                                    <counter>BRANCH</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.3</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>JsonSchemaToPojo</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--            <build>-->
+<!--                <resources>-->
+<!--                    <resource>-->
+<!--                        <filtering>true</filtering>-->
+<!--                        <directory>src/main/resources</directory>-->
+<!--                    </resource>-->
+<!--                </resources>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <groupId>org.jsonschema2pojo</groupId>-->
+<!--                        <artifactId>jsonschema2pojo-maven-plugin</artifactId>-->
+<!--                        <version>${jsonschema2pojo.version}</version>-->
+<!--                        <configuration>-->
+<!--                            <sourceType>jsonschema</sourceType>-->
+<!--                            <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>-->
+<!--                            <outputDirectory>${project.build.directory}/generated-sources/schema</outputDirectory>-->
+<!--                            <targetPackage>com.copious.training.model</targetPackage>-->
+<!--                            <annotationStyle>jackson2</annotationStyle>-->
+<!--                            <generateBuilders>true</generateBuilders>-->
+<!--                            <initializeCollections>true</initializeCollections>-->
+<!--                            <includeAdditionalProperties>false</includeAdditionalProperties>-->
+<!--                            <useCommonsLang3>true</useCommonsLang3>-->
+<!--                            <propertyWordDelimiters>-</propertyWordDelimiters>-->
+<!--                            <useLongIntegers>true</useLongIntegers>-->
+<!--                            <includeToString>true</includeToString>-->
+<!--                            <includeJsr303Annotations>true</includeJsr303Annotations>-->
+<!--                        </configuration>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <goals>-->
+<!--                                    <goal>generate</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 </project>

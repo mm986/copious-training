@@ -1,9 +1,19 @@
 package com.copious.training.designpattern.factory;
 
 import com.copious.training.api.errors.InvalidProductException;
-import com.copious.training.constants.ProductCategory;
-import com.copious.training.designpattern.factory.varients.*;
-import org.springframework.http.HttpStatus;
+import com.copious.training.constants.ExceptionCodeEnum;
+import com.copious.training.constants.ProductCategoryEnum;
+import com.copious.training.designpattern.factory.varients.HomeAndGardenProduct;
+import com.copious.training.designpattern.factory.varients.HomeImprovementProduct;
+import com.copious.training.designpattern.factory.varients.MedicalHealthProduct;
+import com.copious.training.designpattern.factory.varients.SportingGoodsProduct;
+import com.copious.training.designpattern.factory.varients.StyleAndFashionProduct;
+import com.copious.training.designpattern.factory.varients.HealthAndWellnessProduct;
+import com.copious.training.designpattern.factory.varients.ChildrenAndInfantsProduct;
+import com.copious.training.designpattern.factory.varients.PetsAndPetSuppliersProduct;
+import com.copious.training.designpattern.factory.varients.ApparelAndAccessoriesProduct;
+import com.copious.training.designpattern.factory.varients.ConsumerElectronicGoodsProduct;
+import com.copious.training.designpattern.factory.varients.Product;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,7 +32,7 @@ public class ProductFactory {
      * @return Product
      * @throws IOException
      */
-    public Product getProductFactory(ProductCategory category) throws IOException {
+    public Product getProductFactory(ProductCategoryEnum category) throws IOException {
         switch (category) {
             case MEDICAL_HEALTH:
                 return new MedicalHealthProduct();
@@ -45,9 +55,10 @@ public class ProductFactory {
             case CONSUMER_ELECTRONIC_GOODS:
                 return new ConsumerElectronicGoodsProduct();
             default:
-                throw new InvalidProductException(HttpStatus.BAD_REQUEST,
+                throw new InvalidProductException(ExceptionCodeEnum.BAD_REQUEST,
+                        ExceptionCodeEnum.BAD_REQUEST.getMessage(),
                         "Invalid Product Category Product Category should be one of the following: "
-                                + ProductCategory.values()
+                                + ProductCategoryEnum.values()
                 );
         }
     }

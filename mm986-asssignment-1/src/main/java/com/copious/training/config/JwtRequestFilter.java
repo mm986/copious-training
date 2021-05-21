@@ -1,7 +1,6 @@
 package com.copious.training.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,9 +17,8 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 @Component
+@Log4j2
 public class JwtRequestFilter extends OncePerRequestFilter {
-
-    Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
 
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
@@ -34,7 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             final String uri = request.getRequestURI();
 
             if (uri.contains("swagger") || uri.contains("v2") || uri.contains("authenticate")) {
-                logger.info("JWT-AUTH: Skipping token validation for {}", uri);
+                log.info("JWT-AUTH: Skipping token validation for {}", uri);
                 chain.doFilter(request, response);
             } else {
                 String jwtToken = extractJwtFromRequest(request);
@@ -47,15 +45,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                             null,
                                             userDetails.getAuthorities())
                             );
-                    logger.info("JWT-AUTH: Successfully validated JWT token for {}", uri);
+                    log.info("JWT-AUTH: Successfully validated JWT token for {}", uri);
                     chain.doFilter(request, response);
                 } else {
-                    logger.error("JWT-AUTH:  Missing authentication token.");
+                    log.error("JWT-AUTH:  Missing authentication token.");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing authentication token.");
                 }
             }
         } catch (Exception ex) {
-            logger.error("JWT-AUTH:  Malformed JWT Token.");
+            log.error("JWT-AUTH:  Malformed JWT Token.");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Malformed JWT Token. JWT strings must contain exactly 2 period characters. Found: 0");
         }
     }
@@ -68,3 +66,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 .orElse(null);
     }
 }
+

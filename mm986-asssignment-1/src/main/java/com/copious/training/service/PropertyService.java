@@ -1,5 +1,9 @@
 package com.copious.training.service;
 
+import com.copious.training.domain.Label;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -14,6 +18,9 @@ import java.util.stream.Collectors;
 @Service
 public class PropertyService {
 
+    @Autowired
+    private Label props;
+
     /**
      * This method intended to extract all system properties with help of Properties class in Java.
      *
@@ -25,5 +32,9 @@ public class PropertyService {
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+    }
+
+    public Label getOwnerProperties(){
+        return props;
     }
 }

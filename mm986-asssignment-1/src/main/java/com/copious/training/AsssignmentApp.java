@@ -2,6 +2,14 @@ package com.copious.training;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cache.annotation.EnableCaching;
+
+import javax.sql.DataSource;
 
 /**
  * @author Mahesh More
@@ -9,8 +17,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Spring Boot application to implement Java8 basic features Assignment1 under copious training.
  */
 @SpringBootApplication
-public class AsssignmentApp {
-
+@EnableCaching
+public class AsssignmentApp extends SpringBootServletInitializer {
     /**
      * Main method to boot-up order processing app.
      *
@@ -18,5 +26,11 @@ public class AsssignmentApp {
      */
     public static void main(String[] args) {
         SpringApplication.run(AsssignmentApp.class, args);
+    }
+
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(AsssignmentApp.class);
     }
 }

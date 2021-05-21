@@ -1,5 +1,6 @@
 package com.copious.training.api.errors;
 
+import com.copious.training.constants.ExceptionCodeEnum;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -9,11 +10,40 @@ import org.springframework.http.HttpStatus;
  */
 public class InvalidProductException extends RuntimeException {
 
-    private final HttpStatus status;
+    private static final Long serialVersionId = 123456L;
 
-    public InvalidProductException(HttpStatus status, String message) {
+    private final ExceptionCodeEnum exceptionCodeEnum;
+
+    private final String errorDetails;
+
+    public InvalidProductException(ExceptionCodeEnum exceptionCodeEnum, String message, String errorDetails) {
         super(message);
-        this.status = status;
+        this.exceptionCodeEnum = exceptionCodeEnum;
+        this.errorDetails = errorDetails;
+    }
+
+    public InvalidProductException(ExceptionCodeEnum code, String message, Throwable throwable) {
+        super(message, throwable);
+        this.exceptionCodeEnum = code;
+        this.errorDetails = message;
+    }
+
+    /**
+     * Intended to get ExceptionCodeEnum of custom exception.
+     *
+     * @return HttpStatus
+     */
+    public ExceptionCodeEnum getExceptionCodeEnum() {
+        return exceptionCodeEnum;
+    }
+
+    /**
+     * Intended to get ErrorDetails.
+     *
+     * @return ErrorDetails String
+     */
+    public String getErrorDetails() {
+        return errorDetails;
     }
 
     /**
@@ -22,7 +52,7 @@ public class InvalidProductException extends RuntimeException {
      * @return HttpStatus
      */
     public HttpStatus getStatus() {
-        return this.status;
+        return exceptionCodeEnum.getHttpStatus();
     }
 }
 
