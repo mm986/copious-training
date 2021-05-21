@@ -140,8 +140,11 @@
     - **Streams with Collections**
         - A collection is an in-memory data structure to hold values. Whereas a Java Stream doesn’t store data, it is computed on-demand.
         - Java Stream doesn’t store data, it operates on the source data structure (collection and array) and produce pipelined data that we can use and perform specific operations.                                                                     
-        - lazy-seeking - filtering, mapping, or duplicate removal can be implemented lazily, allowing higher performance and scope for optimization.
-        
+        - lazy-seeking 
+            - Java Streams are lazy because intermediate operations will not be executed until the Terminal operations are executed. Each intermediate operation creates new stream.The moment we invoke terminal operation the elements will traverse otherwise nothing will happen. Thst's why streams are called lazy 
+            - filtering, mapping, or duplicate removal can be implemented lazily, allowing higher performance and scope for optimization.
+            - Refer - https://www.youtube.com/watch?v=xadZCQpQofY
+            
     - **Streams with Functional Interfaces**
         - Function & Bi-Function - map(), mapToInt(), reduce(), toArray()
         - Predicate and BiPredicate - filter(), anyMatch(), allMatch()
@@ -251,12 +254,25 @@
         - intermediate operation that returns a stream not longer than the requested size.
         - limit() is a short-circuiting operation.
     - Combining skip() and limit()
-        - To get data in batches (paging machenism can be implemented by combinig both operations)    
-        
+        - To get data in batches (paging machenism can be implemented by combinig both operations)
+            
+- How to merge two Streams?
+    - With the help of concat() method of Stream API we can merge two streams. Eg. Stream.concat(s1,s2)
+    - We can have nested Stream concatenation ion order merging multiple streams. 
+
+- Java Stream map() vs flatMap()
+    - Java map() used to deal with One-To-One mapping whereas flatMap() used to deal with One-To-Many mapping
+    - map() does only transformation of one input to single output. whereas flatMap() does data transformation and flattering of elements.
+    - map() takes Stream<values> as input, whereas flatMap() takes Stream<Stream<values>> as input.
+          
 ### Java Time API
 - It has some sub-packages **java.time.format** that provides classes to print and parse dates and times and **java.time.zone** provides support for time-zones and their rules.
 - DateTimeFormatter
-    
+- LocalDate
+- LocalTime
+- LocalDateTime
+- Instance
+
 ### Collection API improvements
 - Iterator default method **forEachRemaining(Consumer action)** to perform the given action for each remaining element until all elements have been processed or the action throws an exception.
 - Collection default method **removeIf(Predicate filter)** to remove all of the elements of this collection that satisfy the given predicate.
@@ -457,7 +473,41 @@ Only one null allowed.
         - Also Iterator of CopyOnWriteArrayList will never throw ConcurrentModificationException.
 
 ## Optional in Java
-- A container object which may or may not contain a non-null value. If a value is present, **isPresent()** will return **true** and **get()** will return the value.
+- Optional API used to encapsulate the value.
+- Why do we need this? Because it helps us to avoid NullPointerException at the Runtime & also makes the code very clean.
+       
+       // Without Optional
+        private static String codeWithoutOptional(String property){
+            String value = System.getProperty(property);
+            if(value == null){
+                value = System.getenv(property);
+            }
+            if(value != null){
+               return value;
+            }  
+            throw new IllegalArgumentException("" + property + "property not valid");
+        }
+        
+        // With Optional
+        private static String codeWithOptional(String property, String defaultVal){
+            Optional
+                .ofNullable(System.getProperty(property))
+                .orElse(defaultVal);
+        }
+        
+- Three ways to create an Optional 
+    - Optional.empty()
+    - Optional.of()
+    - Optional.ofNullable()    
+    
+- Benefits 
+    - Null check not required
+    - No more NullPointerException
+    - Clean and neat API's
+    - No more boiler plate code.
+         
+- A container object which may or may not contain a non-null value. 
+- If a value is present, **isPresent()** will return **true** and **get()** will return the value.
 - Provides following methods
     - of()
     - ofNullable()
