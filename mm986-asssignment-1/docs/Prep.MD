@@ -287,15 +287,18 @@
 ## Java Collections
 - Collection Hierarchy
     - Root Interface is Iterable & Purpose is to play with group of objects.
-    - Contains multiple Sub-Interfaces to provide different features.
-    - Factors based on they are segregated - Storing, Insertion order, Access, Thread Safety(Sync/Async)
-    - All collection interface classes implement Collection interface indirectly through Sub-Interfaces.
-    - Mostly Two Constructors
+    - Collection interface contains multiple Sub-Interfaces to provide different features. Factors based on they are segregated 
+        - Storing
+        - Insertion order
+        - Access/Retrival 
+        - Thread Safety(Sync/Async)
+    - All collection interface implementation classes implement Collection interface indirectly through Sub-Interfaces.
+    - It is up to each collection to determine its own synchronization policy
+    - Collection interface provides 2 Constructors -
         - No Args - Empty Collection
         - Single arg of type Collection (They can be copied from other collections)
     - UnsupportedOperationException - methods that operate on these collections throws this exception if the operation is not supported by specific collection.
     - Some unchecked exception like NullPointerException or ClassCastException are marked as optional.
-    - It is up to each collection to determine its own synchronization polic
     - Implementations are free to implement optimizations whereby the equals invocation is avoided, for example, by first comparing the hash codes of the two elements. (The hashCode()} specification guarantees that two objects with unequal hash codes cannot be equal.
     - Methods: 
         - size()                
@@ -307,8 +310,7 @@
         
 ### List 
 Follows insertion order. Allows multiple null elements.
-
-**Implementation Classes -** 
+- **Implementation Classes -** 
 - **ArrayList**
     - Maintains Insertion Order
     - Allows Index based access to element. It implements Random Access interface so retrival is faster.
@@ -333,8 +335,7 @@ Follows insertion order. Allows multiple null elements.
     Collection - 1 2 3 4
     create enum 1 2 3 4 - read only copy for iteration
     Add element to collection 1 2 3 4 5
-    
-
+     
 - **ArrayList vs LinkedList** 
     - https://beginnersbook.com/2013/12/difference-between-arraylist-and-linkedlist-in-java/
     - searching
@@ -368,9 +369,18 @@ Only one null allowed.
     4, PRESENT
     
 - **LinkedHashSet**
+    - No duplicate values
+    - Insertion order maintained
+    - Permits null value
+    - Implements Set interface, extends HashSet class
+    - Non Synchronised
     - Uses Doubly Linked List
-    - Maintains Insertion Order
-    - What is internal working? how it Uses Doubly Linked List?
+    - Default Initial Capacity 16 & Load Factor 0.75
+    - Constructors
+        - LinkedHashSet h = new LinkedHashSet();
+        - LinkedHashSet h = new LinkedHashSet(int initialCapacity);
+        - LinkedHashSet h = new LinkedHashSet(int initialCapacity, float loadFactor);
+    
 - **TreeSet**
     - Implements SortedSet
     - uses Tree at back end 
@@ -382,7 +392,7 @@ Only one null allowed.
     - **When to use**
         - If you don’t want to maintain insertion order but want store unique objects -> HashSet
         - If you want to maintain insertion order of elements then you can use LinkedHashSet	
-        - If you want to sort the elements according to some Comparator then use TreeSet]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+        - If you want to sort the elements according to some Comparator then use TreeSet.
 ### Queue
 
 **Sub Interfaces -**
@@ -437,7 +447,7 @@ Only one null allowed.
 - Map Vs IMap 
     
     - IMap - This class is used when the user requires the objects to be compared via reference. It belongs to java.util package.
-    - Use case where qwe use IMap
+    - Use case where we use IMap
     
 - What is the usage of BlockingQueue
 
