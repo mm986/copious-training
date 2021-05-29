@@ -841,13 +841,14 @@ Only one null allowed.
         - timed waiting - 
         - terminated - after task completion
         - Thread Constants
+        
         ![title](img/thread-lifecycle.png)
         
     - What is difference between wait, sleep, yeild ?     
         - wait always called on Object class - for the purpose of Interthread Communication
         - sleep, yeild are from Thread class
         - yeild - it releases CPU hold and gives to other - resume from this state only depends on scheduler.
-        - sleep resumes after specific time, wait needs 
+        - sleep resumes after specific time, wait needs explicitly resume.
 
 - String
     - The String is immutable in Java because of the security, synchronization and concurrency, caching, and class loading. 
