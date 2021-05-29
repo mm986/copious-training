@@ -17,7 +17,7 @@
         //traversing through forEach method of Iterable
         myList.forEach(element -> {
         	System.out.println("forEach element Value::"+element);
-        });
+        }); 
 - For loop Vs Enhanced for loop.
         
 ### default and static methods in Interfaces
@@ -40,6 +40,8 @@
 - java.util.function
 - An interface with exactly one abstract method
 - @FunctionalInterface annotation - This not only clearly communicates the purpose of this interface, but also allows a compiler to generate an error if the annotated interface does not satisfy the conditions.
+- Note that instances of functional interfaces can be created with lambda expressions, method references, or constructor references.
+- Lambda expression in itself is an anonymous method i.e. a method with no name which is used to provide implementation of the method defined by a functional interface.
 - No runtime benefit of Lambda expression - only reduces boilerplate code.
         
             Runnable r = new Runnable(){
@@ -109,8 +111,7 @@
                  - https://www.geeksforgeeks.org/java-8-predicate-with-examples/
         			
 ### Java Stream API
-- To avoid external iteration over collections and object containers in Java.. Stream API introduce internal iteration facility to operate on data structures in Java 8. 
-        
+- To avoid external iteration over collections and object containers in Java.. Stream API introduce internal iteration facility to operate on data structures in Java 8.    
         **Example:**
         
         private static int sumIterator(List<Integer> list) {
@@ -134,7 +135,8 @@
         	    .mapToInt(i -> i)
         	    .sum();
         }
-         
+
+      - When we want to represent group of          
 - It provides several features such as sequential and parallel execution, filtering based on the given criteria, mapping etc.
 - We use Streams with following:
     - **Streams with Collections**
@@ -678,10 +680,10 @@ Only one null allowed.
     - Resizing of hash map will lead you to race condition 
     
 - What is Immutable class? How will you create?
-    - will make class as final so no one can instantiate
+    - will make class as final so no one can extend
     - create variables as final- initialzied during instantiation.
     - expose only getter methods.
-    - If want to update then instantiate new object.
+    - If want to update then instantiate new object. 
 
 - What is transient & volatile
     - transient 
@@ -748,7 +750,10 @@ Only one null allowed.
             - Can i create instance of abstract class? No -> What is the way if i want to create instance? adding main method inside
             - **Object To Object Inheritance**
                 - In Abstract classes object of class created at runtime we can not create it explicitly from code. Extending abstract classs and provide implementation of abstract methods called object to object inheritance.
-                - In Interface neither we nor runtime env can create the object - so this is not Object to Object inheritance      
+                - In Interface neither we nor runtime env can create the object - so this is not Object to Object inheritance
+        - Can we create instance of abstract class? How abstract class constructor invoked?
+        - Can we make abstract class as final?
+                      
     - Encapsulation - coupling method and variables as asingle unit
     - Inheritance
         - Is-A relationship - parent-child - heavily used in OOP 
@@ -759,7 +764,8 @@ Only one null allowed.
         - What is multiple inheritance and does java support it?
             - Here child class inherits properties from multiple parent classes which is not allowed in Java, Here this is achieved with the help of Interfaces.
             - So to overcome Dimond problem in Multiple Inheritance we use interfaces for multiple inheritance.
-            - Since Java 8 there are static and default methods allowed in interfces which may cause this problem again.       
+            - Since Java 8 there are static and default methods allowed in interfces which may cause this problem again.
+                   
     - Polymorphism
         - compile time
             - overloading - static binding - early binding - single class only     
@@ -835,7 +841,8 @@ Only one null allowed.
         - timed waiting - 
         - terminated - after task completion
         - Thread Constants
-    
+        ![title](/docs/img/thread-lifecycle.png)
+        
     - What is difference between wait, sleep, yeild ?     
         - wait always called on Object class - for the purpose of Interthread Communication
         - sleep, yeild are from Thread class
@@ -1038,8 +1045,11 @@ Only one null allowed.
         - This forwards request to other resources or another servlet in same application            
                   
 - Generics    
+    - You can write a single generic method declaration that can be called with arguments of different types. 
+    - Based on the types of the arguments passed to the generic method, the compiler handles each method call appropriately.
 - Unit Testing    
 - Inner classes
+   
 - Deadlock
 
 #### Core Java By The Baeldung
@@ -1382,6 +1392,10 @@ Only one null allowed.
                     @Scope(scopeName = "websocket", proxyMode = ScopedProxyMode.TARGET_CLASS)
                     
 - Spring MVC
+    - MVC is a Model-View-Controller which is a architectural pattern that separates application into three main logical components:
+        - Model
+        - View
+        - Controller
     - Flow & Components
         - There are key parties involved - DispatcherServlet, HandlerMapping, Controller, ModelAndView, ViewResolver, View
         - Dispatcher servlet interacts with ->  UrlHandlerMapper to get mapping and then go to -> Controller - > service,repo processing -> returns ModelAndView -> DispatcherServlet takes view -
@@ -1442,7 +1456,33 @@ Only one null allowed.
                         SpringApplication.run(Application.class, args);
                     }
                 }        
-       
+    
+    - Why we need thymleaf dependency for Spring MVC with Spring Boot?
+        - Thymeleaf is a Java template engine for processing and creating HTML, XML, JavaScript, CSS, and text.
+        - It is a alternative for JSP
+        - Spring boot starter automatically configures view resolver for us and the path for keeping our views at resources/template
+        - he SpringTemplateEngine class performs all of the configuration steps. You can configure this class as a bean in the Java configuration file:
+                
+                @Bean
+                @Description("Thymeleaf Template Resolver")
+                public ServletContextTemplateResolver templateResolver() {
+                    ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
+                    templateResolver.setPrefix("/WEB-INF/views/");
+                    templateResolver.setSuffix(".html");
+                    templateResolver.setTemplateMode("HTML5");
+                
+                    return templateResolver;
+                }
+                
+                @Bean
+                @Description("Thymeleaf Template Engine")
+                public SpringTemplateEngine templateEngine() {
+                    SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+                    templateEngine.setTemplateResolver(templateResolver());
+                    templateEngine.setTemplateEngineMessageSource(messageSource());
+                    return templateEngine;
+                }
+                
 - Exception Handling in Spring 
     - Explain What approach we told initially - need exception handling in each class.
             
@@ -2126,6 +2166,7 @@ Only one null allowed.
                         return city;
                     }
                 }
+                
         - To Overcome Circular Dependency 
             - to break the cycle is saying Spring to initialize one of the beans lazily. 
             - That is: instead of fully initializing the bean, it will create a proxy to inject it into the other bean.
@@ -2140,13 +2181,14 @@ Only one null allowed.
                             this.circB = circB;
                         }
                     }
-            
-      - **@Scheduled**
-        - Method with @Scheduled annotation should follow following rules:
-           - a method should have the void return type
-           - a method should not accept any parameters
+
+- Spring Scheduling
+   - **@Scheduled**
+      - Method with @Scheduled annotation should follow following rules:
+         - a method should have the void return type
+         - a method should not accept any parameters
         
-        - Configuration to enable support for scheduling tasks
+      - Configuration to enable support for scheduling tasks
         
               @Configuration
               @EnableScheduling
@@ -2154,29 +2196,34 @@ Only one null allowed.
                   ...
               }          
               
-        - Schedule a Task at Fixed Delay - The fixedDelay property makes sure that there is a delay of n millisecond between the finish time of an execution of a task and the start time of the next execution of the task.
+      - Schedule a Task at Fixed Delay - The fixedDelay property makes sure that there is a delay of n millisecond between the finish time of an execution of a task and the start time of the next execution of the task.
             
                 @Scheduled(fixedDelay = 1000)
         
-        - Schedule a Task at a Fixed Rate - The fixedRate property runs the scheduled task at every n millisecond.
+      - Schedule a Task at a Fixed Rate - The fixedRate property runs the scheduled task at every n millisecond.
                 
                 @Scheduled(fixedRate = 1000)
                 
                 * Use @Async annotation If we want to support parallel behavior in scheduled tasks.
         
-        - Schedule a Task With Initial Delay
+      - Schedule a Task With Initial Delay
                 
                 @Scheduled(fixedDelay = 1000, initialDelay = 1000)
                 
-        - Schedule a Task Using Cron Expressions
-                
+      - Schedule a Task Using Cron Expressions
+        - https://www.baeldung.com/cron-expressions 
+              
+              #Syntax  
+              <minute> <hour> <day-of-month> <month> <day-of-week>
+              
+              # Example          
                 @Scheduled(cron = "0 15 10 15 * ?")
                 
               # we can use the zone attribute to change this timezone:
                 
                 @Scheduled(cron = "0 15 10 15 * ?", zone = "Europe/Paris")
                 
-        - Configuring Scheduled Tasks Using XML
+      - Configuring Scheduled Tasks Using XML
             
                 <!-- Configure the scheduler -->
                 <task:scheduler id="myScheduler" pool-size="10" />
@@ -2190,7 +2237,7 @@ Only one null allowed.
                     <task:scheduled ref="beanC" method="methodC" 
                       cron="*/5 * * * * MON-FRI" />
                 </task:scheduled-tasks>                               
-                
+          
 - Spring Security
     - Which Security framework you have worked upon? JWT
         - Introduction of JWT
@@ -2683,32 +2730,33 @@ Only one null allowed.
         - ManyToMany
             - **Example: Employee <--> Project**
                 - both the Employee class and Project classes refer to one another, which means that the association between them is bidirectional.    
-                    @Entity
-                    @Table(name = "Employee")
-                    public class Employee { 
-                        // ...
-                     
-                        @ManyToMany(cascade = { CascadeType.ALL })
-                        @JoinTable(
-                            name = "Employee_Project", 
-                            joinColumns = { @JoinColumn(name = "employee_id") }, 
-                            inverseJoinColumns = { @JoinColumn(name = "project_id") }
-                        )
-                        Set<Project> projects = new HashSet<>();
-                       
-                        // standard constructor/getters/setters
-                    }
                     
-                    @Entity
-                    @Table(name = "Project")
-                    public class Project {    
-                        // ...  
-                     
-                        @ManyToMany(mappedBy = "projects")
-                        private Set<Employee> employees = new HashSet<>();
+                        @Entity
+                        @Table(name = "Employee")
+                        public class Employee { 
+                            // ...
+                         
+                            @ManyToMany(cascade = { CascadeType.ALL })
+                            @JoinTable(
+                                name = "Employee_Project", 
+                                joinColumns = { @JoinColumn(name = "employee_id") }, 
+                                inverseJoinColumns = { @JoinColumn(name = "project_id") }
+                            )
+                            Set<Project> projects = new HashSet<>();
+                           
+                            // standard constructor/getters/setters
+                        }
                         
-                        // standard constructors/getters/setters   
-                    }
+                        @Entity
+                        @Table(name = "Project")
+                        public class Project {    
+                            // ...  
+                         
+                            @ManyToMany(mappedBy = "projects")
+                            private Set<Employee> employees = new HashSet<>();
+                            
+                            // standard constructors/getters/setters   
+                        }
                 - In our example, the owning side is Employee so the join table is specified on the owning side by using the @JoinTable annotatio
         - Fetch Type
             - **Eager Loading**
@@ -2934,12 +2982,12 @@ Only one null allowed.
     - **Asynchronous:** In this type of messaging, client does not wait for a message from the server, but automatically an event is created to trigger a message from a server. Ex: email, text messaging, blog posting.
    
    - **Components**
-    - Session
-    - Connection
-    - Message
-    - Message Producer
-    - Message Consumer
-    - Connection factory and destination
+        - Session
+        - Connection
+        - Message
+        - Message Producer
+        - Message Consumer
+        - Connection factory and destination
    
    - jms handles which type of calls.
    - How queue get active.
@@ -2953,6 +3001,7 @@ Only one null allowed.
     - BytesMessage
     - ObjectMessage
     - MapMessage.
+   - Mention the difference between durable and non-durable subscription?
      
 - Spring Async Services
     - Spring provides asynchronous execution support in Spring – with the @Async annotation
@@ -3014,7 +3063,7 @@ Only one null allowed.
     
     - **The Executor** 
         - By default, Spring uses a SimpleAsyncTaskExecutor to actually run these methods asynchronously.
-        - We can cutomize this in two ways:
+        - We can customize this in two ways:
             - Override the Executor at the Method Level
                 - The required executor needs to be declared in a configuration class:
                   
@@ -3062,7 +3111,7 @@ Only one null allowed.
        - Prehandle
        - Posthandle
        - AfterCompletion
-    - We must have to register interceptor in interceptor registory - inside SpringSecurityConfig -> addInterceptor() 
+    - We must have to register interceptor in interceptor registry - inside SpringSecurityConfig -> addInterceptor() 
     
     - Filter is similer to interceptor but different
     - https://www.baeldung.com/spring-mvc-handlerinterceptor
@@ -3416,6 +3465,94 @@ Read more: https://javarevisited.blogspot.com/2011/11/collection-interview-quest
     
 - Where & Having clause? Why group by with having
 
+# Discussion with Guru
 
+- Can we create static classes in Java?
+    Outer class we can't, whereas inner class we can make it static.
 
-                   
+- How many ways we can create Object in java?   
+
+- Can we create instance of abstract class? How abstract class constructor invoked?
+
+- Can we make abstract class as final?
+ 
+- When HashMap goes to infinite loop?
+    When we try to access 
+
+- Bucket & Segment level locking in Collection
+
+- Runnable Vs Callable
+
+- JVM Architecture - PermGen, Metaspace
+
+- Are singleton bean thread safe?
+
+- How to inject prototype in singleton?
+
+- Handler interceptor
+
+# Discussion with Meghdoot
+
+- Optional in Java?
+    - of() vs ofNullable()
+    - Traditional approach comparison
+    - Why we use & purpose?
+    
+- Cursors in Java
+    - Three types of cursors
+        - Enumeration
+            - purpose
+            - pros &  
+        - Iterator
+            - Can we manipulate the data using iterator? No we cannot be can use ListIterator
+        - ListIterator
+            
+- Inner classes in Java
+    - Can Inner class access private members of Parent class?
+    - Disadvantage
+        - It will Increase the load on JVM 
+        - Get limited support on IDE
+         
+- What is Plain Old Anonymous class & Vs Anonymous class?
+    
+    https://java-questions.com/InnerClass-interview-questions.html                    
+
+- Stream  - Not upto the mark 
+
+- Marker Interface - Seerializable & Clonable with collection
+- RandomAccess Marker Interface in ArrayList
+- Classloader subsystem
+- Multithreading
+    - Two ways 
+        - Extending Thread class
+        - Implementing Runnable
+    - What is difference
+        - 
+    - wait, sleep, yeild
+    - wait, notify, notifyAll why they are in Object class?
+
+ # Discussion with Utkarsh
+- SOLID- they are roadmap/benchmark to a well architected application
+    - Single Responsibility
+    - Open close
+    - Liskov Substitution
+    - Interface Segregation
+    - Dependency Inversion Principle (DIP) states that high level modules should not depend on low level modules; both should depend on abstractions.    
+        - High-level modules, which provide complex logic, should be easily reusable and unaffected by changes in low-level modules, which provide utility features. To achieve that, you need to introduce an abstraction that decouples the high-level and low-level modules from each other.
+
+- CAP therom - This is for databases we choose for applications should follow 2/3 constraints
+   - Consistency
+   - Availability
+   - Partition Tolerance
+   
+- Design Pattern        
+    - Creational
+    - Structural
+        - Proxy
+        - Decor
+        - Adapter
+    - Behavioural
+        - Strategy
+        - Observer
+        - State
+        - Template 
