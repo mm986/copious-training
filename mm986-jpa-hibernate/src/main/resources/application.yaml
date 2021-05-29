@@ -1,0 +1,30 @@
+
+---
+spring:
+  profiles: local
+  datasource:
+    # SPRING DataSource JNDI Connection properties
+    #        jndi-name: java:/comp/env/jdbc/LocalMySql
+
+    # SPRING DataSource Connection properties to make automatic connection to DB
+    url: jdbc:mysql://localhost:3306/jpa
+    username: root
+    password: hydrosigma
+    # SPRING DataSource properties to load static data via SQL
+#    data: classpath:data.sql
+    initialization-mode: always
+#    continueOnError: true
+  jpa:
+    hibernate.ddl-auto: create-drop
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+
+server:
+  port: 8181
+
+logging:
+  level:
+    com.mm.jpa: DEBUG
+#    root: DEBUG
+
+management.endpoints.web.exposure.include: '*'

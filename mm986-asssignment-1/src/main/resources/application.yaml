@@ -25,6 +25,8 @@ hibernate:
         region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
         use_second_level_cache: true
         use_query_cache: true
+    dialect:
+net.sf.ehcache.configurationResourceName: ehcache.xml
 
 # Async Executor Configuration
 async:
@@ -33,10 +35,9 @@ async:
     queue.capacity: 100
     shutdown: true
 
-net.sf.ehcache.configurationResourceName: ehcache.xml
-
 server:
     port: 8181
+
 
 jwt.secret: mm986
 logging:
@@ -44,6 +45,7 @@ logging:
         com.copious.training: DEBUG
 #        org.apache.catalina: DEBUG
         root: DEBUG
+
 ---
 spring:
     profiles: dev
