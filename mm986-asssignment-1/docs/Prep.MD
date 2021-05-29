@@ -841,7 +841,7 @@ Only one null allowed.
         - timed waiting - 
         - terminated - after task completion
         - Thread Constants
-        ![title](/docs/img/thread-lifecycle.png)
+        ![title](img/thread-lifecycle.png)
         
     - What is difference between wait, sleep, yeild ?     
         - wait always called on Object class - for the purpose of Interthread Communication
